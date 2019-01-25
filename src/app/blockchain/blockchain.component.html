@@ -1,0 +1,187 @@
+<div class="top_box" *ngIf="navIsOpen === false">
+  <div class="left_box">
+    <div class="mobile_heading" [ngClass]="{'hide_heading': searchIsOpen === true}">Blockchain</div>
+    <div class="blockchain_info">
+      <div class="daemon_state">Daemon state:
+        <span [ngClass]="{
+          'text-success':info?.daemon_network_state==2,
+          'text-danger':info?.daemon_network_state!=2 }">
+          {{daemon_network_state[info?.daemon_network_state] || 'BUSY'}}
+        </span>
+      </div>
+      <div class="network_info">
+        <div>Default network fee: <span>{{info.default_fee | moneyParse | bitNumber}}</span></div>
+        <div>Minimum network fee: <span>{{info.minimum_fee | moneyParse | bitNumber}}</span></div>
+      </div>
+    </div>
+  </div>
+  <app-search (isVisible)='onIsVisible($event)'></app-search>
+</div>
+
+
+<div class="main_info">
+  <div class="height">
+    <div class="title">Height</div>
+    <div class="value">{{infoHeight | bitNumber}}</div>
+  </div>
+  <div class="difficulty">
+    <div class="title">Difficulty</div>
+    <div class="value">
+      <div class="pos"><span>PoS:</span>{{posDifficulty | bitNumber}} </div>
+      <div class="pow"><span>PoW:</span>{{powDifficulty | bitNumber}}</div>
+    </div>
+  </div>
+  <div class="coins_emitted">
+    <div class="title">Coins Emitted</div>
+    <div class="value">{{totalCoins | moneyParse | bitNumber}}</div>
+  </div>
+  <div class="transactions">
+    <div class="title">Transactions</div>
+    <div class="value">{{ (txCount + infoHeight) | bitNumber}}</div>
+  </div>
+  <div class="hash_rate">
+    <div class="title">Hash Rate (aprox):</div>
+    <div class="value">{{NetworkHashrate | bitNumber}} H/sec</div>
+  </div>
+</div>
+
+
+
+
+<div class="latest_blocks">
+  <div class="table_title">
+    Latest Blocks
+  </div>
+  <div *ngIf="loader === true" class="wrap_loader">
+    <div class="loader"></div>
+  </div>
+  <table *ngIf="BlockDetails && BlockDetails.length">
+    <thead>
+      <tr>
+        <th class="height">Height</th>
+        <th class="timestamp">Timestamp (UTC)</th>
+        <th class="age">Age</th>
+        <th class="size">Size</th>
+        <th class="transaction">Transactions</th>
+        <th class="hash">Hash</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr [ngClass]="{'new-block':block.isNew, 'pos': block.type=='0', 'pow': block.type=='1', 'select':block.select}" *ngFor="let block of BlockDetails | Order: ['-height']" >
+        <td class="height">
+          <a [routerLink]="['/block', block.id]">{{block.height}}</a>
+          <span *ngIf="block.type==0">(PoS)</span>
+          <span *ngIf="block.type==1">(PoW)</span>
+        </td>
+        <td class="timestamp">{{block.timestamp*1000 | amUtc | amDateFormat: 'YYYY.MM.DD HH:mm:ss'}}</td><!--Timestamp-->
+        <td class="age">{{block.actual_timestamp*1000 | amUtc | amTimeAgo}}</td><!-- age-->
+        <td class="size">{{block.block_cumulative_size}} bytes</td>
+        <td class="transaction">{{block.tr_count}}</td>
+        <td class="hash">
+          <span class="cont_hash">
+            <a [routerLink]="['/block', block.id]">{{block.id}}</a>
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <div class="pagination" *ngIf="BlockDetails && BlockDetails.length">
+    <div class="left_position">
+      <span>Pages:</span>
+      <button type="button" class="prev_btn" [disabled]="currentPage<=1" (click)="prevPage()">
+        <svg x="0px" y="0px" viewBox="0 0 477.175 477.175">
+          <g>
+            <path d="M145.188,238.575l215.5-215.5c5.3-5.3,5.3-13.8,0-19.1s-13.8-5.3-19.1,0l-225.1,225.1c-5.3,5.3-5.3,13.8,0,19.1l225.1,225
+              c2.6,2.6,6.1,4,9.5,4s6.9-1.3,9.5-4c5.3-5.3,5.3-13.8,0-19.1L145.188,238.575z"/>
+          </g>
+        </svg>
+      </button>
+      <button type="button" class="next_btn" [disabled]="BlockDetails.length<setLimit" (click)="nextPage()">
+        <svg x="0px" y="0px" viewBox="0 0 477.175 477.175">
+          <g>
+            <path d="M360.731,229.075l-225.1-225.1c-5.3-5.3-13.8-5.3-19.1,0s-5.3,13.8,0,19.1l215.5,215.5l-215.5,215.5
+              c-5.3,5.3-5.3,13.8,0,19.1c2.6,2.6,6.1,4,9.5,4c3.4,0,6.9-1.3,9.5-4l225.1-225.1C365.931,242.875,365.931,234.275,360.731,229.075z
+              "/>
+          </g>
+        </svg>
+      </button>
+      <input type="text" [value]="currentPage" (input)="currentPage=$event.target.value" (change)="onChange()">
+    </div>
+    <div class="right_position">
+      <span>Items on page:</span>
+      <input type="text" [value]="setLimit" (input)="setLimit=$event.target.value" (change)="onChangeLimit()">
+      <span class="title_go_to_block">Go to block:</span>
+      <input class="input_go_to_block" type="text" (input)="setBlock=$event.target.value" (change)="searchBlock()" [ngClass]="{'has-error': setBlockValid == false}" placeholder="number" >
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+<div class="transaction_pool">
+
+  <div class="heading_table">
+    <div class="left_block">
+      <span class="table_title">Transaction Pool</span>
+      <button type="button" (click)="toggleBtn()" [ngClass]="{'on': poolsOn===false, 'off': poolsOn===true}">
+        {{poolsOn == true ? 'turn off' : 'turn on' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- IF transaction pool > 0 -->
+  <table class="full_table" *ngIf="(poolsOn === true) && (info.tx_pool_size > 0)">
+    <thead>
+      <tr>
+        <th class="timestamp">Timestamp (UTC)</th>
+        <th class="age">Age</th>
+        <th class="size">Size</th>
+        <th class="fee">Fee</th>
+        <th class="hash">Hash</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr [ngClass]="{'new-block':pools.isNew, 'old-block':pools.isOld}" *ngFor="let pools of TxPoolDetails">
+        <td class="timestamp">
+          <span *ngIf="pools.timestamp > 0">{{pools.timestamp*1000 | amUtc | amDateFormat: 'YYYY.MM.DD HH:mm:ss'}}</span>
+          <span *ngIf="pools.timestamp === 0">0</span>
+        </td>
+        <td class="age">{{pools.timestamp*1000 | TimeAgo}}</td>
+        <td class="size">{{pools.blob_size}} bytes</td>
+        <td class="fee">{{pools.fee | moneyParse}}</td>
+        <td class="hash">
+          <span class="cont_hash">
+            <a [routerLink]="['/transaction', pools.id]">{{pools.id}}</a>
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- IF TRANSACT. POOL !== 0 && BUTTON == FALSE -->
+  <div class="short_info_pool" *ngIf="(poolsOn === false) && (info && info?.tx_pool_size && info?.tx_pool_size !== 0)">
+    {{info.tx_pool_size}} transactions in pool
+  </div>
+
+  <!-- IF POOL IS EMPTY -->
+  <div class="pool_is_empty" *ngIf="(!info?.tx_pool_size) || (info?.tx_pool_size === 0)">
+    Pool is empty
+  </div>
+
+  <div class="pagination trans_pool" *ngIf="(poolsOn === true) && (info.tx_pool_size >= 5)">
+    <div class="left_position"></div>
+    <div class="right_position">
+      <span>Items on page:</span>
+      <input type="text" [value]="setPoolLimit" (input)="setPoolLimit=$event.target.value" (change)="onChangePoolLimit()">
+      <span class="of">of {{info.tx_pool_size}}</span>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,9 @@
+<div *ngIf="visible" class="dialog__main">
+  <div class="dialog__parent">
+    <div [@dialog] class="dialog">
+      <ng-content></ng-content>
+      <button *ngIf="closable" (click)="close()" class="dialog__close-btn"></button>
+    </div>
+    <div *ngIf="visible" class="overlay" (click)="close()"></div>
+  </div>
+</div>

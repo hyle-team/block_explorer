@@ -1,0 +1,147 @@
+// special font - (svg icons)(
+@font-face {
+  font-family: "untitled-font-1";
+  src: url("assets/fonts/untitled-font-1.eot");
+  src: url("assets/fonts/untitled-font-1.eot?#iefix") format("embedded-opentype"),
+       url("assets/fonts/untitled-font-1.woff") format("woff"),
+       url("assets/fonts/untitled-font-1.ttf") format("truetype"),
+       url("assets/fonts/untitled-font-1.svg#untitled-font-1") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+// $variables
+$background: url('assets/img/background.jpg');
+$logo: url('assets/img/logo.svg');
+$font: 'Open Sans', sans-serif;
+$mobileMenuIco: url('assets/img/menu.svg');
+$showIco: url('assets/img/show.svg');
+$search: url('./assets/img/search-general.svg');
+$backBtn: url('./assets/img/back-block.svg');
+$searchSecond: url('./assets/img/search-second.svg');
+
+.base-icon {
+  display: inline-block;
+  font-size: 49px;
+  position: relative;
+  &:before {
+    font-family: 'untitled-font-1';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: absolute;
+  }
+}
+
+// BASE
+@import 'assets/styles/base/null';
+@import 'assets/styles/base/base';
+@import 'assets/styles/base/mixins';
+
+// LAYOUT
+@import 'assets/styles/layout/main';
+@import 'assets/styles/layout/header';
+
+// MODULES
+@import 'assets/styles/modules/main-info';
+@import 'assets/styles/modules/table';
+@import 'assets/styles/modules/forms';
+@import 'assets/styles/modules/pagination';
+@import 'assets/styles/modules/loader';
+@import 'assets/styles/modules/block-details';
+
+
+
+.fixed_background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% + 60px);
+  background-image: $background;
+  background-repeat: no-repeat;
+  background-position: center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-attachment: fixed;
+  z-index: -1;
+}
+
+// search component (btn-search)
+app-search {
+  > button {
+    display: flex;
+    width: 25px;
+    height: 100%;
+    flex-shrink: 0;
+    background-image: $search;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+}
+
+.back_btn {
+  width: 80px;
+  height: 13px;
+  display: flex;
+  align-items: center;
+  padding-left: 21px;
+  background-image: $backBtn;
+  background-repeat: no-repeat;
+  background-position: 3px center;
+  color: #fff;
+  font-size: 16px;
+  @include max575 {
+    &.hide_back_btn {
+      display: none;
+    }
+  }
+}
+
+// alias search
+.alias_input_search {
+  width: 100%;
+  height: 33px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #9eaacc;
+  padding-left: 47px;
+  background-image: $search;
+  background-repeat: no-repeat;
+  background-position: 12px center;
+  background-size: 18px;
+  @include max761 {
+    font-size: 16px;
+  }
+}
+
+.dialog-open {
+  overflow: hidden;
+}
+
+// webkit visible scroll
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+::-webkit-scrollbar:vertical {
+  width: 10px;
+}
+::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  //background-color: rgba(0, 0, 0, .3);
+  background-color: rgba(#32439f, 1);
+  border-radius: 10px;
+  border: 1px solid #ffffff;
+}
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: #ffffff;
+}

@@ -1,0 +1,107 @@
+@import '../../assets/styles/base/mixins';
+:host {
+  position: relative;
+  z-index: 999;
+}
+.dialog__main {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+
+  .dialog__parent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: auto;
+    height: 100%;
+    z-index: 1;
+
+    .dialog {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 520px;
+      padding: 35px;
+      background: linear-gradient(to right, #1b3a8a, #32439f);
+      border-radius: 10px;
+      z-index: 1000;
+      overflow: hidden;
+      transition: 0.1s;
+      margin: 20px;
+      @include max1199 {
+        margin: 0;
+      }
+      @include max1170 {
+        max-width: 90%;
+      }
+      @include max761 {
+        margin: 0;
+      }
+      @include max575 {
+        padding: 35px 20px;
+        width: 100%;
+        height: 100%;
+        transform: translate(0, 0);
+        top: 0;
+        left: 0;
+        border-radius: 0;
+        overflow-y: auto;
+      }
+      &.dialog-top {
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, 0);
+      }
+      &.dialog-center {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      @include max991 {
+        position: absolute;
+        min-width: 520px;
+        left: 50%;
+        right: auto;
+      }
+
+      @include max575 {
+        min-width: 100%;
+        width: 100%;
+        left: 0;
+        transform: translate(0, 0);
+      }
+    }
+
+    .dialog__close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 17px;
+      height: 17px;
+      border: 0;
+      background-color: transparent;
+      &:before {
+        font-family: 'untitled-font-1';
+        font-style: normal;
+        font-weight: normal;
+        line-height: 1;
+        text-transform: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: absolute;
+        content: "u";
+        top: -24px;
+        left: -29px;
+        width: 100%;
+        height: 100%;
+        font-size: 75px;
+        color: #fff;
+      }
+    }
+  }
+}
+

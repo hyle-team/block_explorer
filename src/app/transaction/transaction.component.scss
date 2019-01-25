@@ -1,0 +1,266 @@
+@import '../../assets/styles/base/mixins';
+.transaction_details {
+  margin-bottom: 25px;
+  table {
+    tr {
+      &:nth-child(2n+1) { background-color: rgba(#263163, 1);  }
+      &:nth-child(2n)   { background-color: rgba(#234ee2, .1); }
+      &.confirmed       { background-color: rgba(#0e5311, 1);  }
+      &.unconfirmed     { background-color: rgba(#ff5252, 1);  }
+
+      &.hash {
+        span {
+          @include max761 {
+            display: block;
+            @include textWrap;
+            line-height: 1.4;
+          }
+
+        }
+      }
+      &.one_time_public_key {
+        span {
+          @include max761 {
+            display: block;
+            @include textWrap;
+            line-height: 1.4;
+          }
+        }
+      }
+      &.extra_items {
+        .value_extra_item {
+          ul {
+            > li {
+              @include max761 {
+                display: block;
+                @include textWrap;
+                line-height: 1.4;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .title_transaction {
+    padding: 12px 0;
+    font-size: 28px;
+    font-weight: 300;
+    color: #fff;
+  }
+
+  .value_extra_item, .value_attachment {
+    li {
+      font-size: 13px;
+      padding: 5px 0;
+      .is_extra_item {
+        display: block;
+        margin-left: 20px;
+        padding-top: 10px;
+        @include max761 {
+          padding-top: 0;
+        }
+      }
+    }
+  }
+}
+.table_confirmed_transaction, .transaction_inputs_table, .transaction_outputs_table, .table_unconfirmed_transaction {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  overflow: hidden;
+  tbody tr {
+    &:nth-child(2n+1) {
+      background-color: rgba(#234ee2, .1);
+    }
+    &:nth-child(2n) {
+      background-color: rgba(#263163, 1) !important;
+    }
+  }
+}
+.wrapper_table {
+  margin-bottom: 25px;
+  @include max575 {
+   overflow-x: auto;
+  }
+  .table_title {
+    display: flex;
+    .unconfirmed_transaction {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #e06a6a;
+      background-color: transparent;
+      font-size: 15px;
+      color: #e06a6a;
+      padding: 6px 24px;
+      border-radius: 12px;
+      margin-left: 15px;
+    }
+    .tr_count {
+      padding-left: 5px;
+    }
+  }
+  table {
+    @include max575 {
+      width: 545px;
+    }
+    thead {
+      background-color: rgba(#fff, .5);
+    }
+    tbody {
+      tr {
+        &:last-child {
+          border-bottom: none;
+        }
+        &:nth-child(2n) {
+          background-color: rgba(#234ee2, .1);
+        }
+      }
+    }
+    &.fixed_table {
+      table-layout: fixed;
+      ._hash {
+        width: 65%;
+        @include max991 {
+          width: 50%;
+          > a {
+            display: block;
+            width: 270px;
+            @include text-truncate;
+            @include max761 {
+              width: 230px;
+            }
+          }
+        }
+      }
+      ._height {
+        width: 15%;
+        @include max991 {
+          width: 20%;
+        }
+        @include max761 {
+          width: 22%;
+        }
+      }
+      ._timestamp {
+        width: 20%;
+        @include max991 {
+          width: 30%;
+        }
+      }
+      ._amount {
+        width: 15%;
+      }
+      ._image_multisig {
+        width: 50%;
+        > span {
+          @include textWrap;
+        }
+        @include max991 {
+          width: 35%;
+        }
+      }
+      ._mixin_count {
+        width: 15%;
+        .has_indexes {
+          color: #68a1ff;
+          cursor: pointer;
+        }
+        @include max991 {
+          width: 20%;
+        }
+        @include max761 {
+          width: 22%;
+        }
+      }
+      ._global_index {
+        width: 20%;
+        .has-indexes {
+          color: #68a1ff;
+          cursor: pointer;
+        }
+        @include max991 {
+          width: 30%;
+        }
+      }
+      ._key {
+        width: 65%;
+        @include max991 {
+          width: 55%;
+        }
+        @include max761 {
+          width: 45%;
+        }
+        > span {
+          @include max991 {
+            display: block;
+            white-space: normal;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-all;
+            line-break: strict;
+            -webkit-hyphens: auto; -ms-hyphens: auto; hyphens: auto;
+          }
+        }
+      }
+      ._global_index_multisig {
+        width: 20%;
+        @include max991 {
+          width: 30%;
+          @include max761 {
+            width: 36%;
+          }
+        }
+      }
+    }
+  }
+  .box_load_more {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 122px;
+    .title_load_more {
+      color: #fff;
+      font-size: 14px;
+    }
+    > button {
+      background: linear-gradient(to bottom, #212f6c, #212f6c);
+      border-radius: 10px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      color: #fff;
+      font-size: 14px;
+      border: none;
+      padding: 5px 25px;
+      margin-top: 15px;
+      transition: 0.2s;
+      &:hover {
+        background: linear-gradient(to bottom, #212f6c, #26367a);
+      }
+    }
+  }
+}
+
+
+
+.dialog_title {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 300;
+  padding-bottom: 38px;
+  @include textWrap;
+}
+.wrap_content {
+  @include max575 {
+    padding: 0 15px;
+  }
+  > div {
+    color: #68a1ff;
+    .emulation_link {
+      color: #68a1ff;
+      cursor: pointer;
+      @include textWrap;
+    }
+  }
+}
