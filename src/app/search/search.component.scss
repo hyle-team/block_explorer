@@ -6,7 +6,6 @@
   @include max575 {
     height: 32px;
     max-width: 100%;
-    //position: static;
   }
   > input, button {
     border: none;
@@ -20,10 +19,9 @@
     font-size: 14px;
     margin-right: 15px;
     &::-webkit-input-placeholder {color: #9eaacc;}
-    &::-moz-placeholder {color: #9eaacc;}
-    &:-ms-input-placeholder {color: #9eaacc;}
-    &:-moz-placeholder {color: #9eaacc;}
-    &::placeholder {color: #9eaacc;}
+    &::-moz-placeholder {color: #9eaacc; opacity: 1;}
+    &::-ms-input-placeholder {color: #9eaacc;}
+
     @include max575 {
       opacity: 0;
       width: 0;
@@ -37,10 +35,6 @@
       }
     }
   }
-
-
-  // this btn style.scss
-
 
   .search_not_found {
     position: absolute;

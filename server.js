@@ -571,7 +571,7 @@ db.serialize(function () {
     ", tr_count INTEGER" +
     ", type INTEGER" +
     ", miner_text_info TEXT" +
-    ", seed TEXT" +
+    ", pow_seed TEXT" +
     ");");
 
   db.run("CREATE INDEX if not exists index_bl_height ON blocks(height);");
@@ -626,7 +626,7 @@ db.serialize(function () {
     'total_txs_size INTEGER,' +
     'transactions_details TEXT,' +
     'miner_txt_info TEXT,' +
-    'seed TEXT' +
+    'pow_seed TEXT' +
     ');');
 
   db.run("CREATE INDEX if not exists index_ab_hash ON alt_blocks(hash);");
@@ -817,7 +817,7 @@ function syncTransactions(success) {
             (localBl.tr_count) ? localBl.tr_count : 0,
             localBl.type,
             localBl.miner_text_info,
-            localBl.seed
+            localBl.pow_seed
           );
           stmt.finalize();
           lastBlock = block_array.splice(0, 1)[0];
@@ -1012,7 +1012,7 @@ function syncAltBlocks() {
           var total_txs_size = data.result.blocks[x].total_txs_size;
           var transact_details = JSON.stringify(data.result.blocks[x].transactions_details);
           var miner_txt_info = data.result.blocks[x].miner_text_info;
-          var seed = data.result.blocks[x].seed;
+          var pow_seed  = data.result.blocks[x].pow_seed ;
           stmt.run(
             height,
             timestamp,
@@ -1034,7 +1034,7 @@ function syncAltBlocks() {
             total_txs_size,
             transact_details,
             miner_txt_info,
-            seed
+            pow_seed
           );
         }
         stmt.finalize();

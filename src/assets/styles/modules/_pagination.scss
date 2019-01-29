@@ -22,7 +22,7 @@
       position: relative;
       svg {
         fill: #ffff;
-        width: 14px;
+        width: 18px;
       }
       &:disabled {
         svg { fill: #9eaacc; }
@@ -30,10 +30,16 @@
     }
     > input {
       border: none;
-      background: transparent;
-      font-size: 16px;
-      max-width: 50px;
-      color: #fff;
+      font-size: 14px;
+      max-width: 65px;
+      color: #9eaacc;
+      background-color: rgba(#7694fe, .1);
+      padding: 8px 15px;
+      border-radius: 5px;
+      text-align: center;
+      &::-webkit-input-placeholder {color: #fff;}
+      &::-moz-placeholder {color: #fff; opacity: 1;}
+      &::-ms-input-placeholder {color: #fff;}
     }
   }
   .left_position {
@@ -54,13 +60,9 @@
       }
     }
     > input {
-      max-width: 40px;
+      max-width: 65px;
       &.input_go_to_block {
-        max-width: 70px;
-        color: #fff;
-        &::-webkit-input-placeholder {color: #fff;}
-        &::-moz-placeholder {color: #fff;opacity: 1;}
-        &::-ms-input-placeholder {color: #fff;}
+        max-width: 90px;
       }
     }
   }

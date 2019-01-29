@@ -171,6 +171,9 @@
 
 .alias_input_search {
   background-color: rgba(#234ee2, .1);
+  &::-webkit-input-placeholder {color: #9eaacc;}
+  &::-moz-placeholder {color: #9eaacc; opacity: 1;}
+  &::-ms-input-placeholder {color: #9eaacc;}
   &.desktop {
     display: flex;
     width: 320px;
