@@ -1,7 +1,7 @@
 <h1 class="hidden">Welcome to Block Explorer!</h1>
 <header>
   <button type="button" id="mobile-nav-btn" (click)="btnToggleMenu()" [ngClass]="{'show': navIsOpen === true }"></button>
-  <div class="logo">Zano</div>
+  <div class="logo" [routerLink]="['/']" routerLinkActive="active">Zano</div>
   <nav class="desktop_nav">
     <ul>
       <li><a [routerLink]="['/']" routerLinkActive="active" id="blockchain-li" [routerLinkActiveOptions]="{exact: true}">Blockchain</a></li>

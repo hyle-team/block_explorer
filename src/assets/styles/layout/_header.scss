@@ -40,8 +40,9 @@ header {
     }
   }
   .logo {
-    width: 200px;
+    width: 140px;
     height: 40px;
+    margin-right: 60px;
     background-image: $logo;
     background-repeat: no-repeat;
     background-position: 0 center;
@@ -52,6 +53,12 @@ header {
     color: #fff;
     text-transform: uppercase;
     padding-left: 60px;
+    cursor: pointer;
+    @include unSelect;
+    outline: none;
+    @include max575 {
+      margin-right: 10px;
+    }
   }
 
   .case_testnet_mainnet {
