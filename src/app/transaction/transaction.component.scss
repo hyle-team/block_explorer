@@ -53,6 +53,7 @@
     li {
       font-size: 13px;
       padding: 5px 0;
+      @include textWrap;
       .is_extra_item {
         display: block;
         margin-left: 20px;

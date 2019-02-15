@@ -372,8 +372,8 @@ http.createServer(function (req, res) {
           }
           body = Buffer.concat(body).toString();
           var params_object = JSON.parse(body);
-          if (params_object.id) {
 
+          if (params_object.id) {
             db.get("SELECT * FROM blocks WHERE id == ? ;", [params_object.id], function (err, row) {
               if (row === undefined) {
                 db.get("SELECT * FROM alt_blocks WHERE hash == ? ;", [params_object.id], function (err, row) {

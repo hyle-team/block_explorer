@@ -1,7 +1,4 @@
-<input type="text" [ngClass]="{'show': isVisibleInput === true}"
-       (keydown.enter)="onKeydown($event)"
-       [value] ="setSearch"
-       (input)="setSearch=$event.target.value"
+<input type="text" [ngClass]="{'show': isVisibleInput === true}" [(ngModel)]="setSearch" (keydown)="onKeydown($event)" (keypress)="onKeydown($event)" (keyup)="onKeydown($event)"
        placeholder="block height / block hash / transaction hash">
 <button class="run_search" (click)="searchFunc()"></button>
 <span class="search_not_found" *ngIf="searchNotFound === true">
