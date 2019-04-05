@@ -98,7 +98,6 @@ export class SearchComponent implements OnInit, OnDestroy {
 
 
   onKeydown(event) {
-    // console.log(event);
     if (event.key === 'Enter') {
       this.searchFunc();
       localStorage.setItem('inputSearch', this.setSearch);

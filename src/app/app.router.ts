@@ -7,6 +7,7 @@ import {BlockDetailsComponent} from './block-details/block-details.component';
 import {AltBlocksComponent} from './alt-blocks/alt-blocks.component';
 import {AltBlocksDetailsComponent} from './alt-blocks-details/alt-blocks-details.component';
 import {AliasesComponent} from './aliases/aliases.component';
+import {ChartsComponent} from './charts/charts.component';
 import {TransactionComponent} from './transaction/transaction.component';
 import {ServerErrorComponent} from './server-error/server-error.component'
 
@@ -53,6 +54,10 @@ export const router: Routes = [
     resolve: {
       MainInfo: ServiceResolver
     }
+  },
+  {
+    path: 'charts',
+    component: ChartsComponent,
   },
   {
     path: 'server-error',

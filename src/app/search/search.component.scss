@@ -9,6 +9,9 @@
   border-radius: 10px;
   height: 33px;
   padding-right: 15px;
+  @include max761 {
+    padding-left: 15px;
+  }
   @include max575 {
     height: 32px;
     max-width: 100%;

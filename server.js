@@ -28,7 +28,6 @@ function get_blocks_details(start, count, callback) {
     transformResponse: [data  => JSONbig.parse(data)]
   })
   .then(function (response) {
-    // console.log(response.data.result);
     callback(200, response.data);
   })
   .catch(function (error) {
@@ -36,8 +35,6 @@ function get_blocks_details(start, count, callback) {
     callback(400, error);
   });
 }
-
-// get_blocks_details(13008, 1);
 
 function get_alt_blocks_details(offset, count, callback) {
   axios({
@@ -445,8 +442,7 @@ http.createServer(function (req, res) {
             res.end("Error. Need 'amount' and 'i' param");
           }
         });
-      }
-      else if (req.url === '/get_api') {
+      } else if (req.url === '/get_api') {
         if (api) {
           res.writeHead(200, headers);
           res.end(JSON.stringify({result: api.replace("http://", "")}));
@@ -511,6 +507,96 @@ http.createServer(function (req, res) {
             res.end("Error. Need 'offset' and 'count' params");
           }
         });
+      } else if (req.url === '/get_chart') {
+        var body = [];
+        req.on('data', function (chunk) {
+          body.push(chunk);
+        }).on('end', function () {
+          if (!body.length) {
+            res.writeHead(400, headers);
+            res.end("Error. Need chart");
+            return;
+          }
+          body = Buffer.concat(body).toString();
+          var params_object = JSON.parse(body);
+          console.log(params_object.chart);
+          if (params_object.chart !== undefined) {
+            if (params_object.chart === 'AvgBlockSize') {
+              db.serialize(function () {
+                db.all("SELECT strftime('%s', date(actual_timestamp, 'unixepoch')) as timestamp, avg(block_cumulative_size) as block_cumulative_size from blocks GROUP BY date(actual_timestamp, 'unixepoch');", function (err, rows) {
+                  res.writeHead(200, headers);
+                  const AvgBlockSize = [];
+                  for (let i = 1; i < rows.length; i++) {
+                    AvgBlockSize.push([rows[i].timestamp*1000, rows[i].block_cumulative_size]);
+                  }
+                  res.end(JSON.stringify(AvgBlockSize));
+                });
+              });
+            } else if (params_object.chart === 'AvgTransPerBlock') {
+              db.serialize(function () {
+                db.all("select strftime('%s', date(actual_timestamp, 'unixepoch')) as timestamp, avg(tr_count) as tr_count from blocks GROUP BY date(actual_timestamp, 'unixepoch');", function (err, rows) {
+                  res.writeHead(200, headers);
+                  const AvgTransPerBlock = [];
+                  for (let i = 1; i < rows.length; i++) {
+                    AvgTransPerBlock.push([rows[i].timestamp*1000, rows[i].tr_count]);
+                  }
+                  res.end(JSON.stringify(AvgTransPerBlock));
+                });
+              });
+            } else if (params_object.chart === 'hashRate') {
+              db.serialize(function () {
+                db.all("SELECT t1.height, t1.timestamp, t1.cumulative_difficulty, t2.cumulative_difficulty, t3.timestamp, ((t1.cumulative_difficulty - t2.cumulative_difficulty)/(t1.timestamp - t3.timestamp) ) as result FROM blocks as t1 LEFT JOIN blocks as t2 ON t2.height=t1.height-100 LEFT JOIN blocks as t3 ON t3.height=t1.height-100", function(err, rows) {
+                  res.writeHead(200, headers);
+                  const hashRate100 = [];
+                  for (let i = 1; i < rows.length; i++) {
+                    hashRate100.push([rows[i].timestamp*1000, rows[i].result]);
+                  }
+                  db.all("SELECT t1.height, t1.timestamp, t1.cumulative_difficulty, t2.cumulative_difficulty, t3.timestamp, ((t1.cumulative_difficulty - t2.cumulative_difficulty)/(t1.timestamp - t3.timestamp) ) as result FROM blocks as t1 LEFT JOIN blocks as t2 ON t2.height=t1.height-400 LEFT JOIN blocks as t3 ON t3.height=t1.height-400", function(err, rows) {
+                    res.writeHead(200, headers);
+                    const hashRate400 = [];
+                    for (let i = 1; i < rows.length; i++) {
+                      hashRate400.push([rows[i].timestamp*1000, rows[i].result]);
+                    }
+
+                    db.all("SELECT strftime('%s', date(actual_timestamp, 'unixepoch')) as timestamp, avg(difficulty) as difficulty FROM blocks GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function(err, rows) {
+                      res.writeHead(200, headers);
+                      const difficultyArray = [];
+                      for (let i = 1; i < rows.length; i++) {
+                        difficultyArray.push([rows[i].timestamp*1000, parseInt(rows[i].difficulty)/120]);
+                      }
+                      res.end(JSON.stringify([hashRate100, hashRate400, difficultyArray]));
+                    });
+                  });
+                });
+              });
+            } else if (params_object.chart === 'difficulty') {
+              db.serialize(function () {
+                db.all("SELECT strftime('%s', date(actual_timestamp, 'unixepoch')) as timestamp, avg(difficulty) as difficulty FROM blocks GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function(err, rows) {
+                  res.writeHead(200, headers);
+                  const difficultyArray = [];
+                  for (let i = 1; i < rows.length; i++) {
+                    difficultyArray.push([rows[i].timestamp*1000, parseInt(rows[i].difficulty)]);
+                  }
+                  res.end(JSON.stringify(difficultyArray));
+                });
+              });
+            } else if (params_object.chart === 'ConfirmTransactPerDay') {
+              db.serialize(function () {
+                db.all("SELECT actual_timestamp as timestamp, SUM(tr_count) as tr_count FROM blocks GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function(err, rows) {
+                  res.writeHead(200, headers);
+                  const ConfirmTransactPerDay = [];
+                  for (let i = 1; i < rows.length; i++) {
+                    ConfirmTransactPerDay.push([rows[i].timestamp*1000, rows[i].tr_count]);
+                  }
+                  res.end(JSON.stringify(ConfirmTransactPerDay));
+                });
+              });
+            }
+          } else {
+            res.writeHead(400, headers);
+            res.end("Error. Need chart params");
+          }
+        });
       } else {
         file.serve(req, res, function (e) {
           if (e && (e.status === 404)) {
@@ -554,7 +640,10 @@ db.serialize(function () {
   db.run("create table if not exists blocks (height INTEGER UNIQUE" +
     ", actual_timestamp INTEGER" +
     ", base_reward TEXT" +
+    ", blob TEXT" +
     ", block_cumulative_size INTEGER" +
+    ", block_tself_size TEXT" +
+    ", cumulative_difficulty TEXT" +
     ", cumulative_diff_adjusted TEXT" +
     ", cumulative_diff_precise TEXT" +
     ", difficulty TEXT" +
@@ -795,12 +884,15 @@ function syncTransactions(success) {
       if (localBl.tr_out.length === 0) {
         db.serialize(function () {
           db.run("begin transaction");
-          var stmt = db.prepare("INSERT INTO blocks VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+          var stmt = db.prepare("INSERT INTO blocks VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
           stmt.run(
             localBl.height,
             localBl.actual_timestamp,
             localBl.base_reward,
+            localBl.blob,
             localBl.block_cumulative_size,
+            localBl.block_tself_size,
+            localBl.cumulative_difficulty,
             localBl.cumulative_diff_adjusted.toString(),
             localBl.cumulative_diff_precise.toString(),
             localBl.difficulty.toString(),

@@ -1,0 +1,42 @@
+<div class="top_box" *ngIf="navIsOpen === false">
+    <div class="left_box">
+      <a *ngIf="activeChart" (click)="activeChart = false" class="back_btn" [ngClass]="{'hide_back_btn': searchIsOpen === true}">Back</a>
+      <div class="mobile_heading" *ngIf="!activeChart" [ngClass]="{'hide_heading': searchIsOpen === true}">Charts</div>
+    </div>
+    <app-search (isVisible)='onIsVisible($event)'></app-search>
+</div>
+
+  <div class="wrap_links_chart" *ngIf="!activeChart">
+
+    <button type="button" (click)="activeChart = 'AvgBlockSize'; initialChart();">
+      <span>Average Block Size</span>
+      <!--<img src="../../assets/img/one.png" alt="">-->
+    </button>
+    <button type="button" (click)="activeChart = 'AvgTransPerBlock'; initialChart()">
+      <span>Average Number Of Transactions Per Block</span>
+      <!--<img src="../../assets/img/one.png" alt="">-->
+    </button>
+    <button type="button" disabled="disabled" (click)="activeChart = 'hashRate'; initialChart()">
+      <span>Hash Rate</span>
+      <!--<img src="../../assets/img/one.png" alt="">-->
+    </button>
+    <button type="button" (click)="activeChart = 'difficulty'; initialChart()">
+      <span>Difficulty</span>
+      <!--<img src="../../assets/img/one.png" alt="">-->
+    </button>
+    <button type="button" (click)="activeChart = 'ConfirmTransactPerDay'; initialChart()">
+      <span>Confirmed Transaction Per Day</span>
+      <!--<img src="../../assets/img/one.png" alt="">-->
+    </button>
+  </div>
+
+  <div class="wrap_charts" *ngIf="activeChart">
+    <div [chart]="AvgBlockSizeChart" *ngIf="activeChart === 'AvgBlockSize'"></div>
+    <div [chart]="AvgTransPerBlockChart" *ngIf="activeChart === 'AvgTransPerBlock'"></div>
+    <div [chart]="hashRateChart" *ngIf="activeChart === 'hashRate'"></div>
+    <div [chart]="difficultyChart" *ngIf="activeChart === 'difficulty'"></div>
+    <div [chart]="ConfirmTransactPerDayChart" *ngIf="activeChart === 'ConfirmTransactPerDay'"></div>
+    <div class="loader" *ngIf="loader === true"></div>
+  </div>
+
+

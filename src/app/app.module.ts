@@ -8,6 +8,7 @@ import {MomentModule} from 'angular2-moment';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {CookieService, CookieOptions} from 'angular2-cookie/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ChartModule} from 'angular-highcharts';
 
 // Services
 import {HttpService} from './http.service';
@@ -30,56 +31,59 @@ import {MainInfoComponent} from './main-info/main-info.component';
 import {BlockchainComponent} from './blockchain/blockchain.component';
 import {BlockDetailsComponent} from './block-details/block-details.component';
 import {AltBlocksComponent} from './alt-blocks/alt-blocks.component';
-import {AltBlocksDetailsComponent } from './alt-blocks-details/alt-blocks-details.component';
+import {AltBlocksDetailsComponent} from './alt-blocks-details/alt-blocks-details.component';
 import {AliasesComponent} from './aliases/aliases.component';
 import {TransactionComponent} from './transaction/transaction.component';
 import {DialogComponent} from './dialog/dialog.component';
 import {ServerErrorComponent} from './server-error/server-error.component';
 import {SearchComponent} from './search/search.component';
+import {ChartsComponent} from './charts/charts.component';
 
 
 @NgModule({
-  declarations: [
-    // Components
-    AppComponent,
-    MainInfoComponent,
-    BlockchainComponent,
-    BlockDetailsComponent,
-    AltBlocksComponent,
-    AltBlocksDetailsComponent,
-    AliasesComponent,
-    TransactionComponent,
-    DialogComponent,
-    ServerErrorComponent,
-    SearchComponent,
+    declarations: [
+        // Components
+        AppComponent,
+        MainInfoComponent,
+        BlockchainComponent,
+        BlockDetailsComponent,
+        AltBlocksComponent,
+        AltBlocksDetailsComponent,
+        AliasesComponent,
+        TransactionComponent,
+        DialogComponent,
+        ServerErrorComponent,
+        SearchComponent,
+        ChartsComponent,
 
-    // Pipes
-    OrderPipe,
-    OrderByPipe,
-    SortGridPipe,
-    BitNumberPipe,
-    MoneyParsePipe,
-    TruncatePipe,
-    TimeAgoPipe,
-    SortByAlphabetPipe,
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    routes,
-    BrowserAnimationsModule,
-    MomentModule,
-    MatProgressSpinnerModule,
-  ],
-  providers: [
-    HttpService,
-    ServiceResolver,
-    ResolveAltBlock,
-    CookieService, { provide: CookieOptions, useValue: false },
-    MobileNavState
-  ],
-  bootstrap: [AppComponent]
+        // Pipes
+        OrderPipe,
+        OrderByPipe,
+        SortGridPipe,
+        BitNumberPipe,
+        MoneyParsePipe,
+        TruncatePipe,
+        TimeAgoPipe,
+        SortByAlphabetPipe,
+    ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        routes,
+        BrowserAnimationsModule,
+        MomentModule,
+        MatProgressSpinnerModule,
+        ChartModule
+    ],
+    providers: [
+        HttpService,
+        ServiceResolver,
+        ResolveAltBlock,
+        CookieService, {provide: CookieOptions, useValue: false},
+        MobileNavState
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
 }
