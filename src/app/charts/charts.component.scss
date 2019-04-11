@@ -6,7 +6,6 @@
   grid-column-gap: 20px;
   grid-row-gap: 20px;
   justify-content: center;
-  margin: 15px 0;
   @include max1199 {
     grid-template-columns: repeat(auto-fit, 30%);
   }
@@ -48,9 +47,34 @@
 
 .wrap_charts {
   width: 100%;
-  height: 550px;
+  height: 750px;
   background-color: #2b3768;
   position: relative;
   padding-top: 25px;
   padding-bottom: 25px;
+  .period_filter {
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      border-radius: 10px;
+      background-color: #32439f;
+      padding: 2px 15px;
+      transition: .2s;
+      border: none;
+      color: #fff;
+      margin: 0 3px;
+      white-space: nowrap;
+      opacity: 0.6;
+      &.active {
+        opacity: 1;
+      }
+    }
+  }
 }
+

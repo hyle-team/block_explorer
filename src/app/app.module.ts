@@ -8,7 +8,14 @@ import {MomentModule} from 'angular2-moment';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {CookieService, CookieOptions} from 'angular2-cookie/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+
 import {ChartModule} from 'angular-highcharts';
+import * as highstock from 'highcharts/modules/stock.src';
+
+import * as Highcharts from 'highcharts';
+import StockModule from 'highcharts/modules/stock';
+StockModule(Highcharts);
+
 
 // Services
 import {HttpService} from './http.service';
@@ -74,14 +81,15 @@ import {ChartsComponent} from './charts/charts.component';
         BrowserAnimationsModule,
         MomentModule,
         MatProgressSpinnerModule,
-        ChartModule
+        ChartModule,
     ],
     providers: [
         HttpService,
         ServiceResolver,
         ResolveAltBlock,
         CookieService, {provide: CookieOptions, useValue: false},
-        MobileNavState
+        MobileNavState,
+        {provide: ChartModule, useFactory: () => [ highstock ] }
     ],
     bootstrap: [AppComponent]
 })
