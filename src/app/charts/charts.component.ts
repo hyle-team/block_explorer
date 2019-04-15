@@ -115,7 +115,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
       rangeSelector: {
         height: 60,
         enabled: true,
-        allButtonsEnabled: false,
+        allButtonsEnabled: true,
         buttons: [{
           type: 'day',
           count: 1,
@@ -246,7 +246,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
             for (let i = 1; i < this.InputArray.length; i++) {
               hashRate100.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].hashrate100]);
               hashRate400.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].hashrate400]);
-              difficultyArray.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].difficulty]);
+              difficultyArray.push([this.InputArray[i].actual_timestamp * 1000, parseInt(this.InputArray[i].difficulty, 10)]);
             }
             this.hashRateChart = ChartsComponent.drawChart(
                 'Hash Rate',

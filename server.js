@@ -561,20 +561,16 @@ http.createServer(function (req, res) {
               });
             } else if (params_object.chart === 'hashRate') {
               db.serialize(function () {
-                db.all("SELECT t1.actual_timestamp, t1.difficulty / 120 as difficulty, \n" +
-                    "((t1.cumulative_diff_precise - t2.cumulative_diff_precise)/(t1.actual_timestamp - t3.actual_timestamp) ) as hashrate100, \n" +
-                    "((t1.cumulative_diff_precise - t4.cumulative_diff_precise)/(t1.actual_timestamp - t5.actual_timestamp) ) as hashrate400  \n" +
-                    "FROM blocks as t1 \n" +
-                    "LEFT JOIN blocks as t2 ON t2.height=t1.height-100 \n" +
-                    "LEFT JOIN blocks as t3 ON t3.height=t1.height-100 \n" +
-                    "LEFT JOIN blocks as t4 ON t4.height=t1.height-400 \n" +
-                    "LEFT JOIN blocks as t5 ON t5.height=t1.height-400 \n" +
-                    "WHERE t1.type=1 AND t2.type=1 AND t3.type=1 AND t4.type=1 AND t5.type=1", function (err, rows) {
+                db.all("SELECT actual_timestamp, difficulty / 120 as difficulty, cumulative_diff_precise FROM blocks WHERE type=1",
+                    function (err, rows) {
                   res.writeHead(200, headers);
                   if (err) {
                     res.end(JSON.stringify(err));
                   } else {
-                    console.log(rows);
+                    for(let i=0;i<rows.length;i++){
+                      rows[i]['hashrate100'] = (i > 99) ? ((rows[i]['cumulative_diff_precise']-rows[i-100]['cumulative_diff_precise']) / (rows[i]['actual_timestamp']-rows[i-100]['actual_timestamp'])) : 0;
+                      rows[i]['hashrate400'] = (i > 399) ? ((rows[i]['cumulative_diff_precise']-rows[i-400]['cumulative_diff_precise']) / (rows[i]['actual_timestamp']-rows[i-400]['actual_timestamp'])) : 0;
+                    }
                     res.end(JSON.stringify(rows));
                   }
                 });
