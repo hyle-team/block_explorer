@@ -522,24 +522,52 @@ http.createServer(function (req, res) {
           console.log(params_object);
           if (params_object.chart !== undefined) {
             let period = new Date();
-            if (params_object.period === 'day') {
-              // period = parseInt((period.setDate(period.getDate() - 86400000)) / 1000);
               period = parseInt(period - 86400000) / 1000;
-              console.log(period);
-            } else if (params_object.period === 'week') {
-              period = parseInt((period.setDate(period.getDate()-7)) / 1000);
-            } else if (params_object.period === 'month') {
-              period = parseInt((period.setMonth(period.getMonth()-1)) / 1000);
-            } else if (params_object.period === '3month') {
-              period = parseInt((period.setMonth(period.getMonth()-3)) / 1000);
-            } else if (params_object.period === '6month') {
-              period = parseInt((period.setMonth(period.getMonth()-6)) / 1000);
-            } else if (params_object.period === 'year') {
-              period = parseInt((period.setMonth(period.getMonth()-12)) / 1000);
-            }
-            if (params_object.chart === 'AvgBlockSize') {
+            // if (params_object.period === 'day') {
+            //   // period = parseInt((period.setDate(period.getDate() - 86400000)) / 1000);
+            //   period = parseInt(period - 86400000) / 1000;
+            //   console.log(period);
+            // } else if (params_object.period === 'week') {
+            //   period = parseInt((period.setDate(period.getDate()-7)) / 1000);
+            // } else if (params_object.period === 'month') {
+            //   period = parseInt((period.setMonth(period.getMonth()-1)) / 1000);
+            // } else if (params_object.period === '3month') {
+            //   period = parseInt((period.setMonth(period.getMonth()-3)) / 1000);
+            // } else if (params_object.period === '6month') {
+            //   period = parseInt((period.setMonth(period.getMonth()-6)) / 1000);
+            // } else if (params_object.period === 'year') {
+            //   period = parseInt((period.setMonth(period.getMonth()-12)) / 1000);
+            // }
+            if (params_object.chart === 'all') {
+                const arrayAll = [];
+                db.serialize(function () {
+                    db.all("SELECT " +
+                        "actual_timestamp, " +
+                        "block_cumulative_size, " +
+                        "tr_count, " +
+                        "difficulty, " +
+                        "(SELECT difficulty / 120) as difficulty120, " +
+                        "cumulative_diff_precise " +
+                        "FROM blocks WHERE type=1 AND actual_timestamp > " + period, function (err, arrayAll) {
+                      res.writeHead(200, headers);
+                        if (err) {
+                            res.end(JSON.stringify(err));
+                        } else {
+                          db.all("SELECT actual_timestamp, SUM(tr_count) as sum_tr_count FROM blocks GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function(err, rows0) {
+                            res.writeHead(200, headers);
+                            if (err) {
+                              res.end(JSON.stringify(err));
+                            } else {
+                              arrayAll[0] = rows0;
+                              res.end(JSON.stringify(arrayAll));
+                            }
+                          });
+                        }
+                    });
+                });
+            } else if (params_object.chart === 'AvgBlockSize') {
               db.serialize(function () {
-                db.all("SELECT actual_timestamp, block_cumulative_size FROM blocks WHERE actual_timestamp > " + period, function (err, rows) {
+                db.all("SELECT actual_timestamp, block_cumulative_size FROM blocks", function (err, rows) {
                   res.writeHead(200, headers);
                   if (err) {
                     res.end(JSON.stringify(err));
@@ -550,7 +578,7 @@ http.createServer(function (req, res) {
               });
             } else if (params_object.chart === 'AvgTransPerBlock') {
               db.serialize(function () {
-                db.all("SELECT actual_timestamp, tr_count FROM blocks WHERE actual_timestamp > " + period, function (err, rows) {
+                db.all("SELECT actual_timestamp, tr_count FROM blocks", function (err, rows) {
                   res.writeHead(200, headers);
                   if (err) {
                     res.end(JSON.stringify(err));
@@ -561,13 +589,12 @@ http.createServer(function (req, res) {
               });
             } else if (params_object.chart === 'hashRate') {
               db.serialize(function () {
-                db.all("SELECT actual_timestamp, difficulty / 120 as difficulty, cumulative_diff_precise FROM blocks WHERE type=1",
-                    function (err, rows) {
+                db.all("SELECT actual_timestamp, difficulty / 120 as difficulty, cumulative_diff_precise FROM blocks WHERE type=1", function (err, rows) {
                   res.writeHead(200, headers);
                   if (err) {
                     res.end(JSON.stringify(err));
                   } else {
-                    for(let i=0;i<rows.length;i++){
+                    for(let i = 0; i<rows.length; i++){
                       rows[i]['hashrate100'] = (i > 99) ? ((rows[i]['cumulative_diff_precise']-rows[i-100]['cumulative_diff_precise']) / (rows[i]['actual_timestamp']-rows[i-100]['actual_timestamp'])) : 0;
                       rows[i]['hashrate400'] = (i > 399) ? ((rows[i]['cumulative_diff_precise']-rows[i-400]['cumulative_diff_precise']) / (rows[i]['actual_timestamp']-rows[i-400]['actual_timestamp'])) : 0;
                     }
@@ -588,7 +615,7 @@ http.createServer(function (req, res) {
               });
             } else if (params_object.chart === 'ConfirmTransactPerDay') {
               db.serialize(function () {
-                db.all("SELECT actual_timestamp, SUM(tr_count) as tr_count FROM blocks WHERE actual_timestamp > " + period + " GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function(err, rows) {
+                db.all("SELECT actual_timestamp, SUM(tr_count) as tr_count FROM blocks GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function(err, rows) {
                   res.writeHead(200, headers);
                   if (err) {
                     res.end(JSON.stringify(err));

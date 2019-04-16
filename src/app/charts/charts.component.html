@@ -1,38 +1,38 @@
 <div class="top_box" *ngIf="navIsOpen === false">
     <div class="left_box">
-        <a *ngIf="activeChart" (click)="activeChart = false" class="back_btn"
+        <a *ngIf="activeChart && activeChart !== 'all'" (click)="activeChart = 'all'" class="back_btn"
            [ngClass]="{'hide_back_btn': searchIsOpen === true}">Back</a>
-        <div class="mobile_heading" *ngIf="!activeChart" [ngClass]="{'hide_heading': searchIsOpen === true}">Charts
+        <div class="mobile_heading" *ngIf="!activeChart || activeChart === 'all'" [ngClass]="{'hide_heading': searchIsOpen === true}">Charts
         </div>
     </div>
     <app-search (isVisible)='onIsVisible($event)'></app-search>
 </div>
 
-<div class="wrap_links_chart" *ngIf="!activeChart">
+<div class="wrap_links_chart" *ngIf="!activeChart || activeChart === 'all'">
 
     <button type="button" (click)="activeChart = 'AvgBlockSize'; initialChart();">
-        <span>Average Block Size</span>
-        <img src="../../assets/img/block-size.png" alt="">
+        <!--<span>Average Block Size</span>-->
+        <div [chart]="previewAvgBlockSizeChart"></div>
     </button>
     <button type="button" (click)="activeChart = 'AvgTransPerBlock'; initialChart()">
-        <span>Average Number Of Transactions Per Block</span>
-        <img src="../../assets/img/tr-per-block.png" alt="">
+        <!--<span>Average Number Of Transactions Per Block</span>-->
+        <div [chart]="previewAvgTransPerBlockChart"></div>
     </button>
     <button type="button" (click)="activeChart = 'hashRate'; initialChart()">
-        <span>Hash Rate</span>
-        <img src="../../assets/img/hashrate.png" alt="">
+        <!--<span>Hash Rate</span>-->
+        <div [chart]="previewHashRateChart"></div>
     </button>
     <button type="button" (click)="activeChart = 'difficulty'; initialChart()">
-        <span>Difficulty</span>
-        <img src="../../assets/img/difficulty-chart.png" alt="">
+        <!--<span>Difficulty</span>-->
+        <div [chart]="previewDifficultyChart"></div>
     </button>
     <button type="button" (click)="activeChart = 'ConfirmTransactPerDay'; initialChart()">
-        <span>Confirmed Transaction Per Day</span>
-        <img src="../../assets/img/tr-per-day.png" alt="">
+        <!--<span>Confirmed Transaction Per Day</span>-->
+        <div [chart]="previewConfirmTransactPerDayChart"></div>
     </button>
 </div>
 
-<div class="wrap_charts" *ngIf="activeChart">
+<div class="wrap_charts" *ngIf="activeChart && activeChart !== 'all'">
     <div [chart]="AvgBlockSizeChart" *ngIf="activeChart === 'AvgBlockSize'"></div>
     <div [chart]="AvgTransPerBlockChart" *ngIf="activeChart === 'AvgTransPerBlock'"></div>
     <div [chart]="hashRateChart" *ngIf="activeChart === 'hashRate'"></div>
