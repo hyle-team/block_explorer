@@ -45,6 +45,11 @@ import {DialogComponent} from './dialog/dialog.component';
 import {ServerErrorComponent} from './server-error/server-error.component';
 import {SearchComponent} from './search/search.component';
 import {ChartsComponent} from './charts/charts.component';
+import { AvgBlockSizeComponent } from './charts/avg-block-size/avg-block-size.component';
+import { AvgTransPerBlockComponent } from './charts/avg-trans-per-block/avg-trans-per-block.component';
+import { HashrateComponent } from './charts/hashrate/hashrate.component';
+import { DifficultyComponent } from './charts/difficulty/difficulty.component';
+import { ConfirmTransPerDayComponent } from './charts/confirm-trans-per-day/confirm-trans-per-day.component';
 
 
 @NgModule({
@@ -62,6 +67,11 @@ import {ChartsComponent} from './charts/charts.component';
         ServerErrorComponent,
         SearchComponent,
         ChartsComponent,
+        AvgBlockSizeComponent,
+        AvgTransPerBlockComponent,
+        HashrateComponent,
+        DifficultyComponent,
+        ConfirmTransPerDayComponent,
 
         // Pipes
         OrderPipe,
@@ -72,6 +82,11 @@ import {ChartsComponent} from './charts/charts.component';
         TruncatePipe,
         TimeAgoPipe,
         SortByAlphabetPipe,
+        AvgBlockSizeComponent,
+        AvgTransPerBlockComponent,
+        HashrateComponent,
+        DifficultyComponent,
+        ConfirmTransPerDayComponent,
     ],
     imports: [
         BrowserModule,

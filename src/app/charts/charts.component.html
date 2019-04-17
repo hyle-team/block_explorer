@@ -1,53 +1,32 @@
 <div class="top_box" *ngIf="navIsOpen === false">
     <div class="left_box">
-        <a *ngIf="activeChart && activeChart !== 'all'" (click)="activeChart = 'all'" class="back_btn"
-           [ngClass]="{'hide_back_btn': searchIsOpen === true}">Back</a>
-        <div class="mobile_heading" *ngIf="!activeChart || activeChart === 'all'" [ngClass]="{'hide_heading': searchIsOpen === true}">Charts
-        </div>
+        <div class="mobile_heading" [ngClass]="{'hide_heading': searchIsOpen === true}">Charts</div>
     </div>
     <app-search (isVisible)='onIsVisible($event)'></app-search>
 </div>
 
-<div class="wrap_links_chart" *ngIf="!activeChart || activeChart === 'all'">
-
-    <button type="button" (click)="activeChart = 'AvgBlockSize'; initialChart();">
-        <!--<span>Average Block Size</span>-->
+<div class="wrap_links_chart">
+    <a [routerLink]="['/charts/avg-block-size']">
+        <span>Average Block Size</span>
         <div [chart]="previewAvgBlockSizeChart"></div>
-    </button>
-    <button type="button" (click)="activeChart = 'AvgTransPerBlock'; initialChart()">
-        <!--<span>Average Number Of Transactions Per Block</span>-->
+    </a>
+    <a [routerLink]="['/charts/avg-trans-per-block']">
+        <span>Average Number Of Transactions Per Block</span>
         <div [chart]="previewAvgTransPerBlockChart"></div>
-    </button>
-    <button type="button" (click)="activeChart = 'hashRate'; initialChart()">
-        <!--<span>Hash Rate</span>-->
+    </a>
+    <a [routerLink]="['/charts/hash-rate']">
+        <span>Hash Rate</span>
         <div [chart]="previewHashRateChart"></div>
-    </button>
-    <button type="button" (click)="activeChart = 'difficulty'; initialChart()">
-        <!--<span>Difficulty</span>-->
+    </a>
+    <a [routerLink]="['/charts/difficulty']">
+        <span>Difficulty</span>
         <div [chart]="previewDifficultyChart"></div>
-    </button>
-    <button type="button" (click)="activeChart = 'ConfirmTransactPerDay'; initialChart()">
-        <!--<span>Confirmed Transaction Per Day</span>-->
+    </a>
+    <a [routerLink]="['/charts/confirm-trans-per-day']">
+        <span>Confirmed Transaction Per Day</span>
         <div [chart]="previewConfirmTransactPerDayChart"></div>
-    </button>
+    </a>
 </div>
 
-<div class="wrap_charts" *ngIf="activeChart && activeChart !== 'all'">
-    <div [chart]="AvgBlockSizeChart" *ngIf="activeChart === 'AvgBlockSize'"></div>
-    <div [chart]="AvgTransPerBlockChart" *ngIf="activeChart === 'AvgTransPerBlock'"></div>
-    <div [chart]="hashRateChart" *ngIf="activeChart === 'hashRate'"></div>
-    <div [chart]="difficultyChart" *ngIf="activeChart === 'difficulty'"></div>
-    <div [chart]="ConfirmTransactPerDayChart" *ngIf="activeChart === 'ConfirmTransactPerDay'"></div>
-    <div class="loader" *ngIf="loader === true"></div>
-    <!--<div class="period_filter">-->
-        <!--<button [ngClass]="{'active': period === 'day'}" type="button" (click)="setPeriod('day')">1 day</button>-->
-        <!--<button [ngClass]="{'active': period === 'week'}" type="button" (click)="setPeriod('week')">Week</button>-->
-        <!--<button [ngClass]="{'active': period === 'month'}" type="button" (click)="setPeriod('month')">Month</button>-->
-        <!--<button [ngClass]="{'active': period === '3month'}" type="button" (click)="setPeriod('3month')">Quarter</button>-->
-        <!--<button [ngClass]="{'active': period === '6month'}" type="button" (click)="setPeriod('6month')">6 Month</button>-->
-        <!--<button [ngClass]="{'active': period === 'year'}" type="button" (click)="setPeriod('year')">1 Year</button>-->
-    <!--</div>-->
-
-</div>
-
+<router-outlet></router-outlet>
 

@@ -7,7 +7,14 @@ import {BlockDetailsComponent} from './block-details/block-details.component';
 import {AltBlocksComponent} from './alt-blocks/alt-blocks.component';
 import {AltBlocksDetailsComponent} from './alt-blocks-details/alt-blocks-details.component';
 import {AliasesComponent} from './aliases/aliases.component';
+
 import {ChartsComponent} from './charts/charts.component';
+import {AvgBlockSizeComponent} from './charts/avg-block-size/avg-block-size.component';
+import {AvgTransPerBlockComponent} from './charts/avg-trans-per-block/avg-trans-per-block.component';
+import {HashrateComponent} from './charts/hashrate/hashrate.component';
+import {DifficultyComponent} from './charts/difficulty/difficulty.component';
+import {ConfirmTransPerDayComponent} from './charts/confirm-trans-per-day/confirm-trans-per-day.component';
+
 import {TransactionComponent} from './transaction/transaction.component';
 import {ServerErrorComponent} from './server-error/server-error.component'
 
@@ -57,7 +64,33 @@ export const router: Routes = [
   },
   {
     path: 'charts',
-    component: ChartsComponent,
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        component: ChartsComponent
+      },
+      {
+        path: 'avg-block-size',
+        component: AvgBlockSizeComponent
+      },
+      {
+        path: 'avg-trans-per-block',
+        component: AvgTransPerBlockComponent
+      },
+      {
+        path: 'hash-rate',
+        component: HashrateComponent
+      },
+      {
+        path: 'difficulty',
+        component: DifficultyComponent
+      },
+      {
+        path: 'confirm-trans-per-day',
+        component: ConfirmTransPerDayComponent
+      },
+    ]
   },
   {
     path: 'server-error',

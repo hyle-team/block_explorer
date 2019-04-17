@@ -1,32 +1,24 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {HttpService, MobileNavState} from '../../http.service';
 import {Chart} from 'angular-highcharts';
-import {HttpService, MobileNavState} from '../http.service';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 
 @Component({
-    selector: 'app-charts',
-    templateUrl: './charts.component.html',
-    styleUrls: ['./charts.component.scss']
+    selector: 'app-difficulty',
+    templateUrl: './difficulty.component.html',
+    styleUrls: ['./difficulty.component.scss']
 })
-export class ChartsComponent implements OnInit, OnDestroy {
+export class DifficultyComponent implements OnInit {
     navIsOpen: boolean;
-    activeChart: string;
-    period: string;
-
-    previewAvgBlockSizeChart: Chart;
-    previewAvgTransPerBlockChart: Chart;
-    previewHashRateChart: Chart;
-    previewDifficultyChart: Chart;
-    previewConfirmTransactPerDayChart: Chart;
-
-    chartSubscription: Subscription;
-    loader: boolean;
-    InputArray: any;
-    InputArrayTwo: any;
-
-    seriesData: any;
     searchIsOpen: boolean;
 
+    activeChart: string;
+    period: string;
+    powDifficulty: any;
+    posDifficulty: any;
+    chartSubscription: Subscription;
+    difficultyChart: Chart;
+    seriesData: any;
 
     static drawChart(activeChart, titleText, yText, chartsData): Chart {
         return new Chart({
@@ -36,13 +28,14 @@ export class ChartsComponent implements OnInit, OnDestroy {
                 height: activeChart === true ? 280 : 700,
                 width: activeChart === true ? 375 : null,
                 zoomType: 'x',
+
             },
             title: {
                 text: activeChart === true ? '' : titleText,
                 style: {
                     color: '#fff',
                     fontSize: activeChart === true ? '14px' : '18px',
-                }
+                },
             },
             credits: {enabled: false},
             exporting: {enabled: false},
@@ -117,7 +110,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
             },
             navigator: {enabled: activeChart !== true},
             rangeSelector: {
-                height: 60,
                 enabled: activeChart !== true,
                 allButtonsEnabled: true,
                 buttons: [{
@@ -194,18 +186,16 @@ export class ChartsComponent implements OnInit, OnDestroy {
         });
     }
 
+
     onIsVisible($event): void {
         this.searchIsOpen = $event;
     }
 
-    constructor(
-        private httpService: HttpService,
-        private mobileNavState: MobileNavState) {
+    constructor(private httpService: HttpService, private mobileNavState: MobileNavState) {
         this.navIsOpen = false;
-        this.loader = true;
         this.searchIsOpen = false;
+        this.activeChart = 'difficulty';
         this.period = 'all';
-        this.activeChart = 'all';
     }
 
     ngOnInit() {
@@ -215,94 +205,31 @@ export class ChartsComponent implements OnInit, OnDestroy {
         this.initialChart();
     }
 
+
     initialChart() {
         if (this.chartSubscription) {
             this.chartSubscription.unsubscribe();
-            this.loader = true;
         }
-
         this.chartSubscription = this.httpService.getChart(this.activeChart, this.period).subscribe(data => {
-                this.InputArray = data;
-                this.InputArrayTwo = data[0];
-
-                const previewAvgBlockSize = [];
-                const previewAvgTransPerBlock = [];
-                const previewDifficulty = [];
-
-                const previewHashrate100 = [];
-                const previewHashrate400 = [];
-                const previewDifficulty120 = [];
-
-                const previewConfirmTransactPerDay = [];
-                for (let i = 1; i < this.InputArray.length; i++) {
-                    previewAvgBlockSize.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].block_cumulative_size]);
-                    previewAvgTransPerBlock.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].tr_count]);
-                    previewDifficulty.push([this.InputArray[i].actual_timestamp * 1000, parseInt(this.InputArray[i].difficulty, 10)]);
-
-                    const hashrate100 = this.InputArray[i]['hashrate100'] = (i > 99) ? ((this.InputArray[i]['cumulative_diff_precise'] - this.InputArray[i - 100]['cumulative_diff_precise']) / (this.InputArray[i]['actual_timestamp'] - this.InputArray[i - 100]['actual_timestamp'])) : 0;
-                    const hashrate400 = this.InputArray[i]['hashrate400'] = (i > 399) ? ((this.InputArray[i]['cumulative_diff_precise'] - this.InputArray[i - 400]['cumulative_diff_precise']) / (this.InputArray[i]['actual_timestamp'] - this.InputArray[i - 400]['actual_timestamp'])) : 0;
-                    previewHashrate100.push([this.InputArray[i].actual_timestamp * 1000, hashrate100]);
-                    previewHashrate400.push([this.InputArray[i].actual_timestamp * 1000, hashrate400]);
-                    previewDifficulty120.push([this.InputArray[i].actual_timestamp * 1000, parseInt(this.InputArray[i].difficulty120, 10)]);
-                }
-                for (let i = 1; i < this.InputArrayTwo.length; i++) {
-                    previewConfirmTransactPerDay.push([this.InputArrayTwo[i].actual_timestamp * 1000, this.InputArrayTwo[i].sum_tr_count]);
-                }
-
-                this.previewAvgBlockSizeChart = ChartsComponent.drawChart(
-                    true,
-                    'Average Block Size',
-                    'MB',
-                    this.seriesData = [
-                        {type: 'area', name: 'MB', data: previewAvgBlockSize}
-                    ]
-                );
-                this.previewAvgTransPerBlockChart = ChartsComponent.drawChart(
-                    true,
-                    'Average Number Of Transactions Per Block',
-                    'Transaction Per Block',
-                    this.seriesData = [
-                        {type: 'area', name: 'Transaction Per Block', data: previewAvgTransPerBlock}
-                    ]
-                );
-                this.previewDifficultyChart = ChartsComponent.drawChart(
-                    true,
-                    'Difficulty',
-                    'Difficulty',
-                    this.seriesData = [
-                        {
-                            type: 'area', name: 'PoW difficulty', data: previewDifficulty,
-                        }
-                    ]
-                );
-                this.previewHashRateChart = ChartsComponent.drawChart(
-                    true,
-                    'Hash Rate',
-                    'Hash Rate H/s',
-                    this.seriesData = [
-                        {type: 'area', name: 'Hash Rate 100', data: previewHashrate100, color: '#28B463'},
-                        {type: 'area', name: 'Hash Rate 400', data: previewHashrate400, color: '#3498DB'},
-                        {type: 'area', name: 'Difficulty', data: previewDifficulty120, color: '#d2fe46'}
-                    ]
-                );
-                this.previewConfirmTransactPerDayChart = ChartsComponent.drawChart(
-                    true,
-                    'Confirmed Transactions Per Day',
-                    'Transactions',
-                    this.seriesData = [
-                        {type: 'area', name: 'Transactions', data: previewConfirmTransactPerDay}
-                    ]
-                );
-            }, err => console.log('error chart', err),
-            () => {
-                this.loader = false;
-            });
+            this.posDifficulty = data[0];
+            this.powDifficulty = data[1];
+            const posDifficultyArray = [];
+            const powDifficultyArray = [];
+            for (let i = 1; i < this.powDifficulty.length; i++) {
+                powDifficultyArray.push([this.powDifficulty[i].actual_timestamp * 1000, parseInt(this.powDifficulty[i].difficulty, 10)]);
+            }
+            for (let i = 1; i < this.posDifficulty.length; i++) {
+                posDifficultyArray.push([this.posDifficulty[i].actual_timestamp * 1000, parseInt(this.posDifficulty[i].difficulty, 10)]);
+            }
+            this.difficultyChart = DifficultyComponent.drawChart(
+                false,
+                'Difficulty',
+                'Difficulty',
+                this.seriesData = [
+                    {type: 'area', name: 'PoW difficulty', data: powDifficultyArray, color: '#3498DB'},
+                    {type: 'area', name: 'PoS difficulty', data: posDifficultyArray, color: '#28B463'}
+                ]
+            );
+        });
     }
-
-    ngOnDestroy() {
-        if (this.chartSubscription) {
-            this.chartSubscription.unsubscribe();
-        }
-    }
-
 }
