@@ -126,6 +126,9 @@ app-search {
   background-color: #2b3768;
   position: relative;
   padding: 20px 0;
+  @include max991 {
+    overflow: auto;
+  }
 }
 
 .dialog-open {

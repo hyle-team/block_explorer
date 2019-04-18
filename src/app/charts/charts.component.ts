@@ -23,6 +23,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     loader: boolean;
     InputArray: any;
     InputArrayTwo: any;
+    InputArrayThree: any;
 
     seriesData: any;
     searchIsOpen: boolean;
@@ -33,21 +34,21 @@ export class ChartsComponent implements OnInit, OnDestroy {
             chart: {
                 type: 'line',
                 backgroundColor: '#2b3768',
-                height: activeChart === true ? 280 : 700,
-                width: activeChart === true ? 375 : null,
+                height: 280,
+                // width: 375,
                 zoomType: 'x',
             },
             title: {
-                text: activeChart === true ? '' : titleText,
+                text: null,
                 style: {
                     color: '#fff',
-                    fontSize: activeChart === true ? '14px' : '18px',
+                    fontSize: '14px',
                 }
             },
             credits: {enabled: false},
             exporting: {enabled: false},
             legend: {
-                enabled: activeChart !== true,
+                enabled: false,
                 itemStyle: {
                     color: '#9eaacc',
                     fontFamily: 'Helvetica',
@@ -57,15 +58,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
                 }
             },
             tooltip: {
-                enabled: activeChart !== true,
-                shared: true,
-                valueDecimals: 0,
-                xDateFormat: '%Y/%m/%d %H:%M',
-
-                pointFormatter: function () {
-                    const point = this;
-                    return '<b style="color:' + point.color + '">\u25CF</b> ' + point.series.name + ': <b>' + (point.y) + '</b><br/>';
-                }
+                enabled: false
             },
             plotOptions: {
                 area: {
@@ -103,7 +96,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
             yAxis: {
                 floor: 0,
                 title: {
-                    text: activeChart === true ? false : yText,
+                    text: null,
                     style: {
                         color: '#9eaacc'
                     }
@@ -115,80 +108,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
                     },
                 },
             },
-            navigator: {enabled: activeChart !== true},
+            navigator: false,
             rangeSelector: {
-                height: 60,
-                enabled: activeChart !== true,
-                allButtonsEnabled: true,
-                buttons: [{
-                    type: 'day',
-                    count: 1,
-                    text: 'day'
-                }, {
-                    type: 'week',
-                    count: 1,
-                    text: 'week'
-                }, {
-                    type: 'month',
-                    count: 1,
-                    text: 'month'
-                }, {
-                    type: 'month',
-                    count: 3,
-                    text: 'quarter'
-                }, {
-                    type: 'year',
-                    count: 1,
-                    text: 'year'
-                }, {
-                    type: 'all',
-                    text: 'all'
-                }],
-                selected: 1,
-                labelStyle: {
-                    color: '#9eaacc',
-                },
-                inputStyle: {
-                    color: '#9eaacc',
-                },
-                inputBoxBorderColor: '#9eaacc',
-                inputBoxWidth: 120,
-                inputBoxHeight: 18,
-                buttonTheme: {
-                    width: 60,
-                    fill: '#32439f',
-                    style: {
-                        color: '#fff',
-                        fontSize: '14px',
-                        fontFamily: 'Helvetica',
-                        fontWeight: '300',
-                        opacity: 1,
-                    },
-                    states: {
-                        hover: {
-                            fill: '#32439f',
-                        },
-                        select: {
-                            fill: '#32439f',
-                            stroke: '#fff',
-                            'stroke-width': 1,
-                            style: {
-                                color: '#fff',
-                                opacity: 1,
-                                fontWeight: 400,
-                            }
-                        },
-                        disabled: {
-                            fill: '#32439f',
-                            style: {
-                                color: '#fff',
-                                opacity: 0.5,
-                                fontWeight: 400,
-                                cursor: 'default',
-                            }
-                        }
-                    }
-                },
+                enabled: false
             },
             series: chartsData
         });
@@ -224,6 +146,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
         this.chartSubscription = this.httpService.getChart(this.activeChart, this.period).subscribe(data => {
                 this.InputArray = data;
                 this.InputArrayTwo = data[0];
+                this.InputArrayThree = data[1];
 
                 const previewAvgBlockSize = [];
                 const previewAvgTransPerBlock = [];
@@ -237,16 +160,19 @@ export class ChartsComponent implements OnInit, OnDestroy {
                 for (let i = 1; i < this.InputArray.length; i++) {
                     previewAvgBlockSize.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].block_cumulative_size]);
                     previewAvgTransPerBlock.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].tr_count]);
-                    previewDifficulty.push([this.InputArray[i].actual_timestamp * 1000, parseInt(this.InputArray[i].difficulty, 10)]);
 
-                    const hashrate100 = this.InputArray[i]['hashrate100'] = (i > 99) ? ((this.InputArray[i]['cumulative_diff_precise'] - this.InputArray[i - 100]['cumulative_diff_precise']) / (this.InputArray[i]['actual_timestamp'] - this.InputArray[i - 100]['actual_timestamp'])) : 0;
-                    const hashrate400 = this.InputArray[i]['hashrate400'] = (i > 399) ? ((this.InputArray[i]['cumulative_diff_precise'] - this.InputArray[i - 400]['cumulative_diff_precise']) / (this.InputArray[i]['actual_timestamp'] - this.InputArray[i - 400]['actual_timestamp'])) : 0;
-                    previewHashrate100.push([this.InputArray[i].actual_timestamp * 1000, hashrate100]);
-                    previewHashrate400.push([this.InputArray[i].actual_timestamp * 1000, hashrate400]);
-                    previewDifficulty120.push([this.InputArray[i].actual_timestamp * 1000, parseInt(this.InputArray[i].difficulty120, 10)]);
                 }
                 for (let i = 1; i < this.InputArrayTwo.length; i++) {
                     previewConfirmTransactPerDay.push([this.InputArrayTwo[i].actual_timestamp * 1000, this.InputArrayTwo[i].sum_tr_count]);
+                }
+                for (let i = 1; i < this.InputArrayThree.length; i++) {
+                    previewDifficulty.push([this.InputArrayThree[i].actual_timestamp * 1000, parseInt(this.InputArrayThree[i].difficulty, 10)]);
+
+                    const hashrate100 = this.InputArrayThree[i]['hashrate100'] = (i > 99) ? ((this.InputArrayThree[i]['cumulative_diff_precise'] - this.InputArrayThree[i - 100]['cumulative_diff_precise']) / (this.InputArrayThree[i]['actual_timestamp'] - this.InputArrayThree[i - 100]['actual_timestamp'])) : 0;
+                    const hashrate400 = this.InputArrayThree[i]['hashrate400'] = (i > 399) ? ((this.InputArrayThree[i]['cumulative_diff_precise'] - this.InputArrayThree[i - 400]['cumulative_diff_precise']) / (this.InputArrayThree[i]['actual_timestamp'] - this.InputArrayThree[i - 400]['actual_timestamp'])) : 0;
+                    previewHashrate100.push([this.InputArrayThree[i].actual_timestamp * 1000, hashrate100]);
+                    previewHashrate400.push([this.InputArrayThree[i].actual_timestamp * 1000, hashrate400]);
+                    previewDifficulty120.push([this.InputArrayThree[i].actual_timestamp * 1000, parseInt(this.InputArrayThree[i].difficulty120, 10)]);
                 }
 
                 this.previewAvgBlockSizeChart = ChartsComponent.drawChart(

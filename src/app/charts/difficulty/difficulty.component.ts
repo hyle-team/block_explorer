@@ -25,22 +25,21 @@ export class DifficultyComponent implements OnInit {
             chart: {
                 type: 'line',
                 backgroundColor: '#2b3768',
-                height: activeChart === true ? 280 : 700,
-                width: activeChart === true ? 375 : null,
+                height: 700,
+                width: null,
                 zoomType: 'x',
-
             },
             title: {
-                text: activeChart === true ? '' : titleText,
+                text: titleText,
                 style: {
                     color: '#fff',
-                    fontSize: activeChart === true ? '14px' : '18px',
+                    fontSize: '18px',
                 },
             },
             credits: {enabled: false},
             exporting: {enabled: false},
             legend: {
-                enabled: activeChart !== true,
+                enabled: true,
                 itemStyle: {
                     color: '#9eaacc',
                     fontFamily: 'Helvetica',
@@ -50,15 +49,17 @@ export class DifficultyComponent implements OnInit {
                 }
             },
             tooltip: {
-                enabled: activeChart !== true,
-                shared: true,
+                enabled: true,
+
                 valueDecimals: 0,
                 xDateFormat: '%Y/%m/%d %H:%M',
 
                 pointFormatter: function () {
                     const point = this;
                     return '<b style="color:' + point.color + '">\u25CF</b> ' + point.series.name + ': <b>' + (point.y) + '</b><br/>';
-                }
+                },
+                crosshairs: true,
+                shared: true,
             },
             plotOptions: {
                 area: {
@@ -74,7 +75,7 @@ export class DifficultyComponent implements OnInit {
                     marker: {
                         radius: 2
                     },
-                    lineWidth: activeChart === true ? 1 : 2,
+                    lineWidth: 2,
                     states: {
                         hover: {
                             lineWidth: 1
@@ -96,7 +97,7 @@ export class DifficultyComponent implements OnInit {
             yAxis: {
                 floor: 0,
                 title: {
-                    text: activeChart === true ? false : yText,
+                    text: yText,
                     style: {
                         color: '#9eaacc'
                     }
@@ -108,9 +109,9 @@ export class DifficultyComponent implements OnInit {
                     },
                 },
             },
-            navigator: {enabled: activeChart !== true},
+            navigator: {enabled: true},
             rangeSelector: {
-                enabled: activeChart !== true,
+                enabled: true,
                 allButtonsEnabled: true,
                 buttons: [{
                     type: 'day',
@@ -182,7 +183,25 @@ export class DifficultyComponent implements OnInit {
                     }
                 },
             },
-            series: chartsData
+            series: chartsData,
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 575,
+                    },
+                    chartOptions: {
+                        chart: {
+                          width: 575
+                        },
+                        rangeSelector: {
+                            height: 100,
+                            inputPosition: {
+                                align: 'left',
+                            }
+                        }
+                    }
+                }]
+            }
         });
     }
 

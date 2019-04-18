@@ -25,21 +25,21 @@ export class AvgBlockSizeComponent implements OnInit {
       chart: {
         type: 'line',
         backgroundColor: '#2b3768',
-        height: activeChart === true ? 280 : 700,
-        width: activeChart === true ? 375 : null,
+        height: 700,
+        width: null,
         zoomType: 'x',
       },
       title: {
-        text: activeChart === true ? '' : titleText,
+        text: titleText,
         style: {
           color: '#fff',
-          fontSize: activeChart === true ? '14px' : '18px',
+          fontSize: '18px',
         }
       },
       credits: {enabled: false},
       exporting: {enabled: false},
       legend: {
-        enabled: activeChart !== true,
+        enabled: true,
         itemStyle: {
           color: '#9eaacc',
           fontFamily: 'Helvetica',
@@ -49,7 +49,7 @@ export class AvgBlockSizeComponent implements OnInit {
         }
       },
       tooltip: {
-        enabled: activeChart !== true,
+        enabled: true,
         shared: true,
         valueDecimals: 0,
         xDateFormat: '%Y/%m/%d %H:%M',
@@ -73,7 +73,7 @@ export class AvgBlockSizeComponent implements OnInit {
           marker: {
             radius: 2
           },
-          lineWidth: activeChart === true ? 1 : 2,
+          lineWidth: 2,
           states: {
             hover: {
               lineWidth: 1
@@ -95,7 +95,7 @@ export class AvgBlockSizeComponent implements OnInit {
       yAxis: {
         floor: 0,
         title: {
-          text: activeChart === true ? false : yText,
+          text: yText,
           style: {
             color: '#9eaacc'
           }
@@ -107,10 +107,10 @@ export class AvgBlockSizeComponent implements OnInit {
           },
         },
       },
-      navigator: {enabled: activeChart !== true},
+      navigator: {enabled: true},
       rangeSelector: {
         height: 60,
-        enabled: activeChart !== true,
+        enabled: true,
         allButtonsEnabled: true,
         buttons: [{
           type: 'day',
@@ -182,7 +182,25 @@ export class AvgBlockSizeComponent implements OnInit {
           }
         },
       },
-      series: chartsData
+      series: chartsData,
+      responsive: {
+        rules: [{
+          condition: {
+            maxWidth: 575,
+          },
+          chartOptions: {
+            chart: {
+              width: 575
+            },
+            rangeSelector: {
+              height: 100,
+              inputPosition: {
+                align: 'left',
+              }
+            }
+          }
+        }]
+      }
     });
   }
 

@@ -519,7 +519,7 @@ http.createServer(function (req, res) {
             body = Buffer.concat(body).toString();
             var params_object = JSON.parse(body);
             if (params_object.chart !== undefined) {
-                let period = Math.round(new Date().getTime() / 1000) - (24 * 3600);
+                let period = Math.round(new Date().getTime() / 1000) - (24 * 3600); // + 86400000
                 // if (params_object.period === 'day') {
                 //   // period = parseInt((period.setDate(period.getDate() - 86400000)) / 1000);
                 //   period = parseInt(period - 86400000) / 1000;
@@ -545,18 +545,28 @@ http.createServer(function (req, res) {
                             "difficulty, " +
                             "(SELECT difficulty / 120) as difficulty120, " +
                             "cumulative_diff_precise " +
-                            "FROM blocks WHERE type=1 AND actual_timestamp > " + period, function (err, arrayAll) {
+                            "FROM blocks WHERE actual_timestamp > " + period, function (err, arrayAll) {
                             res.writeHead(200, headers);
                             if (err) {
+                                console.log(err);
                                 res.end(JSON.stringify(err));
                             } else {
                                 db.all("SELECT actual_timestamp, SUM(tr_count) as sum_tr_count FROM blocks GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function(err, rows0) {
                                   res.writeHead(200, headers);
                                   if (err) {
+                                    console.log(err);
                                     res.end(JSON.stringify(err));
                                   } else {
-                                    arrayAll[0] = rows0;
-                                    res.end(JSON.stringify(arrayAll));
+                                      db.all("SELECT actual_timestamp, difficulty, (SELECT difficulty / 120) as difficulty120, cumulative_diff_precise FROM blocks WHERE type=1 AND actual_timestamp > " + period, function (err, rows1) {
+                                          if (err) {
+                                              console.log(err);
+                                              res.end(JSON.stringify(err));
+                                          } else {
+                                              arrayAll[0] = rows0;
+                                              arrayAll[1] = rows1;
+                                              res.end(JSON.stringify(arrayAll));
+                                          }
+                                      });
                                   }
                                 });
                             }
