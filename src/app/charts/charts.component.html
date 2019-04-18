@@ -6,23 +6,26 @@
 </div>
 
 <div class="wrap_links_chart">
-    <a [routerLink]="['/charts/avg-block-size']">
+    <div *ngIf="loader === true" class="wrap_loader">
+        <div class="loader"></div>
+    </div>
+    <a [routerLink]="['/charts/avg-block-size']" *ngIf="loader !== true">
         <span>Average Block Size</span>
         <div [chart]="previewAvgBlockSizeChart"></div>
     </a>
-    <a [routerLink]="['/charts/avg-trans-per-block']">
+    <a [routerLink]="['/charts/avg-trans-per-block']" *ngIf="loader !== true">
         <span>Average Number Of Transactions Per Block</span>
         <div [chart]="previewAvgTransPerBlockChart"></div>
     </a>
-    <a [routerLink]="['/charts/hash-rate']">
+    <a [routerLink]="['/charts/hash-rate']" *ngIf="loader !== true">
         <span>Hash Rate</span>
-        <div [chart]="previewHashRateChart"></div>
+        <div [chart]="previewHashRateChart" *ngIf="loader !== true"></div>
     </a>
-    <a [routerLink]="['/charts/difficulty']">
+    <a [routerLink]="['/charts/difficulty']" *ngIf="loader !== true">
         <span>Difficulty</span>
-        <div [chart]="previewDifficultyChart"></div>
+        <div [chart]="previewDifficultyChart" *ngIf="loader !== true"></div>
     </a>
-    <a [routerLink]="['/charts/confirm-trans-per-day']">
+    <a [routerLink]="['/charts/confirm-trans-per-day']" *ngIf="loader !== true">
         <span>Confirmed Transaction Per Day</span>
         <div [chart]="previewConfirmTransactPerDayChart"></div>
     </a>

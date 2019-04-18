@@ -19,6 +19,7 @@ export class DifficultyComponent implements OnInit {
     chartSubscription: Subscription;
     difficultyChart: Chart;
     seriesData: any;
+    loader: boolean;
 
     static drawChart(activeChart, titleText, yText, chartsData): Chart {
         return new Chart({
@@ -191,7 +192,7 @@ export class DifficultyComponent implements OnInit {
                     },
                     chartOptions: {
                         chart: {
-                          width: 575
+                            width: 575
                         },
                         rangeSelector: {
                             height: 100,
@@ -226,29 +227,34 @@ export class DifficultyComponent implements OnInit {
 
 
     initialChart() {
+        this.loader = true;
         if (this.chartSubscription) {
             this.chartSubscription.unsubscribe();
         }
         this.chartSubscription = this.httpService.getChart(this.activeChart, this.period).subscribe(data => {
-            this.posDifficulty = data[0];
-            this.powDifficulty = data[1];
-            const posDifficultyArray = [];
-            const powDifficultyArray = [];
-            for (let i = 1; i < this.powDifficulty.length; i++) {
-                powDifficultyArray.push([this.powDifficulty[i].actual_timestamp * 1000, parseInt(this.powDifficulty[i].difficulty, 10)]);
+                this.posDifficulty = data[0];
+                this.powDifficulty = data[1];
+                const posDifficultyArray = [];
+                const powDifficultyArray = [];
+                for (let i = 1; i < this.powDifficulty.length; i++) {
+                    powDifficultyArray.push([this.powDifficulty[i].actual_timestamp * 1000, parseInt(this.powDifficulty[i].difficulty, 10)]);
+                }
+                for (let i = 1; i < this.posDifficulty.length; i++) {
+                    posDifficultyArray.push([this.posDifficulty[i].actual_timestamp * 1000, parseInt(this.posDifficulty[i].difficulty, 10)]);
+                }
+                this.difficultyChart = DifficultyComponent.drawChart(
+                    false,
+                    'Difficulty',
+                    'Difficulty',
+                    this.seriesData = [
+                        {type: 'area', name: 'PoW difficulty', data: powDifficultyArray, color: '#3498DB'},
+                        {type: 'area', name: 'PoS difficulty', data: posDifficultyArray, color: '#28B463'}
+                    ]
+                );
+            }, err => console.log(err),
+            () => {
+                this.loader = false;
             }
-            for (let i = 1; i < this.posDifficulty.length; i++) {
-                posDifficultyArray.push([this.posDifficulty[i].actual_timestamp * 1000, parseInt(this.posDifficulty[i].difficulty, 10)]);
-            }
-            this.difficultyChart = DifficultyComponent.drawChart(
-                false,
-                'Difficulty',
-                'Difficulty',
-                this.seriesData = [
-                    {type: 'area', name: 'PoW difficulty', data: powDifficultyArray, color: '#3498DB'},
-                    {type: 'area', name: 'PoS difficulty', data: posDifficultyArray, color: '#28B463'}
-                ]
-            );
-        });
+        );
     }
 }

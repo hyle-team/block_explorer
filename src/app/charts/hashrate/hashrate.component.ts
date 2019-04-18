@@ -18,6 +18,7 @@ export class HashrateComponent implements OnInit {
     chartSubscription: Subscription;
     hashRateChart: Chart;
     seriesData: any;
+    loader: boolean;
 
     static drawChart(activeChart, titleText, yText, chartsData): Chart {
         return new Chart({
@@ -223,7 +224,9 @@ export class HashrateComponent implements OnInit {
         });
         this.initialChart();
     }
+
     initialChart() {
+        this.loader = true;
         if (this.chartSubscription) {
             this.chartSubscription.unsubscribe();
         }
@@ -248,6 +251,8 @@ export class HashrateComponent implements OnInit {
                     {type: 'area', name: 'Difficulty', data: difficultyArray, color: '#d2fe46'}
                 ]
             );
+        }, err => console.log(err), () => {
+            this.loader = false
         });
     }
 }

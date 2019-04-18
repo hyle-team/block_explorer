@@ -18,6 +18,7 @@ export class AvgTransPerBlockComponent implements OnInit {
     chartSubscription: Subscription;
     AvgTransPerBlockChart: Chart;
     seriesData: any;
+    loader: boolean;
 
     static drawChart(activeChart, titleText, yText, chartsData): Chart {
         return new Chart({
@@ -222,24 +223,28 @@ export class AvgTransPerBlockComponent implements OnInit {
     }
 
     initialChart() {
+        this.loader = true;
         if (this.chartSubscription) {
             this.chartSubscription.unsubscribe();
         }
         this.chartSubscription = this.httpService.getChart(this.activeChart, this.period).subscribe(data => {
-            this.InputArray = data;
-            const AvgTransPerBlock = [];
-            for (let i = 1; i < this.InputArray.length; i++) {
-                AvgTransPerBlock.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].tr_count]);
-            }
-            this.AvgTransPerBlockChart = AvgTransPerBlockComponent.drawChart(
-                false,
-                'Average Number Of Transactions Per Block',
-                'Transaction Per Block',
-                this.seriesData = [
-                    {type: 'area', name: 'Transaction Per Block', data: AvgTransPerBlock}
-                ]
-            );
-        });
+                this.InputArray = data;
+                const AvgTransPerBlock = [];
+                for (let i = 1; i < this.InputArray.length; i++) {
+                    AvgTransPerBlock.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].tr_count]);
+                }
+                this.AvgTransPerBlockChart = AvgTransPerBlockComponent.drawChart(
+                    false,
+                    'Average Number Of Transactions Per Block',
+                    'Transaction Per Block',
+                    this.seriesData = [
+                        {type: 'area', name: 'Transaction Per Block', data: AvgTransPerBlock}
+                    ]
+                );
+            }, err => console.log(err),
+            () => {
+                this.loader = false;
+            });
     }
 }
 

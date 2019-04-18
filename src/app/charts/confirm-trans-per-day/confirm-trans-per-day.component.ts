@@ -18,6 +18,7 @@ export class ConfirmTransPerDayComponent implements OnInit {
     chartSubscription: Subscription;
     ConfirmTransactPerDayChart: Chart;
     seriesData: any;
+    loader: boolean;
 
     static drawChart(activeChart, titleText, yText, chartsData): Chart {
         return new Chart({
@@ -222,6 +223,7 @@ export class ConfirmTransPerDayComponent implements OnInit {
     }
 
     initialChart() {
+        this.loader = true;
         if (this.chartSubscription) {
             this.chartSubscription.unsubscribe();
         }
@@ -241,6 +243,8 @@ export class ConfirmTransPerDayComponent implements OnInit {
                 ]
             );
 
+        }, err => console.log(err), () => {
+            this.loader = false;
         });
     }
 

@@ -6,5 +6,8 @@
 </div>
 
 <div class="wrap_charts">
+    <div *ngIf="loader === true" class="wrap_loader">
+        <div class="loader"></div>
+    </div>
     <div [chart]="AvgBlockSizeChart"></div>
 </div>

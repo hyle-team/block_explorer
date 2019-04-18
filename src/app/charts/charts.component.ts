@@ -138,9 +138,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
     }
 
     initialChart() {
+        this.loader = true;
         if (this.chartSubscription) {
             this.chartSubscription.unsubscribe();
-            this.loader = true;
         }
 
         this.chartSubscription = this.httpService.getChart(this.activeChart, this.period).subscribe(data => {

@@ -129,6 +129,9 @@ app-search {
   @include max991 {
     overflow: auto;
   }
+  .wrap_loader {
+    height: 700px;
+  }
 }
 
 .dialog-open {
