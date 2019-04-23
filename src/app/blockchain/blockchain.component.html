@@ -179,7 +179,7 @@
     <div class="left_position"></div>
     <div class="right_position">
       <span>Items on page:</span>
-      <input type="text" [value]="setPoolLimit" (input)="setPoolLimit=$event.target.value" (change)="onChangePoolLimit()">
+      <input type="text" [value]="setPoolLimit" (input)="setPoolLimit=$event.target.value" [(ngModel)]="setPoolLimit" (change)="onChangePoolLimit()">
       <span class="of">of {{info.tx_pool_size}}</span>
     </div>
   </div>

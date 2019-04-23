@@ -61,17 +61,24 @@
     }
     > input {
       max-width: 65px;
+      margin-right: 7px;
       &.input_go_to_block {
         max-width: 90px;
       }
     }
   }
   &.trans_pool {
+    .right_position {
+      > span {
+        &:first-child {
+          //margin-right: 0;
+        }
+      }
+    }
     input  {
-      max-width: 17px;
       transition: 0.25s;
       &:active, &:focus {
-        max-width: 30px;
+        //max-width: 30px;
       }
     }
     .of {
