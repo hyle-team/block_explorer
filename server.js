@@ -685,6 +685,7 @@ var countAliasesServer;
 // alt_blocks
 var countAltBlocksDB = 0;
 var countAltBlocksServer;
+var statusSyncAltBlocks = false;
 
 var db = new sqlite3.Database('db');
 db.configure('busyTimeout', 30000);
@@ -780,7 +781,7 @@ db.serialize(function () {
 
     db.run("CREATE INDEX if not exists index_pool_id ON pool(id);");
 
-
+    db.run("DELETE FROM alt_blocks");
     db.get("SELECT * FROM blocks WHERE height=(SELECT MAX(height) FROM blocks)", [], function (err, row) {
         if (err) log(err);
         if (row) {
@@ -1129,68 +1130,71 @@ function syncBlocks() {
 }
 
 function syncAltBlocks() {
-    db.run("DELETE FROM alt_blocks");
-
-    get_alt_blocks_details(0, countAltBlocksServer, function (code, data) {
-        if (code === 200) {
-
-            db.serialize(function () {
-                var stmt = db.prepare('INSERT INTO alt_blocks VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
-                for (var x in data.result.blocks) {
-                    var height = data.result.blocks[x].height;
-                    var timestamp = data.result.blocks[x].timestamp;
-                    var actual_timestamp = data.result.blocks[x].actual_timestamp;
-                    var size = data.result.blocks[x].block_cumulative_size;
-                    var hash = data.result.blocks[x].id;
-                    var type = data.result.blocks[x].type;
-                    var difficulty = data.result.blocks[x].difficulty.toString();
-                    var cumulative_diff_adjusted = data.result.blocks[x].cumulative_diff_adjusted.toString();
-                    var cumulative_diff_precise = data.result.blocks[x].cumulative_diff_precise.toString();
-                    var is_orphan = data.result.blocks[x].is_orphan;
-                    var base_reward = data.result.blocks[x].base_reward;
-                    var total_fee = data.result.blocks[x].total_fee.toString();
-                    var penalty = data.result.blocks[x].penalty;
-                    var summary_reward = data.result.blocks[x].summary_reward;
-                    var block_cumulative_size = data.result.blocks[x].block_cumulative_size;
-                    var this_block_fee_median = data.result.blocks[x].this_block_fee_median;
-                    var effective_fee_median = data.result.blocks[x].effective_fee_median;
-                    var total_txs_size = data.result.blocks[x].total_txs_size;
-                    var transact_details = JSON.stringify(data.result.blocks[x].transactions_details);
-                    var miner_txt_info = data.result.blocks[x].miner_text_info;
-                    var pow_seed = data.result.blocks[x].pow_seed;
-                    stmt.run(
-                        height,
-                        timestamp,
-                        actual_timestamp,
-                        size,
-                        hash,
-                        type,
-                        difficulty,
-                        cumulative_diff_adjusted,
-                        cumulative_diff_precise,
-                        is_orphan,
-                        base_reward,
-                        total_fee,
-                        penalty,
-                        summary_reward,
-                        block_cumulative_size,
-                        this_block_fee_median,
-                        effective_fee_median,
-                        total_txs_size,
-                        transact_details,
-                        miner_txt_info,
-                        pow_seed
-                    );
-                }
-                stmt.finalize();
-                db.get("SELECT COUNT(*) AS height FROM alt_blocks", function (err, rows) {
-                    if (err) log(err);
-                    if (rows) {
-                        countAltBlocksDB = rows.height;
+    statusSyncAltBlocks = true;
+    db.run("DELETE FROM alt_blocks", function () {
+        get_alt_blocks_details(0, countAltBlocksServer, function (code, data) {
+            if (code === 200) {
+                db.serialize(function () {
+                    var stmt = db.prepare('INSERT INTO alt_blocks VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+                    for (var x in data.result.blocks) {
+                        var height = data.result.blocks[x].height;
+                        var timestamp = data.result.blocks[x].timestamp;
+                        var actual_timestamp = data.result.blocks[x].actual_timestamp;
+                        var size = data.result.blocks[x].block_cumulative_size;
+                        var hash = data.result.blocks[x].id;
+                        var type = data.result.blocks[x].type;
+                        var difficulty = data.result.blocks[x].difficulty.toString();
+                        var cumulative_diff_adjusted = data.result.blocks[x].cumulative_diff_adjusted.toString();
+                        var cumulative_diff_precise = data.result.blocks[x].cumulative_diff_precise.toString();
+                        var is_orphan = data.result.blocks[x].is_orphan;
+                        var base_reward = data.result.blocks[x].base_reward;
+                        var total_fee = data.result.blocks[x].total_fee.toString();
+                        var penalty = data.result.blocks[x].penalty;
+                        var summary_reward = data.result.blocks[x].summary_reward;
+                        var block_cumulative_size = data.result.blocks[x].block_cumulative_size;
+                        var this_block_fee_median = data.result.blocks[x].this_block_fee_median;
+                        var effective_fee_median = data.result.blocks[x].effective_fee_median;
+                        var total_txs_size = data.result.blocks[x].total_txs_size;
+                        var transact_details = JSON.stringify(data.result.blocks[x].transactions_details);
+                        var miner_txt_info = data.result.blocks[x].miner_text_info;
+                        var pow_seed = '';
+                        stmt.run(
+                            height,
+                            timestamp,
+                            actual_timestamp,
+                            size,
+                            hash,
+                            type,
+                            difficulty,
+                            cumulative_diff_adjusted,
+                            cumulative_diff_precise,
+                            is_orphan,
+                            base_reward,
+                            total_fee,
+                            penalty,
+                            summary_reward,
+                            block_cumulative_size,
+                            this_block_fee_median,
+                            effective_fee_median,
+                            total_txs_size,
+                            transact_details,
+                            miner_txt_info,
+                            pow_seed
+                        );
                     }
+                    stmt.finalize();
+                    db.get("SELECT COUNT(*) AS height FROM alt_blocks", function (err, rows) {
+                        if (err) log(err);
+                        if (rows) {
+                            countAltBlocksDB = rows.height;
+                        }
+                        statusSyncAltBlocks = false;
+                    });
                 });
-            });
-        }
+            } else {
+                statusSyncAltBlocks = false;
+            }
+        });
     });
 }
 
@@ -1206,10 +1210,11 @@ function getInfoTimer() {
                     now_pool_sync = true;
                     syncPool();
                 }
-
-                if (countAltBlocksServer !== countAltBlocksDB) {
-                    log("need update alt-blocks db=" + countAltBlocksDB + ' server=' + countAltBlocksServer);
-                    syncAltBlocks();
+                if (statusSyncAltBlocks === false) {
+                    if (countAltBlocksServer !== countAltBlocksDB) {
+                        log("need update alt-blocks db=" + countAltBlocksDB + ' server=' + countAltBlocksServer);
+                        syncAltBlocks();
+                    }
                 }
                 if (lastBlock.height !== blockInfo.height - 1 && now_blocks_sync === false) {
                     log("need update blocks db=" + lastBlock.height + ' server=' + blockInfo.height);

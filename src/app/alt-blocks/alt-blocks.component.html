@@ -44,7 +44,7 @@
 
   <div class="no_data" *ngIf="!altBlocks.length">No data</div>
 
-  <div class="pagination" *ngIf="visiblePagination === true && altBlocks.length === 1">
+  <div class="pagination" *ngIf="(visiblePagination === true) && (altBlocks.length !== 0)">
     <div class="left_position">
       <span>Pages:</span>
       <button type="button" class="prev_btn" [disabled]="currentPage<=1" (click)="prevPage()">
