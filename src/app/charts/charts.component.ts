@@ -16,14 +16,15 @@ export class ChartsComponent implements OnInit, OnDestroy {
     previewAvgBlockSizeChart: Chart;
     previewAvgTransPerBlockChart: Chart;
     previewHashRateChart: Chart;
-    previewDifficultyChart: Chart;
+    previewDifficultyPoSChart: Chart;
+    previewDifficultyPoWChart: Chart;
     previewConfirmTransactPerDayChart: Chart;
 
     chartSubscription: Subscription;
     loader: boolean;
     InputArray: any;
-    InputArrayTwo: any;
-    InputArrayThree: any;
+    ArrayConfirmTransactPerDay: any;
+    ArrayHashrate: any;
 
     seriesData: any;
     searchIsOpen: boolean;
@@ -145,34 +146,47 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
         this.chartSubscription = this.httpService.getChart(this.activeChart, this.period).subscribe(data => {
                 this.InputArray = data;
-                this.InputArrayTwo = data[0];
-                this.InputArrayThree = data[1];
-
+                this.ArrayConfirmTransactPerDay = data[0];
+                this.ArrayHashrate = data[1];
                 const previewAvgBlockSize = [];
                 const previewAvgTransPerBlock = [];
-                const previewDifficulty = [];
+                const previewDifficultyPoS = [];
+                const previewDifficultyPoW = [];
 
                 const previewHashrate100 = [];
                 const previewHashrate400 = [];
                 const previewDifficulty120 = [];
 
                 const previewConfirmTransactPerDay = [];
+
+                // AvgBlockSize, AvgTransPerBlock
                 for (let i = 1; i < this.InputArray.length; i++) {
                     previewAvgBlockSize.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].block_cumulative_size]);
                     previewAvgTransPerBlock.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].tr_count]);
-
                 }
-                for (let i = 1; i < this.InputArrayTwo.length; i++) {
-                    previewConfirmTransactPerDay.push([this.InputArrayTwo[i].actual_timestamp * 1000, this.InputArrayTwo[i].sum_tr_count]);
-                }
-                for (let i = 1; i < this.InputArrayThree.length; i++) {
-                    previewDifficulty.push([this.InputArrayThree[i].actual_timestamp * 1000, parseInt(this.InputArrayThree[i].difficulty, 10)]);
 
-                    const hashrate100 = this.InputArrayThree[i]['hashrate100'] = (i > 99) ? ((this.InputArrayThree[i]['cumulative_diff_precise'] - this.InputArrayThree[i - 100]['cumulative_diff_precise']) / (this.InputArrayThree[i]['actual_timestamp'] - this.InputArrayThree[i - 100]['actual_timestamp'])) : 0;
-                    const hashrate400 = this.InputArrayThree[i]['hashrate400'] = (i > 399) ? ((this.InputArrayThree[i]['cumulative_diff_precise'] - this.InputArrayThree[i - 400]['cumulative_diff_precise']) / (this.InputArrayThree[i]['actual_timestamp'] - this.InputArrayThree[i - 400]['actual_timestamp'])) : 0;
-                    previewHashrate100.push([this.InputArrayThree[i].actual_timestamp * 1000, hashrate100]);
-                    previewHashrate400.push([this.InputArrayThree[i].actual_timestamp * 1000, hashrate400]);
-                    previewDifficulty120.push([this.InputArrayThree[i].actual_timestamp * 1000, parseInt(this.InputArrayThree[i].difficulty120, 10)]);
+                // ConfirmTransactPerDay
+                for (let i = 1; i < this.ArrayConfirmTransactPerDay.length; i++) {
+                    previewConfirmTransactPerDay.push([this.ArrayConfirmTransactPerDay[i].actual_timestamp * 1000, this.ArrayConfirmTransactPerDay[i].sum_tr_count]);
+                }
+
+                // Difficulty (PoS/PoW)
+                for (let i = 1; i < this.InputArray.length; i++) {
+                    if (this.InputArray[i].type === 0) {
+                        previewDifficultyPoS.push([this.InputArray[i].actual_timestamp * 1000, parseInt(this.InputArray[i].difficulty, 10)])
+                    }
+                    if (this.InputArray[i].type === 1) {
+                        previewDifficultyPoW.push([this.InputArray[i].actual_timestamp * 1000, parseInt(this.InputArray[i].difficulty, 10)])
+                    }
+                }
+
+                // hashRate
+                for (let i = 1; i < this.ArrayHashrate.length; i++) {
+                    const hashrate100 = this.ArrayHashrate[i]['hashrate100'] = (i > 99) ? ((this.ArrayHashrate[i]['cumulative_diff_precise'] - this.ArrayHashrate[i - 100]['cumulative_diff_precise']) / (this.ArrayHashrate[i]['actual_timestamp'] - this.ArrayHashrate[i - 100]['actual_timestamp'])) : 0;
+                    const hashrate400 = this.ArrayHashrate[i]['hashrate400'] = (i > 399) ? ((this.ArrayHashrate[i]['cumulative_diff_precise'] - this.ArrayHashrate[i - 400]['cumulative_diff_precise']) / (this.ArrayHashrate[i]['actual_timestamp'] - this.ArrayHashrate[i - 400]['actual_timestamp'])) : 0;
+                    previewHashrate100.push([this.ArrayHashrate[i].actual_timestamp * 1000, hashrate100]);
+                    previewHashrate400.push([this.ArrayHashrate[i].actual_timestamp * 1000, hashrate400]);
+                    previewDifficulty120.push([this.ArrayHashrate[i].actual_timestamp * 1000, parseInt(this.ArrayHashrate[i].difficulty120, 10)]);
                 }
 
                 this.previewAvgBlockSizeChart = ChartsComponent.drawChart(
@@ -191,13 +205,23 @@ export class ChartsComponent implements OnInit, OnDestroy {
                         {type: 'area', name: 'Transaction Per Block', data: previewAvgTransPerBlock}
                     ]
                 );
-                this.previewDifficultyChart = ChartsComponent.drawChart(
+                this.previewDifficultyPoWChart = ChartsComponent.drawChart(
                     true,
-                    'Difficulty',
-                    'Difficulty',
+                    'PoW Difficulty',
+                    'PoW Difficulty',
                     this.seriesData = [
                         {
-                            type: 'area', name: 'PoW difficulty', data: previewDifficulty,
+                            type: 'area', name: 'PoW difficulty', data: previewDifficultyPoW
+                        }
+                    ]
+                );
+                this.previewDifficultyPoSChart = ChartsComponent.drawChart(
+                    true,
+                    'PoS Difficulty',
+                    'PoS Difficulty',
+                    this.seriesData = [
+                        {
+                            type: 'area', name: 'PoS difficulty', data: previewDifficultyPoS,
                         }
                     ]
                 );

@@ -158,3 +158,13 @@ app-search {
   border-radius: 10px;
   background-color: #ffffff;
 }
+
+.highcharts-range-selector {
+  font-size: 13px !important;
+  &:focus {
+    border: none !important;
+    top: 11px !important;
+    margin-left: 2px;
+    color: #fff !important;
+  }
+}

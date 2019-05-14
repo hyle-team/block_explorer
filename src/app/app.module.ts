@@ -50,6 +50,7 @@ import { AvgTransPerBlockComponent } from './charts/avg-trans-per-block/avg-tran
 import { HashrateComponent } from './charts/hashrate/hashrate.component';
 import { DifficultyComponent } from './charts/difficulty/difficulty.component';
 import { ConfirmTransPerDayComponent } from './charts/confirm-trans-per-day/confirm-trans-per-day.component';
+import { DifficultyPowComponent } from './charts/difficulty-pow/difficulty-pow.component';
 
 
 @NgModule({
@@ -71,6 +72,7 @@ import { ConfirmTransPerDayComponent } from './charts/confirm-trans-per-day/conf
         AvgTransPerBlockComponent,
         HashrateComponent,
         DifficultyComponent,
+        DifficultyPowComponent,
         ConfirmTransPerDayComponent,
 
         // Pipes
@@ -82,11 +84,6 @@ import { ConfirmTransPerDayComponent } from './charts/confirm-trans-per-day/conf
         TruncatePipe,
         TimeAgoPipe,
         SortByAlphabetPipe,
-        AvgBlockSizeComponent,
-        AvgTransPerBlockComponent,
-        HashrateComponent,
-        DifficultyComponent,
-        ConfirmTransPerDayComponent,
     ],
     imports: [
         BrowserModule,

@@ -142,10 +142,11 @@ export class AvgBlockSizeComponent implements OnInit {
                 },
                 inputStyle: {
                     color: '#9eaacc',
+                    backgroundColor: '#2b3768',
                 },
                 inputBoxBorderColor: '#9eaacc',
                 inputBoxWidth: 120,
-                inputBoxHeight: 18,
+                inputBoxHeight: 16,
                 buttonTheme: {
                     width: 60,
                     fill: '#32439f',

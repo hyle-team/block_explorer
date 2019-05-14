@@ -13,6 +13,7 @@ import {AvgBlockSizeComponent} from './charts/avg-block-size/avg-block-size.comp
 import {AvgTransPerBlockComponent} from './charts/avg-trans-per-block/avg-trans-per-block.component';
 import {HashrateComponent} from './charts/hashrate/hashrate.component';
 import {DifficultyComponent} from './charts/difficulty/difficulty.component';
+import {DifficultyPowComponent} from './charts/difficulty-pow/difficulty-pow.component';
 import {ConfirmTransPerDayComponent} from './charts/confirm-trans-per-day/confirm-trans-per-day.component';
 
 import {TransactionComponent} from './transaction/transaction.component';
@@ -83,8 +84,12 @@ export const router: Routes = [
         component: HashrateComponent
       },
       {
-        path: 'difficulty',
+        path: 'difficulty-pos',
         component: DifficultyComponent
+      },
+      {
+        path: 'difficulty-pow',
+        component: DifficultyPowComponent
       },
       {
         path: 'confirm-trans-per-day',

@@ -536,27 +536,29 @@ http.createServer(function (req, res) {
                 //   period = parseInt((period.setMonth(period.getMonth()-12)) / 1000);
                 // }
                 if (params_object.chart === 'all') {
-                    const arrayAll = [];
+                    // const arrayAll = [];
                     db.serialize(function () {
+                        // Charts AvgBlockSize, AvgTransPerBlock, difficultyPoS, difficultyPoW
                         db.all("SELECT " +
                             "actual_timestamp, " +
                             "block_cumulative_size, " +
                             "tr_count, " +
                             "difficulty, " +
-                            "(SELECT difficulty / 120) as difficulty120, " +
-                            "cumulative_diff_precise " +
+                            "type " +
                             "FROM blocks WHERE actual_timestamp > " + period, function (err, arrayAll) {
                             res.writeHead(200, headers);
                             if (err) {
                                 console.log(err);
                                 res.end(JSON.stringify(err));
                             } else {
+                                // Chart Confirmed Transactions Per Day
                                 db.all("SELECT actual_timestamp, SUM(tr_count) as sum_tr_count FROM blocks GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function(err, rows0) {
                                   res.writeHead(200, headers);
                                   if (err) {
                                     console.log(err);
                                     res.end(JSON.stringify(err));
                                   } else {
+                                      // Chart HashRate
                                       db.all("SELECT actual_timestamp, difficulty, (SELECT difficulty / 120) as difficulty120, cumulative_diff_precise FROM blocks WHERE type=1 AND actual_timestamp > " + period, function (err, rows1) {
                                           if (err) {
                                               console.log(err);

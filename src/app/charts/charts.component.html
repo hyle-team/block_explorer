@@ -21,9 +21,13 @@
         <span>Hash Rate</span>
         <div [chart]="previewHashRateChart" *ngIf="loader !== true"></div>
     </a>
-    <a [routerLink]="['/charts/difficulty']" *ngIf="loader !== true">
-        <span>Difficulty</span>
-        <div [chart]="previewDifficultyChart" *ngIf="loader !== true"></div>
+    <a [routerLink]="['/charts/difficulty-pow']" *ngIf="loader !== true">
+        <span>PoW Difficulty</span>
+        <div [chart]="previewDifficultyPoWChart" *ngIf="loader !== true"></div>
+    </a>
+    <a [routerLink]="['/charts/difficulty-pos']" *ngIf="loader !== true">
+        <span>PoS Difficulty</span>
+        <div [chart]="previewDifficultyPoSChart" *ngIf="loader !== true"></div>
     </a>
     <a [routerLink]="['/charts/confirm-trans-per-day']" *ngIf="loader !== true">
         <span>Confirmed Transaction Per Day</span>
