@@ -51,6 +51,8 @@ import { HashrateComponent } from './charts/hashrate/hashrate.component';
 import { DifficultyComponent } from './charts/difficulty/difficulty.component';
 import { ConfirmTransPerDayComponent } from './charts/confirm-trans-per-day/confirm-trans-per-day.component';
 import { DifficultyPowComponent } from './charts/difficulty-pow/difficulty-pow.component';
+import { ApiComponent } from './api/api.component';
+import { ResponseJsonComponent } from './response-json/response-json.component';
 
 
 @NgModule({
@@ -84,6 +86,8 @@ import { DifficultyPowComponent } from './charts/difficulty-pow/difficulty-pow.c
         TruncatePipe,
         TimeAgoPipe,
         SortByAlphabetPipe,
+        ApiComponent,
+        ResponseJsonComponent,
     ],
     imports: [
         BrowserModule,

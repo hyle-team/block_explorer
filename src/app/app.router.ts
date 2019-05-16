@@ -17,6 +17,8 @@ import {DifficultyPowComponent} from './charts/difficulty-pow/difficulty-pow.com
 import {ConfirmTransPerDayComponent} from './charts/confirm-trans-per-day/confirm-trans-per-day.component';
 
 import {TransactionComponent} from './transaction/transaction.component';
+import {ApiComponent} from './api/api.component';
+import {ResponseJsonComponent} from './response-json/response-json.component';
 import {ServerErrorComponent} from './server-error/server-error.component'
 
 // Resolve
@@ -28,7 +30,7 @@ export const router: Routes = [
     component: BlockchainComponent,
     resolve: {
       MainInfo: ServiceResolver
-    }
+    },
   },
   {
     path: 'block/:id',
@@ -96,6 +98,14 @@ export const router: Routes = [
         component: ConfirmTransPerDayComponent
       },
     ]
+  },
+  {
+    path: 'api',
+    component: ApiComponent,
+  },
+  {
+    path: 'api/:method',
+    component: ResponseJsonComponent,
   },
   {
     path: 'server-error',

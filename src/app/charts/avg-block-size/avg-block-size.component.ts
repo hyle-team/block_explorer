@@ -236,7 +236,7 @@ export class AvgBlockSizeComponent implements OnInit {
 
                 const AvgBlockSize = [];
                 for (let i = 1; i < this.InputArray.length; i++) {
-                    AvgBlockSize.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].block_cumulative_size]);
+                    AvgBlockSize.push([this.InputArray[i].at * 1000, this.InputArray[i].bcs]);
                 }
                 this.AvgBlockSizeChart = AvgBlockSizeComponent.drawChart(
                     false,

@@ -214,7 +214,7 @@ export class DifficultyPowComponent implements OnInit {
   constructor(private httpService: HttpService, private mobileNavState: MobileNavState) {
     this.navIsOpen = false;
     this.searchIsOpen = false;
-    this.activeChart = 'difficulty';
+    this.activeChart = 'pow-difficulty';
     this.period = 'all';
   }
 
@@ -232,10 +232,10 @@ export class DifficultyPowComponent implements OnInit {
       this.chartSubscription.unsubscribe();
     }
     this.chartSubscription = this.httpService.getChart(this.activeChart, this.period).subscribe(data => {
-          this.powDifficulty = data[1];
+          this.powDifficulty = data;
           const powDifficultyArray = [];
           for (let i = 1; i < this.powDifficulty.length; i++) {
-            powDifficultyArray.push([this.powDifficulty[i].actual_timestamp * 1000, parseInt(this.powDifficulty[i].difficulty, 10)]);
+            powDifficultyArray.push([this.powDifficulty[i].at * 1000, parseInt(this.powDifficulty[i].d, 10)]);
           }
           this.difficultyChart = DifficultyPowComponent.drawChart(
               false,

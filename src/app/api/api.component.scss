@@ -1,0 +1,47 @@
+.head_page {
+  height: 77px;
+  display: flex;
+  align-items: center;
+  color: #9eaacc;
+  font-size: 14px;
+}
+
+.item_box {
+  background-color: rgba(35, 78, 226, 0.1);
+  border-radius: 10px;
+  margin-bottom: 25px;
+  overflow: hidden;
+  font-size: 13px;
+  .heading {
+    font-size: 24px;
+    font-weight: 300;
+    color: #fff;
+    padding: 18px 20px;
+    background: linear-gradient(to right, #1b3a8a, #32439f);
+  }
+  .info {
+    .row {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      padding: 0 20px;
+      color: #fff;
+      &:nth-child(2n) {
+        background-color: #263163;
+      }
+      > div {
+
+        &.title {
+          flex-basis: 30%;
+        }
+        &.value {
+          flex-basis: 70%;
+        }
+      }
+    }
+  }
+  .response {
+    // json format
+  }
+
+}

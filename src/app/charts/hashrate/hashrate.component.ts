@@ -238,9 +238,9 @@ export class HashrateComponent implements OnInit {
             const hashRate100 = [];
             const hashRate400 = [];
             for (let i = 1; i < this.InputArray.length; i++) {
-                hashRate100.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].hashrate100]);
-                hashRate400.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].hashrate400]);
-                difficultyArray.push([this.InputArray[i].actual_timestamp * 1000, parseInt(this.InputArray[i].difficulty, 10)]);
+                hashRate100.push([this.InputArray[i].at * 1000, parseInt(this.InputArray[i].h100, 10)]);
+                hashRate400.push([this.InputArray[i].at * 1000,  parseInt(this.InputArray[i].h400, 10)]);
+                difficultyArray.push([this.InputArray[i].at * 1000, parseInt(this.InputArray[i].d120, 10)]);
             }
             this.hashRateChart = HashrateComponent.drawChart(
                 false,

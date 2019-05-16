@@ -232,7 +232,7 @@ export class AvgTransPerBlockComponent implements OnInit {
                 this.InputArray = data;
                 const AvgTransPerBlock = [];
                 for (let i = 1; i < this.InputArray.length; i++) {
-                    AvgTransPerBlock.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].tr_count]);
+                    AvgTransPerBlock.push([this.InputArray[i].at * 1000, this.InputArray[i].trc]);
                 }
                 this.AvgTransPerBlockChart = AvgTransPerBlockComponent.drawChart(
                     false,

@@ -233,7 +233,7 @@ export class ConfirmTransPerDayComponent implements OnInit {
 
             const ConfirmTransactPerDay = [];
             for (let i = 1; i < this.InputArray.length; i++) {
-                ConfirmTransactPerDay.push([this.InputArray[i].actual_timestamp * 1000, this.InputArray[i].tr_count]);
+                ConfirmTransactPerDay.push([this.InputArray[i].at * 1000, this.InputArray[i].sum_trc]);
             }
             this.ConfirmTransactPerDayChart = ConfirmTransPerDayComponent.drawChart(
                 false,

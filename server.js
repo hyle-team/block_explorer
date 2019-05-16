@@ -1,17 +1,38 @@
-var http = require('http');
-var static = require('node-static');
-var file = new static.Server('./dist');
-var request = require('request');
-var fs = require('fs');
+const http = require('http');
+const static = require('node-static');
+const file = new static.Server('./dist');
+const request = require('request');
+const fs = require('fs');
 const axios = require('axios');
-var sqlite3 = require('sqlite3').verbose();
-var JSONbig = require('json-bigint');
+const sqlite3 = require('sqlite3').verbose();
+const JSONbig = require('json-bigint');
 const BigNumber = require('bignumber.js');
-var config = fs.readFileSync('config.json', 'utf8');
-config = JSON.parse(config);
-var api = config.api + '/json_rpc';
-var front_port = config.front_port;
 
+const express = require('express');
+
+let config = fs.readFileSync('config.json', 'utf8');
+config = JSON.parse(config);
+const api = config.api + '/json_rpc';
+const front_port = config.front_port;
+
+function get_info(callback) {
+    axios({
+        method: 'post',
+        url: api,
+        data: {
+            method: 'getinfo',
+            params: {'flags': 0x410},
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then(function (response) {
+            callback(200, response.data);
+        })
+        .catch(function (error) {
+            log('POST getinfo failed');
+            callback(400, error);
+        });
+}
 
 function get_blocks_details(start, count, callback) {
     axios({
@@ -103,28 +124,6 @@ function get_pool_txs_details(ids, callback) {
 
 }
 
-
-function get_info(callback) {
-    axios({
-        method: 'post',
-        url: api,
-        data: {
-            method: 'getinfo',
-            params: {'flags': 0x410},
-        },
-        transformResponse: [data => JSONbig.parse(data)]
-    })
-        .then(function (response) {
-            callback(200, response.data);
-        })
-        .catch(function (error) {
-            log('POST getinfo failed');
-            callback(400, error);
-        });
-
-}
-
-
 function get_tx_details(tx_hash, callback) {
     axios({
         method: 'post',
@@ -182,11 +181,11 @@ http.createServer(function (req, res) {
     //   var password = plain_auth[1];
     //   if (username === "user" && password === "zano2019") {
 
-    var headers = {
+    const headers = {
         "Content-Type": "text/plain",
         "Access-Control-Allow-Origin": "*"
     };
-    var maxCount = 1000;
+    const maxCount = 1000;
 
     if (req.url === '/get_blocks_details') {
         var body = [];
@@ -520,6 +519,7 @@ http.createServer(function (req, res) {
             var params_object = JSON.parse(body);
             if (params_object.chart !== undefined) {
                 let period = Math.round(new Date().getTime() / 1000) - (24 * 3600); // + 86400000
+                let period2 = Math.round(new Date().getTime() / 1000) - (48 * 3600); // + 86400000
                 // if (params_object.period === 'day') {
                 //   // period = parseInt((period.setDate(period.getDate() - 86400000)) / 1000);
                 //   period = parseInt(period - 86400000) / 1000;
@@ -539,44 +539,38 @@ http.createServer(function (req, res) {
                     // const arrayAll = [];
                     db.serialize(function () {
                         // Charts AvgBlockSize, AvgTransPerBlock, difficultyPoS, difficultyPoW
-                        db.all("SELECT " +
-                            "actual_timestamp, " +
-                            "block_cumulative_size, " +
-                            "tr_count, " +
-                            "difficulty, " +
-                            "type " +
-                            "FROM blocks WHERE actual_timestamp > " + period, function (err, arrayAll) {
+                        db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs, tr_count as trc, difficulty as d, type as t FROM charts WHERE actual_timestamp > " + period, function (err, arrayAll) {
                             res.writeHead(200, headers);
                             if (err) {
-                                console.log(err);
+                                console.log('all charts error', err);
                                 res.end(JSON.stringify(err));
                             } else {
                                 // Chart Confirmed Transactions Per Day
-                                db.all("SELECT actual_timestamp, SUM(tr_count) as sum_tr_count FROM blocks GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function(err, rows0) {
-                                  res.writeHead(200, headers);
-                                  if (err) {
-                                    console.log(err);
-                                    res.end(JSON.stringify(err));
-                                  } else {
-                                      // Chart HashRate
-                                      db.all("SELECT actual_timestamp, difficulty, (SELECT difficulty / 120) as difficulty120, cumulative_diff_precise FROM blocks WHERE type=1 AND actual_timestamp > " + period, function (err, rows1) {
-                                          if (err) {
-                                              console.log(err);
-                                              res.end(JSON.stringify(err));
-                                          } else {
-                                              arrayAll[0] = rows0;
-                                              arrayAll[1] = rows1;
-                                              res.end(JSON.stringify(arrayAll));
-                                          }
-                                      });
-                                  }
+                                db.all("SELECT actual_timestamp as at, SUM(tr_count) as sum_trc FROM charts GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function (err, rows0) {
+                                    res.writeHead(200, headers);
+                                    if (err) {
+                                        console.log('all charts confirmed-transactions-per-day', err);
+                                        res.end(JSON.stringify(err));
+                                    } else {
+                                        // Chart HashRate
+                                        db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1 AND actual_timestamp > " + period2, function (err, rows1) {
+                                            if (err) {
+                                                console.log(err);
+                                                res.end(JSON.stringify(err));
+                                            } else {
+                                                arrayAll[0] = rows0;
+                                                arrayAll[1] = rows1;
+                                                res.end(JSON.stringify(arrayAll));
+                                            }
+                                        });
+                                    }
                                 });
                             }
                         });
                     });
                 } else if (params_object.chart === 'AvgBlockSize') {
                     db.serialize(function () {
-                        db.all("SELECT actual_timestamp, block_cumulative_size FROM blocks", function (err, rows) {
+                        db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs FROM charts", function (err, rows) {
                             res.writeHead(200, headers);
                             if (err) {
                                 res.end(JSON.stringify(err));
@@ -587,7 +581,7 @@ http.createServer(function (req, res) {
                     });
                 } else if (params_object.chart === 'AvgTransPerBlock') {
                     db.serialize(function () {
-                        db.all("SELECT actual_timestamp, tr_count FROM blocks", function (err, rows) {
+                        db.all("SELECT actual_timestamp as at, tr_count as trc FROM charts", function (err, rows) {
                             res.writeHead(200, headers);
                             if (err) {
                                 res.end(JSON.stringify(err));
@@ -598,45 +592,46 @@ http.createServer(function (req, res) {
                     });
                 } else if (params_object.chart === 'hashRate') {
                     db.serialize(function () {
-                        db.all("SELECT actual_timestamp, difficulty / 120 as difficulty, cumulative_diff_precise FROM blocks WHERE type=1", function (err, rows) {
+                        db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1", function (err, rows) {
                             res.writeHead(200, headers);
                             if (err) {
                                 res.end(JSON.stringify(err));
                             } else {
-                                for (let i = 0; i < rows.length; i++) {
-                                    rows[i]['hashrate100'] = (i > 99) ? ((rows[i]['cumulative_diff_precise'] - rows[i - 100]['cumulative_diff_precise']) / (rows[i]['actual_timestamp'] - rows[i - 100]['actual_timestamp'])) : 0;
-                                    rows[i]['hashrate400'] = (i > 399) ? ((rows[i]['cumulative_diff_precise'] - rows[i - 400]['cumulative_diff_precise']) / (rows[i]['actual_timestamp'] - rows[i - 400]['actual_timestamp'])) : 0;
-                                }
+                                // for (let i = 0; i < rows.length; i++) {
+                                //     rows[i]['hashrate100'] = (i > 99) ? ((rows[i]['cumulative_diff_precise'] - rows[i - 100]['cumulative_diff_precise']) / (rows[i]['actual_timestamp'] - rows[i - 100]['actual_timestamp'])) : 0;
+                                //     rows[i]['hashrate400'] = (i > 399) ? ((rows[i]['cumulative_diff_precise'] - rows[i - 400]['cumulative_diff_precise']) / (rows[i]['actual_timestamp'] - rows[i - 400]['actual_timestamp'])) : 0;
+                                // }
                                 res.end(JSON.stringify(rows));
                             }
                         });
                     });
-                } else if (params_object.chart === 'difficulty') {
+                } else if (params_object.chart === 'pos-difficulty') {
                     db.serialize(function () {
-                        db.all("SELECT actual_timestamp, difficulty, type FROM blocks", function (err, rows) {
+                        db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=0", function (err, rows) {
                             res.writeHead(200, headers);
                             if (err) {
                                 res.end(JSON.stringify(err));
                                 console.log(err);
                             } else {
-                                const sorted = {};
-                                const array = [];
-                                for (let i = 0; i < rows.length; i++){
-                                    if ( sorted[rows[i]['type']] === undefined ){
-                                        sorted[rows[i]['type']] = [];
-                                    }
-                                    sorted[rows[i].type].push(rows[i]);
-
-                                    array[0] = sorted[0];
-                                    array[1] = sorted[1];
-                                }
-                                res.end(JSON.stringify(array));
+                                res.end(JSON.stringify(rows));
+                            }
+                        });
+                    });
+                } else if (params_object.chart === 'pow-difficulty') {
+                    db.serialize(function () {
+                        db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=1", function (err, rows) {
+                            res.writeHead(200, headers);
+                            if (err) {
+                                res.end(JSON.stringify(err));
+                                console.log(err);
+                            } else {
+                                res.end(JSON.stringify(rows));
                             }
                         });
                     });
                 } else if (params_object.chart === 'ConfirmTransactPerDay') {
                     db.serialize(function () {
-                        db.all("SELECT actual_timestamp, SUM(tr_count) as tr_count FROM blocks GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function (err, rows) {
+                        db.all("SELECT actual_timestamp as at, SUM(tr_count) as sum_trc FROM charts GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function (err, rows) {
                             res.writeHead(200, headers);
                             if (err) {
                                 res.end(JSON.stringify(err));
@@ -782,6 +777,22 @@ db.serialize(function () {
         ');');
 
     db.run("CREATE INDEX if not exists index_pool_id ON pool(id);");
+
+    db.run('create table if not exists charts (' +
+        "height INTEGER" +
+        ", actual_timestamp INTEGER" +
+        ", block_cumulative_size INTEGER" +
+        ", cumulative_diff_precise TEXT" +
+        ", difficulty TEXT" +
+        ", tr_count INTEGER" +
+        ", type INTEGER" +
+        ", difficulty120 TEXT" +
+        ", hashrate100 TEXT" +
+        ", hashrate400 TEXT" +
+        ');');
+
+    db.run("CREATE INDEX if not exists index_bl_height ON charts(height);");
+
 
     db.run("DELETE FROM alt_blocks");
     db.get("SELECT * FROM blocks WHERE height=(SELECT MAX(height) FROM blocks)", [], function (err, row) {
@@ -938,6 +949,54 @@ function syncTransactions(success) {
             if (localBl.tr_out.length === 0) {
                 db.serialize(function () {
                     db.run("begin transaction");
+
+                    var hashrate100 = 0;
+                    var hashrate400 = 0;
+
+                    if (localBl.type === 1) {
+                        db.all("SELECT height, actual_timestamp, cumulative_diff_precise FROM charts WHERE type=1", function (err, rows) {
+                            if (err) {
+                                log(err);
+                            } else {
+                                for (let i = 0; i < rows.length; i++) {
+                                    hashrate100 = (i > 99 - 1) ? ((localBl['cumulative_diff_precise'] - rows[rows.length - 100]['cumulative_diff_precise']) / (localBl['actual_timestamp'] - rows[rows.length - 100]['actual_timestamp'])) : 0;
+                                    hashrate400 = (i > 399 - 1) ? ((localBl['cumulative_diff_precise'] - rows[rows.length - 400]['cumulative_diff_precise']) / (localBl['actual_timestamp'] - rows[rows.length - 400]['actual_timestamp'])) : 0;
+                                }
+
+                                var stmtCharts = db.prepare("INSERT INTO charts VALUES (?,?,?,?,?,?,?,?,?,?)");
+                                stmtCharts.run(
+                                    localBl.height,
+                                    localBl.actual_timestamp,
+                                    localBl.block_cumulative_size,
+                                    localBl.cumulative_diff_precise.toString(),
+                                    localBl.difficulty.toString(),
+                                    (localBl.tr_count) ? localBl.tr_count : 0,
+                                    localBl.type,
+                                    (localBl.difficulty / 120).toFixed(0),
+                                    hashrate100,
+                                    hashrate400
+                                );
+                                stmtCharts.finalize();
+                            }
+                        });
+                    } else {
+                        var stmtCharts = db.prepare("INSERT INTO charts VALUES (?,?,?,?,?,?,?,?,?,?)");
+                        stmtCharts.run(
+                            localBl.height,
+                            localBl.actual_timestamp,
+                            localBl.block_cumulative_size,
+                            localBl.cumulative_diff_precise.toString(),
+                            localBl.difficulty.toString(),
+                            (localBl.tr_count) ? localBl.tr_count : 0,
+                            localBl.type,
+                            0,
+                            0,
+                            0
+                        );
+                        stmtCharts.finalize();
+                    }
+
+
                     var stmt = db.prepare("INSERT INTO blocks VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                     stmt.run(
                         localBl.height,
@@ -1104,6 +1163,7 @@ function syncBlocks() {
                     var deleteCount = 100;
                     log("height > " + (parseInt(lastBlock.height) - deleteCount) + " deleted");
                     db.run("DELETE FROM blocks WHERE height > " + (parseInt(lastBlock.height) - deleteCount) + ";");
+                    db.run("DELETE FROM charts WHERE height > " + (parseInt(lastBlock.height) - deleteCount) + ";");
                     db.run("DELETE FROM transactions WHERE keeper_block > " + (parseInt(lastBlock.height) - deleteCount) + ";");
                     db.run("UPDATE aliases SET enabled=1 WHERE transact IN (SELECT transact FROM aliases WHERE alias IN (select alias from aliases where block > " + (parseInt(lastBlock.height) - deleteCount) + " ) AND enabled == 0 GROUP BY alias);");
                     db.run("DELETE FROM aliases WHERE block > " + (parseInt(lastBlock.height) - deleteCount) + ";");
