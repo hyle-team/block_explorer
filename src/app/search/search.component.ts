@@ -107,7 +107,6 @@ export class SearchComponent implements OnInit, OnDestroy {
       localStorage.removeItem('inputSearch');
     }
     if (event.key === 'Backspace') {
-      console.log(this.setSearch);
       if (this.setSearch.length <= 1) {
         localStorage.removeItem('inputSearch');
       }

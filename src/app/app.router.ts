@@ -18,7 +18,6 @@ import {ConfirmTransPerDayComponent} from './charts/confirm-trans-per-day/confir
 
 import {TransactionComponent} from './transaction/transaction.component';
 import {ApiComponent} from './api/api.component';
-import {ResponseJsonComponent} from './response-json/response-json.component';
 import {ServerErrorComponent} from './server-error/server-error.component'
 
 // Resolve
@@ -102,10 +101,6 @@ export const router: Routes = [
   {
     path: 'api',
     component: ApiComponent,
-  },
-  {
-    path: 'api/:method',
-    component: ResponseJsonComponent,
   },
   {
     path: 'server-error',

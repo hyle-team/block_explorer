@@ -13,7 +13,7 @@
   overflow: hidden;
   font-size: 13px;
   .heading {
-    font-size: 24px;
+    font-size: 21px;
     font-weight: 300;
     color: #fff;
     padding: 18px 20px;
@@ -26,13 +26,14 @@
       height: 40px;
       padding: 0 20px;
       color: #fff;
+
       &:nth-child(2n) {
         background-color: #263163;
       }
       > div {
-
         &.title {
           flex-basis: 30%;
+          font-size: 14px;
         }
         &.value {
           flex-basis: 70%;
@@ -41,7 +42,19 @@
     }
   }
   .response {
-    // json format
+    padding-bottom: 20px;
+    .title {
+      padding: 20px;
+      color: #fff;
+      font-size: 14px;
+    }
   }
 
 }
+
+
+//.ngx-json-viewer {
+//  .segment-key {
+//
+//  }
+//}

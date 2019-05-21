@@ -1,23 +1,31 @@
-const http = require('http');
-const static = require('node-static');
-const file = new static.Server('./dist');
-const request = require('request');
 const fs = require('fs');
-const axios = require('axios');
+const express = require('express');
+const app = express();
 const sqlite3 = require('sqlite3').verbose();
+const axios = require('axios');
 const JSONbig = require('json-bigint');
 const BigNumber = require('bignumber.js');
-
-const express = require('express');
 
 let config = fs.readFileSync('config.json', 'utf8');
 config = JSON.parse(config);
 const api = config.api + '/json_rpc';
 const front_port = config.front_port;
 
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+let maxCount = 1000;
+
+function log(msg) {
+    let t = new Date();
+    console.log(t.getFullYear() + "-" + t.getMonth() + "-" + t.getDate() + " " + t.getHours() + ":" + t.getMinutes() + ":" + t.getSeconds() + "." + t.getMilliseconds() + " " + msg);
+}
+
 function get_info(callback) {
     axios({
-        method: 'post',
+        method: 'get',
         url: api,
         data: {
             method: 'getinfo',
@@ -29,14 +37,14 @@ function get_info(callback) {
             callback(200, response.data);
         })
         .catch(function (error) {
-            log('POST getinfo failed');
+            log('get_info failed', error);
             callback(400, error);
         });
 }
 
 function get_blocks_details(start, count, callback) {
     axios({
-        method: 'post',
+        method: 'get',
         url: api,
         data: {
             method: 'get_blocks_details',
@@ -52,14 +60,14 @@ function get_blocks_details(start, count, callback) {
             callback(200, response.data);
         })
         .catch(function (error) {
-            log('POST get_blocks_details failed');
+            log('get_blocks_details failed', error);
             callback(400, error);
         });
 }
 
 function get_alt_blocks_details(offset, count, callback) {
     axios({
-        method: 'post',
+        method: 'get',
         url: api,
         data: {
             method: 'get_alt_blocks_details',
@@ -74,39 +82,32 @@ function get_alt_blocks_details(offset, count, callback) {
             callback(200, response.data);
         })
         .catch(function (error) {
-            log('POST get_alt_blocks_details failed');
+            log('get_alt_blocks_details failed', error);
             callback(400, error);
         });
 }
 
-// all_list_tx
 function get_all_pool_tx_list(callback) {
-    var params = {
-        "method": "get_all_pool_tx_list",
-        "params": {}
-    };
-    request.post(api, {json: params}, function (error, response, body) {
-        if (error) callback(400, error); else callback(200, body);
-    });
+    axios({
+        method: 'get',
+        url: api,
+        data: {
+            method: 'get_all_pool_tx_list',
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then(function (response) {
+            callback(200, response.data);
+        })
+        .catch(function (error) {
+            log('get_all_pool_tx_list failed', error);
+            callback(400, error);
+        });
 }
 
-// brief tx_information
-// function get_pool_txs_brief_details(ids, callback) {
-//   var params = {
-//     "method": "get_pool_txs_brief_details",
-//     "params": {
-//       "ids": ids
-//     }
-//   };
-//   request.post(api + "/json_rpc", {json: params}, function (error, response, body) {
-//     if (error) callback(400, error); else callback(200, body);
-//   });
-// }
-
-// detail_tx_information
 function get_pool_txs_details(ids, callback) {
     axios({
-        method: 'post',
+        method: 'get',
         url: api,
         data: {
             method: 'get_pool_txs_details',
@@ -118,7 +119,7 @@ function get_pool_txs_details(ids, callback) {
             callback(200, response.data);
         })
         .catch(function (error) {
-            log('POST get_pool_txs_details failed');
+            log('get_pool_txs_details failed', error);
             callback(400, error);
         });
 
@@ -126,7 +127,7 @@ function get_pool_txs_details(ids, callback) {
 
 function get_tx_details(tx_hash, callback) {
     axios({
-        method: 'post',
+        method: 'get',
         url: api,
         data: {
             method: 'get_tx_details',
@@ -138,14 +139,14 @@ function get_tx_details(tx_hash, callback) {
             callback(200, response.data);
         })
         .catch(function (error) {
-            log('POST get_tx_details failed');
+            log('get_tx_details failed', error);
             callback(400, error);
         });
 }
 
 function get_out_info(amount, i, callback) {
     axios({
-        method: 'post',
+        method: 'get',
         url: api,
         data: {
             method: 'get_out_info',
@@ -157,513 +158,321 @@ function get_out_info(amount, i, callback) {
             callback(200, response.data);
         })
         .catch(function (error) {
-            log('POST get_out_info failed');
+            log('get_out_info failed', error);
             callback(400, error);
         });
 }
 
 
-http.createServer(function (req, res) {
-    log('request: ' + req.url);
+app.get('/get_info', (req, res) => {
+    blockInfo.lastBlock = lastBlock.height;
+    res.send(JSON.stringify(blockInfo));
+});
 
+// Blockchain page
+app.get('/get_blocks_details/:start/:count', (req, res) => {
+    let start = req.params.start;
+    let count = req.params.count;
 
-    // var auth = req.headers['authorization'];
-    // console.log("Authorization Header is: ", auth);
-    // if (!auth) {
-    //   res.statusCode = 401;
-    //   res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-    //   res.end('<html><body>Need authorization</body></html>');
-    // } else if (auth) {
-    //   var tmp = auth.split(' ');
-    //   var buf = new Buffer(tmp[1], 'base64');
-    //   var plain_auth = buf.toString().split(':');
-    //   var username = plain_auth[0];
-    //   var password = plain_auth[1];
-    //   if (username === "user" && password === "zano2019") {
-
-    const headers = {
-        "Content-Type": "text/plain",
-        "Access-Control-Allow-Origin": "*"
-    };
-    const maxCount = 1000;
-
-    if (req.url === '/get_blocks_details') {
-        var body = [];
-        req.on('data', function (chunk) {
-            body.push(chunk);
-        }).on('end', function () {
-            if (!body.length) {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'start' and 'count' params");
-                return;
-            }
-            body = Buffer.concat(body).toString();
-            var params_object = JSON.parse(body);
-
-            if (params_object.start !== undefined && params_object.count !== undefined) {
-                if (params_object.count > maxCount) {
-                    params_object.count = maxCount;
-                }
-                db.serialize(function () {
-                    db.all("SELECT blocks.* FROM blocks " +
-                        "WHERE blocks.height >= ? " +
-                        "ORDER BY blocks.height ASC " +
-                        "LIMIT ?;", [params_object.start, params_object.count], function (err, rows) {
-                        res.writeHead(200, headers);
-                        res.end(JSON.stringify(rows));
-                    });
-                });
-            } else {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'start' and 'count' params");
-            }
+    if (start && count) {
+        db.serialize(function () {
+            db.all("SELECT blocks.* FROM blocks " +
+                "WHERE blocks.height >= ? " +
+                "ORDER BY blocks.height ASC " +
+                "LIMIT ?;", [start, count], function (err, rows) {
+                res.send(JSON.stringify(rows));
+            });
         });
+    }
+});
 
-    } else if (req.url === '/get_main_block_details') {
-        var body = [];
-        req.on('data', function (chunk) {
-            body.push(chunk);
-        }).on('end', function () {
-            if (!body.length) {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'id' param");
-                return;
-            }
-            body = Buffer.concat(body).toString();
-            var params_object = JSON.parse(body);
-            if (params_object.id) {
-                db.serialize(function () {
-                    db.get("SELECT b2.id as next_id, b1.* FROM blocks as b1 left join blocks as b2 on b2.height > b1.height WHERE b1.id == ? ORDER BY b2.height ASC LIMIT 1;", [params_object.id], function (err, row) {
-                        if (row) {
-                            db.all("SELECT * FROM transactions WHERE keeper_block == ? ;", [row.height], function (err2, rows2) {
-                                res.writeHead(200, headers);
-                                for (var i = 0; i < rows2.length; i++) {
-                                    rows2[i].extra = JSON.parse(rows2[i].extra);
-                                    rows2[i].ins = JSONbig(rows2[i].ins);
-                                    rows2[i].outs = JSONbig(rows2[i].outs);
-                                    rows2[i].attachments = JSON.parse(rows2[i].attachments);
-                                }
-                                row.transactions_details = rows2;
-                                res.end(JSON.stringify(row));
-                            });
-                        } else {
-                            res.writeHead(400, headers);
-                            res.end(JSON.stringify("block not found"));
+app.get('/get_main_block_details/:id', (req, res) => {
+    let id = req.params.id;
+    if (id) {
+        db.serialize(function () {
+            db.get("SELECT b2.id as next_id, b1.* FROM blocks as b1 left join blocks as b2 on b2.height > b1.height WHERE b1.id == ? ORDER BY b2.height ASC LIMIT 1;", [id], function (err, row) {
+                if (row) {
+                    db.all("SELECT * FROM transactions WHERE keeper_block == ? ;", [row.height], function (err2, rows2) {
+                        for (let i = 0; i < rows2.length; i++) {
+                            rows2[i].extra = JSON.parse(rows2[i].extra);
+                            rows2[i].ins = JSONbig(rows2[i].ins);
+                            rows2[i].outs = JSONbig(rows2[i].outs);
+                            rows2[i].attachments = JSON.parse(rows2[i].attachments);
                         }
+                        row.transactions_details = rows2;
+                        res.send(JSON.stringify(row));
                     });
-                });
-            } else {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'id' param");
-            }
-        });
-
-    } else if (req.url === '/get_alt_blocks_details') {
-        var body = [];
-        req.on('data', function (chunk) {
-            body.push(chunk);
-        }).on('end', function () {
-            if (!body.length) {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'offset' and 'count' params");
-                return;
-            }
-            body = Buffer.concat(body).toString();
-            var params_object = JSON.parse(body);
-
-            if (params_object.offset !== undefined && params_object.count !== undefined) {
-                if (params_object.count > maxCount) {
-                    params_object.count = maxCount;
+                } else {
+                    res.send(JSON.stringify("block not found"));
                 }
-                db.all("SELECT * FROM alt_blocks ORDER BY height DESC limit ? offset ?", [params_object.count, params_object.offset], function (err, rows) {
-                    res.writeHead(200, headers);
-                    res.end(JSON.stringify(rows));
-                });
-            } else {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'offset' and 'count' params");
-            }
+            });
         });
+    }
+});
 
-    } else if (req.url === '/get_alt_block_details') {
-        var body = [];
-        req.on('data', function (chunk) {
-            body.push(chunk);
-        }).on('end', function () {
-            if (!body.length) {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'id' param");
-                return;
-            }
-            body = Buffer.concat(body).toString();
-            var params_object = JSON.parse(body);
+app.get('/get_tx_pool_details/:count', (req, res) => {
+    let count = req.params.count;
+    if (count !== undefined) {
+        db.serialize(function () {
+            db.all("SELECT * FROM pool ORDER BY timestamp DESC limit ?", [count], function (err, rows) {
+                res.send(JSON.stringify(rows));
+            });
 
-            if (params_object.id) {
-                db.get("SELECT * FROM alt_blocks WHERE hash == ? ;", [params_object.id], function (err, row) {
-                    res.writeHead(200, headers);
-                    res.end(JSON.stringify(row));
-                });
-            } else {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'id' param");
-            }
-        });
-    } else if (req.url === '/get_info') {
-        res.writeHead(200, headers);
-        blockInfo.lastBlock = lastBlock.height;
-        res.end(JSON.stringify(blockInfo));
-    } else if (req.url === '/get_tx_details') {
-        var body = [];
-        req.on('data', function (chunk) {
-            body.push(chunk);
-        }).on('end', function () {
-            if (!body.length) {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'tx_hash' param");
-                return;
-            }
-            body = Buffer.concat(body).toString();
-            var params_object = JSON.parse(body);
-
-            if (params_object.tx_hash) {
-                db.serialize(function () {
-                    db.all("SELECT transactions.*, blocks.id as block_hash, blocks.timestamp as block_timestamp FROM transactions LEFT JOIN blocks ON transactions.keeper_block = blocks.height WHERE transactions.id == ? ;", [params_object.tx_hash], function (err, row) {
-                        if (row.length) {
-                            res.writeHead(200, headers);
-                            res.end(JSON.stringify(row[0]));
-                        } else {
-                            get_tx_details(params_object.tx_hash, function (code, data) {
-                                if (code === 200) {
-                                    res.writeHead(200, headers);
-                                    if (data.result !== undefined) {
-                                        res.end(JSON.stringify(data.result.tx_info));
-                                    } else {
-                                        res.writeHead(400, headers);
-                                        res.end("Error. Need 'tx_hash' param");
-                                    }
-                                } else {
-                                    res.writeHead(400, headers);
-                                    res.end("Error. Need 'tx_hash' param");
-                                }
-                            });
-                        }
-                    });
-                });
-            } else {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'tx_hash' param");
-            }
-        });
-
-    } else if (req.url === '/search_by_id') {
-        var body = [];
-        req.on('data', function (chunk) {
-            body.push(chunk);
-        }).on('end', function () {
-            if (!body.length) {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'id' param");
-                return;
-            }
-            body = Buffer.concat(body).toString();
-            var params_object = JSON.parse(body);
-
-            if (params_object.id) {
-                db.get("SELECT * FROM blocks WHERE id == ? ;", [params_object.id], function (err, row) {
-                    if (row === undefined) {
-                        db.get("SELECT * FROM alt_blocks WHERE hash == ? ;", [params_object.id], function (err, row) {
-                            if (row === undefined) {
-                                db.get("SELECT * FROM transactions WHERE id == ? ;", [params_object.id], function (err, row) {
-                                    if (row === undefined) {
-                                        get_tx_details(params_object.id, function (code, data) {
-                                            if (code === 200) {
-                                                if (data.result) {
-                                                    res.writeHead(200, headers);
-                                                    res.end(JSON.stringify({result: "tx"}));
-                                                } else {
-                                                    res.writeHead(200, headers);
-                                                    res.end(JSON.stringify({result: "NOT FOUND"}));
-                                                }
-                                            } else {
-                                                res.writeHead(200, headers);
-                                                res.end(JSON.stringify({result: "NOT FOUND"}));
-                                            }
-                                        });
-                                    } else {
-                                        res.writeHead(200, headers);
-                                        res.end(JSON.stringify({result: "tx"}));
-                                    }
-                                });
-                            } else {
-                                res.writeHead(200, headers);
-                                res.end(JSON.stringify({result: "alt_block"}));
-                            }
-                        });
-                    } else {
-                        res.writeHead(200, headers);
-                        res.end(JSON.stringify({result: "block"}));
-                    }
-                });
-            } else {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'id' param");
-            }
-        });
-
-    } else if (req.url === '/get_out_info') {
-        var body = [];
-        req.on('data', function (chunk) {
-            body.push(chunk);
-        }).on('end', function () {
-            if (!body.length) {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'amount' and 'i' param");
-                return;
-            }
-            body = Buffer.concat(body).toString();
-            var params_object = JSON.parse(body);
-
-            if (params_object.amount !== undefined && params_object.i !== undefined) {
-                db.get("SELECT * FROM out_info WHERE amount = ? AND i = ?", [params_object.amount, params_object.i], function (err, row) {
-                    res.writeHead(200, headers);
-                    if (row === undefined) {
-                        get_out_info(params_object.amount, params_object.i, function (code, data) {
-                            res.writeHead(code, headers);
-                            res.end(JSON.stringify({tx_id: data.result.tx_id}));
-                        });
-                    } else {
-                        res.end(JSON.stringify(row));
-                    }
-                });
-            } else {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'amount' and 'i' param");
-            }
-        });
-    } else if (req.url === '/get_api') {
-        if (api) {
-            res.writeHead(200, headers);
-            res.end(JSON.stringify({result: api.replace("http://", "")}));
-        } else {
-            res.writeHead(400, headers);
-            res.end("api link not found");
-        }
-    } else if (req.url === '/get_tx_pool_details') {
-        var body = [];
-        req.on('data', function (chunk) {
-            body.push(chunk);
-        }).on('end', function () {
-            if (!body.length) {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'count' params");
-                return;
-            }
-            body = Buffer.concat(body).toString();
-            var params_object = JSON.parse(body);
-
-            if (params_object.count !== undefined) {
-                db.serialize(function () {
-                    db.all("SELECT * FROM pool ORDER BY timestamp DESC limit ?", [params_object.count], function (err, rows) {
-                        res.writeHead(200, headers);
-                        res.end(JSON.stringify(rows));
-                    });
-                });
-            } else {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'count' params");
-            }
-        });
-    } else if (req.url === '/get_aliases') {
-        var body = [];
-        req.on('data', function (chunk) {
-            body.push(chunk);
-        }).on('end', function () {
-            if (!body.length) {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'offset' and 'count' params");
-                return;
-            }
-            body = Buffer.concat(body).toString();
-            var params_object = JSON.parse(body);
-
-            if (params_object.offset !== undefined && params_object.count !== undefined) {
-                if (params_object.count > maxCount) {
-                    params_object.count = maxCount;
-                }
-                var where = '';
-                if (params_object.search !== undefined && params_object.search.length) {
-                    where += " AND (alias LIKE '%" + params_object.search + "%' OR address LIKE '%" + params_object.search + "%' OR comment LIKE '%" + params_object.search + "%') ";
-                }
-                db.serialize(function () {
-                    db.all("SELECT * FROM aliases WHERE enabled == 1 " + where + " ORDER BY block DESC limit ? offset ?", [params_object.count, params_object.offset], function (err, rows) {
-                        res.writeHead(200, headers);
-                        res.end(JSON.stringify(rows));
-                    });
-                });
-            } else {
-                res.writeHead(400, headers);
-                res.end("Error. Need 'offset' and 'count' params");
-            }
-        });
-    } else if (req.url === '/get_chart') {
-        var body = [];
-        req.on('data', function (chunk) {
-            body.push(chunk);
-        }).on('end', function () {
-            if (!body.length) {
-                res.writeHead(400, headers);
-                res.end("Error. Need chart");
-                return;
-            }
-            body = Buffer.concat(body).toString();
-            var params_object = JSON.parse(body);
-            if (params_object.chart !== undefined) {
-                let period = Math.round(new Date().getTime() / 1000) - (24 * 3600); // + 86400000
-                let period2 = Math.round(new Date().getTime() / 1000) - (48 * 3600); // + 86400000
-                // if (params_object.period === 'day') {
-                //   // period = parseInt((period.setDate(period.getDate() - 86400000)) / 1000);
-                //   period = parseInt(period - 86400000) / 1000;
-                //   console.log(period);
-                // } else if (params_object.period === 'week') {
-                //   period = parseInt((period.setDate(period.getDate()-7)) / 1000);
-                // } else if (params_object.period === 'month') {
-                //   period = parseInt((period.setMonth(period.getMonth()-1)) / 1000);
-                // } else if (params_object.period === '3month') {
-                //   period = parseInt((period.setMonth(period.getMonth()-3)) / 1000);
-                // } else if (params_object.period === '6month') {
-                //   period = parseInt((period.setMonth(period.getMonth()-6)) / 1000);
-                // } else if (params_object.period === 'year') {
-                //   period = parseInt((period.setMonth(period.getMonth()-12)) / 1000);
-                // }
-                if (params_object.chart === 'all') {
-                    // const arrayAll = [];
-                    db.serialize(function () {
-                        // Charts AvgBlockSize, AvgTransPerBlock, difficultyPoS, difficultyPoW
-                        db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs, tr_count as trc, difficulty as d, type as t FROM charts WHERE actual_timestamp > " + period, function (err, arrayAll) {
-                            res.writeHead(200, headers);
-                            if (err) {
-                                console.log('all charts error', err);
-                                res.end(JSON.stringify(err));
-                            } else {
-                                // Chart Confirmed Transactions Per Day
-                                db.all("SELECT actual_timestamp as at, SUM(tr_count) as sum_trc FROM charts GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function (err, rows0) {
-                                    res.writeHead(200, headers);
-                                    if (err) {
-                                        console.log('all charts confirmed-transactions-per-day', err);
-                                        res.end(JSON.stringify(err));
-                                    } else {
-                                        // Chart HashRate
-                                        db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1 AND actual_timestamp > " + period2, function (err, rows1) {
-                                            if (err) {
-                                                console.log(err);
-                                                res.end(JSON.stringify(err));
-                                            } else {
-                                                arrayAll[0] = rows0;
-                                                arrayAll[1] = rows1;
-                                                res.end(JSON.stringify(arrayAll));
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    });
-                } else if (params_object.chart === 'AvgBlockSize') {
-                    db.serialize(function () {
-                        db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs FROM charts", function (err, rows) {
-                            res.writeHead(200, headers);
-                            if (err) {
-                                res.end(JSON.stringify(err));
-                            } else {
-                                res.end(JSON.stringify(rows));
-                            }
-                        });
-                    });
-                } else if (params_object.chart === 'AvgTransPerBlock') {
-                    db.serialize(function () {
-                        db.all("SELECT actual_timestamp as at, tr_count as trc FROM charts", function (err, rows) {
-                            res.writeHead(200, headers);
-                            if (err) {
-                                res.end(JSON.stringify(err));
-                            } else {
-                                res.end(JSON.stringify(rows));
-                            }
-                        });
-                    });
-                } else if (params_object.chart === 'hashRate') {
-                    db.serialize(function () {
-                        db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1", function (err, rows) {
-                            res.writeHead(200, headers);
-                            if (err) {
-                                res.end(JSON.stringify(err));
-                            } else {
-                                // for (let i = 0; i < rows.length; i++) {
-                                //     rows[i]['hashrate100'] = (i > 99) ? ((rows[i]['cumulative_diff_precise'] - rows[i - 100]['cumulative_diff_precise']) / (rows[i]['actual_timestamp'] - rows[i - 100]['actual_timestamp'])) : 0;
-                                //     rows[i]['hashrate400'] = (i > 399) ? ((rows[i]['cumulative_diff_precise'] - rows[i - 400]['cumulative_diff_precise']) / (rows[i]['actual_timestamp'] - rows[i - 400]['actual_timestamp'])) : 0;
-                                // }
-                                res.end(JSON.stringify(rows));
-                            }
-                        });
-                    });
-                } else if (params_object.chart === 'pos-difficulty') {
-                    db.serialize(function () {
-                        db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=0", function (err, rows) {
-                            res.writeHead(200, headers);
-                            if (err) {
-                                res.end(JSON.stringify(err));
-                                console.log(err);
-                            } else {
-                                res.end(JSON.stringify(rows));
-                            }
-                        });
-                    });
-                } else if (params_object.chart === 'pow-difficulty') {
-                    db.serialize(function () {
-                        db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=1", function (err, rows) {
-                            res.writeHead(200, headers);
-                            if (err) {
-                                res.end(JSON.stringify(err));
-                                console.log(err);
-                            } else {
-                                res.end(JSON.stringify(rows));
-                            }
-                        });
-                    });
-                } else if (params_object.chart === 'ConfirmTransactPerDay') {
-                    db.serialize(function () {
-                        db.all("SELECT actual_timestamp as at, SUM(tr_count) as sum_trc FROM charts GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function (err, rows) {
-                            res.writeHead(200, headers);
-                            if (err) {
-                                res.end(JSON.stringify(err));
-                            } else {
-                                res.end(JSON.stringify(rows));
-                            }
-                        });
-                    });
-                }
-            } else {
-                res.writeHead(400, headers);
-                res.end("Error. Need chart params");
-            }
         });
     } else {
-        file.serve(req, res, function (e) {
-            if (e && (e.status === 404)) {
-                file.serveFile('/index.html', 200, {}, req, res);
+        res.send("Error. Need 'count' params");
+    }
+});
+
+
+// Alt-blocks
+app.get('/get_alt_blocks_details/:offset/:count', (req, res) => {
+    let offset = req.params.offset;
+    let count = req.params.count;
+
+    if (count > maxCount) {
+        count = maxCount;
+    }
+    db.all("SELECT * FROM alt_blocks ORDER BY height DESC limit ? offset ?", [count, offset], function (err, rows) {
+        res.send(JSON.stringify(rows));
+    });
+});
+
+app.get('/get_alt_block_details/:id', (req, res) => {
+    let id = req.params.id;
+    if (id) {
+        db.get("SELECT * FROM alt_blocks WHERE hash == ? ;", [id], function (err, row) {
+            res.send(JSON.stringify(row));
+        });
+    }
+});
+
+
+// Transactions
+app.get('/get_tx_details/:tx_hash', (req, res) => {
+    let tx_hash = req.params.tx_hash;
+    if (tx_hash) {
+        db.serialize(function () {
+            db.all("SELECT transactions.*, blocks.id as block_hash, blocks.timestamp as block_timestamp FROM transactions LEFT JOIN blocks ON transactions.keeper_block = blocks.height WHERE transactions.id == ? ;", [tx_hash], function (err, row) {
+                if (row.length) {
+                    res.send(JSON.stringify(row[0]));
+                } else {
+                    get_tx_details(tx_hash, function (code, data) {
+                        if (code === 200) {
+                            if (data.result !== undefined) {
+                                res.send(JSON.stringify(data.result.tx_info));
+                            } else {
+                                res.send("Error. Need 'tx_hash' param");
+                            }
+                        } else {
+                            res.send("Error. Need 'tx_hash' param");
+                        }
+                    });
+                }
+            });
+        });
+    }
+});
+
+app.get('/get_out_info/:amount/:i', (req, res) => {
+    let amount = req.params.amount;
+    let i = req.params.i;
+
+    if (amount !== undefined && i !== undefined) {
+        db.get("SELECT * FROM out_info WHERE amount = ? AND i = ?", [amount, i], function (err, row) {
+            if (row === undefined) {
+                get_out_info(amount, i, function (code, data) {
+                    res.send(JSON.stringify({tx_id: data.result.tx_id}));
+                });
+            } else {
+                res.send(JSON.stringify(row));
             }
         });
     }
 
-
-    //   } else {
-    //     res.statusCode = 401;
-    //     res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-    //     res.end('<html><body>Password not correct</body></html>');
-    //   }
-    // }
+});
 
 
-}).listen(parseInt(front_port));
+// Aliases
+app.get('/get_aliases/:offset/:count/:search', (req, res) => {
+    let offset = req.params.offset;
+    let count = req.params.count;
+    let search = req.params.search;
+    if (count > maxCount) {
+        count = maxCount;
+    }
+    if (search === 'all' && offset !== undefined && count !== undefined) {
+        db.serialize(function () {
+            db.all("SELECT * FROM aliases WHERE enabled == 1 ORDER BY block DESC limit ? offset ?", [count, offset], function (err, rows) {
+                res.send(JSON.stringify(rows));
+            });
+        });
+    } else if (search !== undefined && offset !== undefined && count !== undefined) {
+        db.serialize(function () {
+            db.all("SELECT * FROM aliases WHERE enabled == 1 AND (alias LIKE '%" + search + "%' OR address LIKE '%" + search + "%' OR comment LIKE '%" + search + "%') ORDER BY block DESC limit ? offset ?", [count, offset], function (err, rows) {
+                res.send(JSON.stringify(rows));
+            });
+        });
+    }
+});
+
+
+// Charts
+app.get('/get_chart/:chart/:period', (req, res) => {
+    let chart = req.params.chart;
+    let period = req.params.period; // temporarily unused
+
+    if (chart !== undefined) {
+        let period = Math.round(new Date().getTime() / 1000) - (24 * 3600); // + 86400000
+        let period2 = Math.round(new Date().getTime() / 1000) - (48 * 3600); // + 86400000
+        // if (params_object.period === 'day') {
+        //   // period = parseInt((period.setDate(period.getDate() - 86400000)) / 1000);
+        //   period = parseInt(period - 86400000) / 1000;
+        //   console.log(period);
+        // } else if (params_object.period === 'week') {
+        //   period = parseInt((period.setDate(period.getDate()-7)) / 1000);
+        // } else if (params_object.period === 'month') {
+        //   period = parseInt((period.setMonth(period.getMonth()-1)) / 1000);
+        // } else if (params_object.period === '3month') {
+        //   period = parseInt((period.setMonth(period.getMonth()-3)) / 1000);
+        // } else if (params_object.period === '6month') {
+        //   period = parseInt((period.setMonth(period.getMonth()-6)) / 1000);
+        // } else if (params_object.period === 'year') {
+        //   period = parseInt((period.setMonth(period.getMonth()-12)) / 1000);
+        // }
+        if (chart === 'all') {
+            db.serialize(function () {
+                // Charts AvgBlockSize, AvgTransPerBlock, difficultyPoS, difficultyPoW
+                db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs, tr_count as trc, difficulty as d, type as t FROM charts WHERE actual_timestamp > " + period, function (err, arrayAll) {
+                    if (err) {
+                        log('all charts error', err);
+                    } else {
+                        // Chart Confirmed Transactions Per Day
+                        db.all("SELECT actual_timestamp as at, SUM(tr_count) as sum_trc FROM charts GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function (err, rows0) {
+                            if (err) {
+                                log('all charts confirmed-transactions-per-day', err);
+                            } else {
+                                // Chart HashRate
+                                db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1 AND actual_timestamp > " + period2, function (err, rows1) {
+                                    if (err) {
+                                        log('all hashrate', err);
+                                    } else {
+                                        arrayAll[0] = rows0;
+                                        arrayAll[1] = rows1;
+                                        res.send(JSON.stringify(arrayAll));
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        } else if (chart === 'AvgBlockSize') {
+            db.serialize(function () {
+                db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs FROM charts", function (err, rows) {
+                    if (err) {
+                        log('AvgBlockSize', err);
+                    } else {
+                        res.send(JSON.stringify(rows));
+                    }
+                });
+            });
+        } else if (chart === 'AvgTransPerBlock') {
+            db.serialize(function () {
+                db.all("SELECT actual_timestamp as at, tr_count as trc FROM charts", function (err, rows) {
+                    if (err) {
+                        log('AvgTransPerBlock', err);
+                    } else {
+                        res.send(JSON.stringify(rows));
+                    }
+                });
+            });
+        } else if (chart === 'hashRate') {
+            db.serialize(function () {
+                db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1", function (err, rows) {
+                    if (err) {
+                        log('hashrate', err);
+                    } else {
+                        // for (let i = 0; i < rows.length; i++) {
+                        //     rows[i]['hashrate100'] = (i > 99) ? ((rows[i]['cumulative_diff_precise'] - rows[i - 100]['cumulative_diff_precise']) / (rows[i]['actual_timestamp'] - rows[i - 100]['actual_timestamp'])) : 0;
+                        //     rows[i]['hashrate400'] = (i > 399) ? ((rows[i]['cumulative_diff_precise'] - rows[i - 400]['cumulative_diff_precise']) / (rows[i]['actual_timestamp'] - rows[i - 400]['actual_timestamp'])) : 0;
+                        // }
+                        res.send(JSON.stringify(rows));
+                    }
+                });
+            });
+        } else if (chart === 'pos-difficulty') {
+            db.serialize(function () {
+                db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=0", function (err, rows) {
+                    if (err) {
+                        log('pos-difficulty', err);
+                    } else {
+                        res.send(JSON.stringify(rows));
+                    }
+                });
+            });
+        } else if (chart === 'pow-difficulty') {
+            db.serialize(function () {
+                db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=1", function (err, rows) {
+                    if (err) {
+                        log('pow-difficulty', err);
+                    } else {
+                        res.send(JSON.stringify(rows));
+                    }
+                });
+            });
+        } else if (chart === 'ConfirmTransactPerDay') {
+            db.serialize(function () {
+                db.all("SELECT actual_timestamp as at, SUM(tr_count) as sum_trc FROM charts GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp;", function (err, rows) {
+                    if (err) {
+                        log('ConfirmTransactPerDay', err);
+                    } else {
+                        res.send(JSON.stringify(rows));
+                    }
+                });
+            });
+        }
+    }
+
+
+});
+
+// Search
+app.get('/search_by_id/:id', (req, res) => {
+    let id = req.params.id;
+
+    if (id) {
+        db.get("SELECT * FROM blocks WHERE id == ? ;", [id], function (err, row) {
+            if (row === undefined) {
+                db.get("SELECT * FROM alt_blocks WHERE hash == ? ;", [id], function (err, row) {
+                    if (row === undefined) {
+                        db.get("SELECT * FROM transactions WHERE id == ? ;", [id], function (err, row) {
+                            if (row === undefined) {
+                                get_tx_details(id, function (code, data) {
+                                    if (code === 200) {
+                                        if (data.result) {
+                                            res.send(JSON.stringify({result: "tx"}));
+                                        } else {
+                                            res.send(JSON.stringify({result: "NOT FOUND"}));
+                                        }
+                                    } else {
+                                        res.send(JSON.stringify({result: "NOT FOUND"}));
+                                    }
+                                });
+                            } else {
+                                res.send(JSON.stringify({result: "tx"}));
+                            }
+                        });
+                    } else {
+                        res.send(JSON.stringify({result: "alt_block"}));
+                    }
+                });
+            } else {
+                res.send(JSON.stringify({result: "block"}));
+            }
+        });
+    }
+});
 
 
 var lastBlock = {
@@ -796,17 +605,17 @@ db.serialize(function () {
 
     db.run("DELETE FROM alt_blocks");
     db.get("SELECT * FROM blocks WHERE height=(SELECT MAX(height) FROM blocks)", [], function (err, row) {
-        if (err) log(err);
+        if (err) log('select from blocks', err);
         if (row) {
             lastBlock = row;
         }
         db.get("SELECT COUNT(*) AS alias FROM aliases", function (err, row) {
-            if (err) log(err);
+            if (err) log('select count alias', err);
             if (row) {
                 countAliasesDB = row.alias;
             }
             db.get("SELECT COUNT(*) AS height FROM alt_blocks", function (err, row) {
-                if (err) log(err);
+                if (err) log('select count alt-blocks', err);
                 if (row) {
                     countAltBlocksDB = row.height;
                 }
@@ -827,11 +636,6 @@ db.serialize(function () {
 
 });
 
-function log(msg) {
-    var t = new Date();
-    console.log(t.getFullYear() + "-" + t.getMonth() + "-" + t.getDate() + " " + t.getHours() + ":" + t.getMinutes() + ":" + t.getSeconds() + "." + t.getMilliseconds() + " " + msg);
-}
-
 var block_array = [];
 var pools_array = [];
 
@@ -848,7 +652,7 @@ function syncPool() {
                 });
 
                 db.all("SELECT id FROM pool", function (err, rows) {
-                    if (err) log(err);
+                    if (err) log('select id from pool', err);
                     var new_ids = [];
                     for (var j = 0; j < pools_array.length; j++) {
                         var find = false;
@@ -956,7 +760,7 @@ function syncTransactions(success) {
                     if (localBl.type === 1) {
                         db.all("SELECT height, actual_timestamp, cumulative_diff_precise FROM charts WHERE type=1", function (err, rows) {
                             if (err) {
-                                log(err);
+                                log('syncTransactions', err);
                             } else {
                                 for (let i = 0; i < rows.length; i++) {
                                     hashrate100 = (i > 99 - 1) ? ((localBl['cumulative_diff_precise'] - rows[rows.length - 100]['cumulative_diff_precise']) / (localBl['actual_timestamp'] - rows[rows.length - 100]['actual_timestamp'])) : 0;
@@ -1303,3 +1107,213 @@ function getInfoTimer() {
         }, 10000);
     }
 }
+
+
+// API
+app.get('/api/get_info', (req, res) => {
+    axios({
+        method: 'get',
+        url: api,
+        data: {
+            method: 'getinfo',
+            params: {'flags': 0x410},
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then((response) => {
+            res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+           log('api get_info', error);
+        });
+});
+
+app.get('/api/get_blocks_details/:start/:count', (req, res) => {
+    let start = req.params.start;
+    let count = req.params.count;
+    axios({
+        method: 'get',
+        url: api,
+        data: {
+            method: 'get_blocks_details',
+            params: {
+                "height_start": parseInt(start ? start : 0),
+                "count": parseInt(count ? count : 10),
+                "ignore_transactions": false
+            },
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then(function (response) {
+            res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+            log('api get_blocks_details failed', error);
+        });
+});
+
+app.get('/api/get_main_block_details/:id', (req, res) => {
+    let id = req.params.id;
+    axios({
+        method: 'get',
+        url: api,
+        data: {
+            method: 'get_main_block_details',
+            params: {
+                'id': id
+            },
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then(function (response) {
+            res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+            log('api get_main_block_details failed', error);
+        });
+});
+
+app.get('/api/get_alt_blocks_details/:offset/:count', (req, res) => {
+    let offset = req.params.offset;
+    let count = req.params.count;
+    axios({
+        method: 'get',
+        url: api,
+        data: {
+            method: 'get_alt_blocks_details',
+            params: {
+                "offset": parseInt(offset),
+                "count": parseInt(count)
+            },
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then(function (response) {
+            res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+            log('api get_alt_blocks_details failed' ,error);
+        });
+});
+
+app.get('/api/get_alt_block_details/:id', (req, res) => {
+    let id = req.params.id;
+    axios({
+        method: 'get',
+        url: api,
+        data: {
+            method: 'get_alt_block_details',
+            params: {
+                'id': id
+            },
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then(function (response) {
+            res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+            log('api get_alt_block_details failed', error);
+        });
+});
+
+// app.get('/api/get_all_pool_tx_list', (req, res) => {
+//     axios({
+//         method: 'get',
+//         url: api,
+//         data: {
+//             method: 'get_pool_txs_details',
+//         },
+//         transformResponse: [data => JSONbig.parse(data)]
+//     })
+//         .then((response) => {
+//             res.send(JSON.stringify(response.data));
+//         })
+//         .catch(function (error) {
+//             log('api get_all_pool_tx_list failed', error);
+//         });
+// });
+
+app.get('/api/get_pool_txs_details', (req, res) => {
+    // let count = req.params.count;
+    axios({
+        method: 'get',
+        url: api,
+        data: {
+            method: 'get_pool_txs_details',
+            // params: {'ids': count},
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then((response) => {
+            res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+            log('api get_pool_txs_details failed', error);
+        });
+});
+
+app.get('/api/get_pool_txs_brief_details', (req, res) => {
+    // let count = req.params.count;
+    axios({
+        method: 'get',
+        url: api,
+        data: {
+            method: 'get_pool_txs_brief_details',
+            // params: {'ids': count},
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then((response) => {
+            res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+            log('api get_pool_txs_details failed', error);
+        });
+});
+
+app.get('/api/get_tx_details/:tx_hash', (req, res) => {
+    let tx_hash = req.params.tx_hash;
+    axios({
+        method: 'get',
+        url: api,
+        data: {
+            method: 'get_tx_details',
+            params: {'tx_hash': tx_hash},
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then((response) => {
+            res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+            log('api get_tx_details failed', error);
+        });
+});
+
+// app.get('/api/get_out_info/:amount/:i', (req, res) => {
+//     let amount = req.params.amount;
+//     let i = req.params.i;
+//     axios({
+//         method: 'get',
+//         url: api,
+//         data: {
+//             method: 'get_out_info',
+//             params: {'amount': amount, 'i': i},
+//         },
+//         transformResponse: [data => JSONbig.parse(data)]
+//     })
+//         .then((response) => {
+//             res.send(JSON.stringify(response.data));
+//         })
+//         .catch(function (error) {
+//             log('api get_tx_details failed', error);
+//         });
+// });
+
+
+// Start the server
+const server = app.listen(parseInt(front_port), (req, res, error) => {
+    if (error) return log(`Error: ${error}`);
+    log(`Server listening on port ${server.address().port}`);
+});

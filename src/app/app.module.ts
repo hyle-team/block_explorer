@@ -8,12 +8,15 @@ import {MomentModule} from 'angular2-moment';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {CookieService, CookieOptions} from 'angular2-cookie/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {NgxJsonViewerModule} from 'ngx-json-viewer';
+
 
 import {ChartModule} from 'angular-highcharts';
 import * as highstock from 'highcharts/modules/stock.src';
 
 import * as Highcharts from 'highcharts';
 import StockModule from 'highcharts/modules/stock';
+
 StockModule(Highcharts);
 
 
@@ -31,6 +34,7 @@ import {MoneyParsePipe} from './pipes.pipe';
 import {TruncatePipe} from './pipes.pipe';
 import {TimeAgoPipe} from './pipes.pipe';
 import {SortByAlphabetPipe} from './pipes.pipe';
+import {HashPowerConverterPipe} from './pipes.pipe';
 
 // Components
 import {AppComponent} from './app.component';
@@ -45,14 +49,13 @@ import {DialogComponent} from './dialog/dialog.component';
 import {ServerErrorComponent} from './server-error/server-error.component';
 import {SearchComponent} from './search/search.component';
 import {ChartsComponent} from './charts/charts.component';
-import { AvgBlockSizeComponent } from './charts/avg-block-size/avg-block-size.component';
-import { AvgTransPerBlockComponent } from './charts/avg-trans-per-block/avg-trans-per-block.component';
-import { HashrateComponent } from './charts/hashrate/hashrate.component';
-import { DifficultyComponent } from './charts/difficulty/difficulty.component';
-import { ConfirmTransPerDayComponent } from './charts/confirm-trans-per-day/confirm-trans-per-day.component';
-import { DifficultyPowComponent } from './charts/difficulty-pow/difficulty-pow.component';
-import { ApiComponent } from './api/api.component';
-import { ResponseJsonComponent } from './response-json/response-json.component';
+import {AvgBlockSizeComponent} from './charts/avg-block-size/avg-block-size.component';
+import {AvgTransPerBlockComponent} from './charts/avg-trans-per-block/avg-trans-per-block.component';
+import {HashrateComponent} from './charts/hashrate/hashrate.component';
+import {DifficultyComponent} from './charts/difficulty/difficulty.component';
+import {ConfirmTransPerDayComponent} from './charts/confirm-trans-per-day/confirm-trans-per-day.component';
+import {DifficultyPowComponent} from './charts/difficulty-pow/difficulty-pow.component';
+import {ApiComponent} from './api/api.component';
 
 
 @NgModule({
@@ -86,8 +89,8 @@ import { ResponseJsonComponent } from './response-json/response-json.component';
         TruncatePipe,
         TimeAgoPipe,
         SortByAlphabetPipe,
+        HashPowerConverterPipe,
         ApiComponent,
-        ResponseJsonComponent,
     ],
     imports: [
         BrowserModule,
@@ -97,6 +100,7 @@ import { ResponseJsonComponent } from './response-json/response-json.component';
         BrowserAnimationsModule,
         MomentModule,
         MatProgressSpinnerModule,
+        NgxJsonViewerModule,
         ChartModule,
     ],
     providers: [
@@ -105,7 +109,7 @@ import { ResponseJsonComponent } from './response-json/response-json.component';
         ResolveAltBlock,
         CookieService, {provide: CookieOptions, useValue: false},
         MobileNavState,
-        {provide: ChartModule, useFactory: () => [ highstock ] }
+        {provide: ChartModule, useFactory: () => [highstock]}
     ],
     bootstrap: [AppComponent]
 })

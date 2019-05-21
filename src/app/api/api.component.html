@@ -9,14 +9,8 @@
         </div>
         <div class="row">
             <div class="title">URL Request Format</div>
-            <!--            <div class="value"><code>http://moneroblocks.info/api/{method}/{param1}/{param2}/</code></div>-->
-            <div>url format</div>
+            <div class="value">{{objectLinks.url_request_format}}</div>
         </div>
-    </div>
-    <div class="response">
-        <code>
-
-        </code>
     </div>
 </div>
 
@@ -33,28 +27,117 @@
         </div>
     </div>
     <div class="response">
-        <code>
-            <pre></pre>
-        </code>
+        <div class="title">JSON Response</div>
+        <ngx-json-viewer [json]="infoExample" [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
 
 <div class="item_box">
-    <div class="heading">Request a given block header by height or hash</div>
+    <div class="heading">Request blocks (offset and count)</div>
     <div class="info">
         <div class="row">
             <div class="title">Method</div>
-            <div class="value">get_main_blocks_details</div>
+            <div class="value">get_blocks_details</div>
         </div>
         <div class="row">
             <div class="title">Example</div>
-            <div class="value">https://explorer.zano.org/api/get_main_blocks_details[:height]</div>
+            <div class="value">{{objectLinks.url_get_blocks_details}}</div>
         </div>
     </div>
     <div class="response">
-        <code>
-            <pre></pre>
-        </code>
+        <div class="title">JSON Response</div>
+        <ngx-json-viewer [json]="getBlocksDetails" [expanded]="false"></ngx-json-viewer>
+    </div>
+</div>
+
+<div class="item_box">
+    <div class="heading">Request a given block by hash</div>
+    <div class="info">
+        <div class="row">
+            <div class="title">Method</div>
+            <div class="value">get_main_block_details</div>
+        </div>
+        <div class="row">
+            <div class="title">Example</div>
+            <div class="value">{{objectLinks.url_get_main_block_details}}</div>
+        </div>
+    </div>
+    <div class="response">
+        <div class="title">JSON Response</div>
+        <ngx-json-viewer [json]="getMainBlockDetails" [expanded]="false"></ngx-json-viewer>
+    </div>
+</div>
+
+<div class="item_box">
+    <div class="heading">Request Alt-blocks (offset and count)</div>
+    <div class="info">
+        <div class="row">
+            <div class="title">Method</div>
+            <div class="value">get_alt_blocks_details</div>
+        </div>
+        <div class="row">
+            <div class="title">Example</div>
+            <div class="value">{{objectLinks.url_get_alt_blocks_details}}</div>
+        </div>
+    </div>
+    <div class="response">
+        <div class="title">JSON Response</div>
+        <ngx-json-viewer [json]="getAltBlocksDetails" [expanded]="false"></ngx-json-viewer>
+    </div>
+</div>
+
+
+<div class="item_box">
+    <div class="heading">Request a given Alt-block by hash</div>
+    <div class="info">
+        <div class="row">
+            <div class="title">Method</div>
+            <div class="value">get_alt_block_details</div>
+        </div>
+        <div class="row">
+            <div class="title">Example</div>
+            <div class="value">{{objectLinks.url_get_alt_block_details}}</div>
+        </div>
+    </div>
+    <div class="response">
+        <div class="title">JSON Response</div>
+        <ngx-json-viewer [json]="getAltBlockDetails" [expanded]="false"></ngx-json-viewer>
+    </div>
+</div>
+
+<div class="item_box">
+    <div class="heading">Request transaction from the pool</div>
+    <div class="info">
+        <div class="row">
+            <div class="title">Method</div>
+            <div class="value">get_all_pool_tx_list</div>
+        </div>
+        <div class="row">
+            <div class="title">Example</div>
+            <div class="value">{{objectLinks.url_get_pool_txs_details}}</div>
+        </div>
+    </div>
+    <div class="response">
+        <div class="title">JSON Response</div>
+        <ngx-json-viewer [json]="geAllPoolTXlist" [expanded]="false"></ngx-json-viewer>
+    </div>
+</div>
+
+<div class="item_box">
+    <div class="heading">Request brief information transactions from the pool</div>
+    <div class="info">
+        <div class="row">
+            <div class="title">Method</div>
+            <div class="value">get_pool_txs_brief_details</div>
+        </div>
+        <div class="row">
+            <div class="title">Example</div>
+            <div class="value">{{objectLinks.url_get_pool_txs_brief_details}}</div>
+        </div>
+    </div>
+    <div class="response">
+        <div class="title">JSON Response</div>
+        <ngx-json-viewer [json]="getPoolTXSbriefDetails" [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
 
@@ -67,10 +150,11 @@
         </div>
         <div class="row">
             <div class="title">Example</div>
-            <div class="value">https://explorer.zano.org/api/get_tx_details[:tx]</div>
+            <div class="value">{{objectLinks.url_get_tx_details}}</div>
         </div>
     </div>
     <div class="response">
-        <code><pre></pre></code>
+        <div class="title">JSON Response</div>
+        <ngx-json-viewer [json]="getTXdetails" [expanded]="false"></ngx-json-viewer>
     </div>
 </div>

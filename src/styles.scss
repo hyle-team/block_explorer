@@ -173,3 +173,9 @@ app-charts {
     display: none !important;
   }
 }
+.ngx-json-viewer {
+  padding: 0 5px;
+  .segment .segment-main .segment-key {
+    color: #fff !important;
+  }
+}

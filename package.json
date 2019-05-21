@@ -38,6 +38,7 @@
     "json-bigint": "^0.3.0",
     "json-bignum": "0.0.3",
     "json-bignumber": "^1.0.1",
+    "ngx-json-viewer": "^2.4.0",
     "node-static": "^0.7.11",
     "rxjs": "^6.3.3",
     "rxjs-compat": "^6.3.3",
