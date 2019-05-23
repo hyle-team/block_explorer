@@ -177,7 +177,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
   goToTransaction(connection) {
     this.connection = connection;
     this.currentIndex = this.connection.global_indexes[0];
-
     this.subscription7 = this.httpService.getConnectTransaction(this.connection.amount, this.currentIndex).subscribe(
       data => {
         this.ConnectTransaction = data;

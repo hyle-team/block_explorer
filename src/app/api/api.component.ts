@@ -16,12 +16,24 @@ export class ApiComponent implements OnInit {
     getPoolTXSbriefDetails: any;
     getTXdetails: any;
 
+    dropdowns = {
+        'info': false,
+        'blocks': false,
+        'block': false,
+        'altblocks': false,
+        'altblock': false,
+        'pool_transact': false,
+        'brief_pool_transact': false,
+        'transaction': false,
+    };
+
     constructor() {
     }
 
     ngOnInit() {
         this.objectLinks = {
             url_request_format: 'https://explorer.zano.org/api/{method}/{param1}/{param2}',
+            utl_get_info: 'https://explorer.zano.org/api/get_info/4294967295',
             url_get_blocks_details: 'https://explorer.zano.org/api/get_blocks_details/{:offset}/{:count}',
             url_get_main_block_details: 'https://explorer.zano.org/api/get_main_block_details/{:hash}',
             url_get_alt_blocks_details: 'https://explorer.zano.org/api/get_alt_blocks_details/{:offset}/{:count}',
@@ -701,4 +713,8 @@ export class ApiComponent implements OnInit {
         };
 
     }
+    clickEvent(name: string) {
+        this.dropdowns[name] = !this.dropdowns[name];
+    }
 }
+

@@ -1,9 +1,14 @@
+@import '../../assets/styles/base/mixins';
 .head_page {
   height: 77px;
   display: flex;
   align-items: center;
   color: #9eaacc;
   font-size: 14px;
+  @include max575 {
+    color: #fff;
+    font-size: 20px;
+  }
 }
 
 .item_box {
@@ -12,12 +17,21 @@
   margin-bottom: 25px;
   overflow: hidden;
   font-size: 13px;
+  @include  max575 {
+    overflow-x: auto;
+  }
   .heading {
     font-size: 21px;
     font-weight: 300;
     color: #fff;
     padding: 18px 20px;
     background: linear-gradient(to right, #1b3a8a, #32439f);
+    @include max575 {
+      min-width: 480px;
+    }
+    @include mobile {
+      font-size: 18px;
+    }
   }
   .info {
     .row {
@@ -26,6 +40,13 @@
       height: 40px;
       padding: 0 20px;
       color: #fff;
+      @include max575 {
+        flex-direction: column;
+        align-items: flex-start;
+        height: 60px;
+        padding: 7px 20px;
+        min-width: 480px;
+      }
 
       &:nth-child(2n) {
         background-color: #263163;
@@ -34,27 +55,76 @@
         &.title {
           flex-basis: 30%;
           font-size: 14px;
+          @include max575 {
+            display: flex;
+            flex-basis: 50%;
+            align-items: center;
+          }
         }
         &.value {
           flex-basis: 70%;
+          a {
+            color: #68a1ff;
+          }
+          @include max575 {
+            display: flex;
+            flex-basis: 50%;
+            align-items: center;
+          }
+        }
+      }
+      &.method {
+        @include max575 {
+          height: 40px;
+          flex-direction: row;
+          align-items: center;
+          .title {
+            flex-basis: auto;
+            padding-right: 7px;
+          }
+          .value {}
         }
       }
     }
   }
   .response {
-    padding-bottom: 20px;
+    //padding-bottom: 20px;
     .title {
       padding: 20px;
       color: #fff;
       font-size: 14px;
+      cursor: pointer;
+      padding-left: 40px;
+      .toggler {
+        position: relative;
+        color: #787878;
+        margin-left: -20px;
+        font-size: 12px;
+        line-height: 1.2;
+        &:after {
+          display: flex;
+          @include pseudo;
+          width: 15px;
+          height: 15px;
+          content: "►";
+          transition: transform 0.1s ease-in, -webkit-transform 0.1s ease-in;
+        }
+      }
     }
   }
 
 }
 
 
-//.ngx-json-viewer {
-//  .segment-key {
-//
-//  }
-//}
+ngx-json-viewer {
+  display: flex;
+  padding: 0 17px 20px 17px;
+  &.show {
+    padding-bottom: 20px;
+  }
+  &.hide {
+    display: flex;
+    height: 0;
+    overflow: hidden;
+  }
+}

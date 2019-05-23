@@ -11,11 +11,13 @@ config = JSON.parse(config);
 const api = config.api + '/json_rpc';
 const front_port = config.front_port;
 
+app.use(express.static('dist'));
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+
 let maxCount = 1000;
 
 function log(msg) {
@@ -150,7 +152,7 @@ function get_out_info(amount, i, callback) {
         url: api,
         data: {
             method: 'get_out_info',
-            params: {'amount': amount, 'i': i},
+            params: {'amount': parseInt(amount), 'i': parseInt(i)},
         },
         transformResponse: [data => JSONbig.parse(data)]
     })
@@ -162,7 +164,6 @@ function get_out_info(amount, i, callback) {
             callback(400, error);
         });
 }
-
 
 app.get('/get_info', (req, res) => {
     blockInfo.lastBlock = lastBlock.height;
@@ -1110,13 +1111,14 @@ function getInfoTimer() {
 
 
 // API
-app.get('/api/get_info', (req, res) => {
+app.get('/api/get_info/:flags', (req, res) => {
+    let flags = req.params.flags;
     axios({
         method: 'get',
         url: api,
         data: {
             method: 'getinfo',
-            params: {'flags': 0x410},
+            params: {'flags': parseInt(flags)},
         },
         transformResponse: [data => JSONbig.parse(data)]
     })
@@ -1311,6 +1313,9 @@ app.get('/api/get_tx_details/:tx_hash', (req, res) => {
 //         });
 // });
 
+app.use(function(req, res) {
+    res.sendFile(__dirname + '/dist/index.html');
+});
 
 // Start the server
 const server = app.listen(parseInt(front_port), (req, res, error) => {
