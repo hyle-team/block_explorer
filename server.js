@@ -610,7 +610,6 @@ db.serialize(function () {
         ');');
 
     db.run("CREATE INDEX if not exists index_bl_height ON charts(height);");
-    db.run("CREATE INDEX if not exists index_bl_height ON charts(actual_timestamp);");
 
 
     db.run("DELETE FROM alt_blocks");
