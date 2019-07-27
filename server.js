@@ -188,7 +188,7 @@ app.get('/get_blocks_details/:start/:count', (req, res) => {
 });
 
 app.get('/get_main_block_details/:id', (req, res) => {
-    let id = req.params.id;
+    let id = req.params.id.toLowerCase();;
     if (id) {
         db.serialize(function () {
             db.get("SELECT b2.id as next_id, b1.* FROM blocks as b1 left join blocks as b2 on b2.height > b1.height WHERE b1.id == ? ORDER BY b2.height ASC LIMIT 1;", [id], function (err, row) {
@@ -240,7 +240,7 @@ app.get('/get_alt_blocks_details/:offset/:count', (req, res) => {
 });
 
 app.get('/get_alt_block_details/:id', (req, res) => {
-    let id = req.params.id;
+    let id = req.params.id.toLowerCase();
     if (id) {
         db.get("SELECT * FROM alt_blocks WHERE hash == ? ;", [id], function (err, row) {
             res.send(JSON.stringify(row));
@@ -251,7 +251,7 @@ app.get('/get_alt_block_details/:id', (req, res) => {
 
 // Transactions
 app.get('/get_tx_details/:tx_hash', (req, res) => {
-    let tx_hash = req.params.tx_hash;
+    let tx_hash = req.params.tx_hash.toLowerCase();
     if (tx_hash) {
         db.serialize(function () {
             db.all("SELECT transactions.*, blocks.id as block_hash, blocks.timestamp as block_timestamp FROM transactions LEFT JOIN blocks ON transactions.keeper_block = blocks.height WHERE transactions.id == ? ;", [tx_hash], function (err, row) {
@@ -298,7 +298,7 @@ app.get('/get_out_info/:amount/:i', (req, res) => {
 app.get('/get_aliases/:offset/:count/:search', (req, res) => {
     let offset = req.params.offset;
     let count = req.params.count;
-    let search = req.params.search;
+    let search = req.params.search.toLowerCase();
     if (count > maxCount) {
         count = maxCount;
     }
@@ -440,8 +440,8 @@ app.get('/get_chart/:chart/:period', (req, res) => {
 
 // Search
 app.get('/search_by_id/:id', (req, res) => {
-    let id = req.params.id;
-
+    let id = req.params.id.toLowerCase();
+    console.log(id)
     if (id) {
         db.get("SELECT * FROM blocks WHERE id == ? ;", [id], function (err, row) {
             if (row === undefined) {
@@ -649,7 +649,7 @@ db.serialize(function () {
 var block_array = [];
 var pools_array = [];
 
-var serverTimeout = 30;
+var serverTimeout = 3000;
 
 function syncPool() {
     statusSyncPool = true;
