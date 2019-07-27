@@ -370,7 +370,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'AvgBlockSize') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs FROM charts ORDER BY actual_timestamp", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, avg(block_cumulative_size) as bcs FROM charts GROUP BY strftime('%Y-%m-%d, %H', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('AvgBlockSize', err);
                     } else {
@@ -380,7 +380,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'AvgTransPerBlock') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, tr_count as trc FROM charts ORDER BY actual_timestamp", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, avg(tr_count) as trc FROM charts GROUP BY strftime('%Y-%m-%d, %H', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('AvgTransPerBlock', err);
                     } else {
@@ -390,7 +390,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'hashRate') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1 ORDER BY actual_timestamp", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, avg(difficulty120) as d120, avg(hashrate100) as h100, avg(hashrate400) as h400 FROM charts WHERE type=1 GROUP BY strftime('%Y-%m-%d, %H', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('hashrate', err);
                     } else {
@@ -404,7 +404,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'pos-difficulty') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=0 ORDER BY actual_timestamp", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, avg(difficulty) as d FROM charts WHERE type=0 GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('pos-difficulty', err);
                     } else {
@@ -414,7 +414,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'pow-difficulty') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=1 ORDER BY actual_timestamp", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, avg(difficulty) as d FROM charts WHERE type=1 GROUP BY strftime('%Y-%m-%d', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('pow-difficulty', err);
                     } else {
