@@ -344,7 +344,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
         if (chart === 'all') {
             db.serialize(function () {
                 // Charts AvgBlockSize, AvgTransPerBlock, difficultyPoS, difficultyPoW
-                db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs, tr_count as trc, difficulty as d, type as t FROM charts WHERE actual_timestamp > " + period, function (err, arrayAll) {
+                db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs, tr_count as trc, difficulty as d, type as t FROM charts WHERE actual_timestamp > " + period + ' ORDER BY actual_timestamp', function (err, arrayAll) {
                     if (err) {
                         log('all charts error', err);
                     } else {
@@ -354,7 +354,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
                                 log('all charts confirmed-transactions-per-day', err);
                             } else {
                                 // Chart HashRate
-                                db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1 AND actual_timestamp > " + period2, function (err, rows1) {
+                                db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1 AND actual_timestamp > " + period2 + ' ORDER BY actual_timestamp', function (err, rows1) {
                                     if (err) {
                                         log('all hashrate', err);
                                     } else {
@@ -370,7 +370,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'AvgBlockSize') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs FROM charts", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs FROM charts ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('AvgBlockSize', err);
                     } else {
@@ -380,7 +380,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'AvgTransPerBlock') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, tr_count as trc FROM charts", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, tr_count as trc FROM charts ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('AvgTransPerBlock', err);
                     } else {
@@ -390,7 +390,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'hashRate') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1 ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('hashrate', err);
                     } else {
@@ -404,7 +404,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'pos-difficulty') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=0", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=0 ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('pos-difficulty', err);
                     } else {
@@ -414,7 +414,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'pow-difficulty') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=1", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=1 ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('pow-difficulty', err);
                     } else {
@@ -480,10 +480,18 @@ var lastBlock = {
     height: -1,
     id: "0000000000000000000000000000000000000000000000000000000000000000"
 };
-var now_blocks_sync = false;
-var now_pool_sync = false;
+
+
+
 var blockInfo = {};
+var now_blocks_sync = false;
+
+// market
 var now_delete_offers = false;
+
+// pool
+var countTrPoolServer;
+var statusSyncPool = false;
 
 // aliases
 var countAliasesDB;
@@ -602,6 +610,7 @@ db.serialize(function () {
         ');');
 
     db.run("CREATE INDEX if not exists index_bl_height ON charts(height);");
+    db.run("CREATE INDEX if not exists index_bl_height ON charts(actual_timestamp);");
 
 
     db.run("DELETE FROM alt_blocks");
@@ -643,67 +652,81 @@ var pools_array = [];
 var serverTimeout = 30;
 
 function syncPool() {
-    get_all_pool_tx_list(function (code, data) {
-        if (code === 200) {
-
-            if (data.result) {
-                pools_array = (data.result.ids) ? data.result.ids : [];
-                db.serialize(function () {
-                    db.run("DELETE FROM pool WHERE id NOT IN ( '" + pools_array.join("','") + "' );");
-                });
-
-                db.all("SELECT id FROM pool", function (err, rows) {
-                    if (err) log('select id from pool', err);
-                    var new_ids = [];
-                    for (var j = 0; j < pools_array.length; j++) {
-                        var find = false;
-                        for (var i = 0; i < rows.length; i++) {
-                            if (pools_array[j] === rows[i].id) {
-                                find = true;
-                                break;
-                            }
-                        }
-                        if (!find) {
-                            new_ids.push(pools_array[j]);
-                        }
-                    }
-
-                    if (new_ids.length) {
-                        get_pool_txs_details(new_ids, function (code, data) {
-                            if (code === 200) {
-                                if (data.result && data.result.txs) {
-                                    db.serialize(function () {
-                                        db.run("begin transaction");
-                                        var stmt = db.prepare("INSERT INTO pool VALUES (?,?,?,?)");
-                                        for (var x in data.result.txs) {
-                                            stmt.run(
-                                                data.result.txs[x].blob_size,
-                                                data.result.txs[x].fee.toString(),
-                                                data.result.txs[x].id,
-                                                data.result.txs[x].timestamp
-                                            );
-                                        }
-                                        stmt.finalize();
-                                        db.run("commit");
-                                        now_pool_sync = false;
-                                    });
-
-                                }
-                            } else {
-                                now_pool_sync = false;
+    statusSyncPool = true;
+    countTrPoolServer = blockInfo.tx_pool_size;
+    if (countTrPoolServer === 0) {
+        db.run("DELETE FROM pool");
+        statusSyncPool = false;
+    } else {
+        get_all_pool_tx_list(function (code, data) {
+            if (code === 200) {
+                if (data.result.ids) {
+                    pools_array = (data.result.ids) ? data.result.ids : [];
+                    db.serialize(function () {
+                        db.run("DELETE FROM pool WHERE id NOT IN ( '" + pools_array.join("','") + "' );", function (err) {
+                            if (err) {
+                                log('pool delete', err);
                             }
                         });
-                    } else {
-                        now_pool_sync = false;
-                    }
+                    });
 
-                });
+                    db.all("SELECT id FROM pool", function (err, rows) {
+                        if (err) log('select id from pool', err);
+                        var new_ids = [];
+                        for (var j = 0; j < pools_array.length; j++) {
+                            var find = false;
+                            for (var i = 0; i < rows.length; i++) {
+                                if (pools_array[j] === rows[i].id) {
+                                    find = true;
+                                    break;
+                                } else {
+                                    log('pools_array[j] !== rows[i].id');
+                                }
+                            }
+                            if (!find) {
+                                new_ids.push(pools_array[j]);
+                            }
+                        }
 
+                        if (new_ids.length) {
+                            get_pool_txs_details(new_ids, function (code, data) {
+                                if (code === 200) {
+                                    if (data.result && data.result.txs) {
+                                        db.serialize(function () {
+                                            db.run("begin transaction");
+                                            var stmt = db.prepare("INSERT INTO pool VALUES (?,?,?,?)");
+                                            for (var x in data.result.txs) {
+                                                stmt.run(
+                                                    data.result.txs[x].blob_size,
+                                                    data.result.txs[x].fee,
+                                                    data.result.txs[x].id,
+                                                    data.result.txs[x].timestamp
+                                                );
+                                            }
+                                            stmt.finalize();
+                                            db.run("commit");
+                                            statusSyncPool = false;
+                                        });
+                                    } else {
+                                        statusSyncPool = false;
+                                    }
+                                } else {
+                                    statusSyncPool = false;
+                                }
+                            });
+                        } else {
+                            statusSyncPool = false;
+                        }
+                    });
+                } else {
+                    statusSyncPool = false;
+                }
+            } else {
+                db.run("DELETE FROM pool");
+                statusSyncPool = false;
             }
-        } else {
-            now_pool_sync = false;
-        }
-    });
+        });
+    }
 }
 
 
@@ -1072,11 +1095,20 @@ function getInfoTimer() {
                 blockInfo = body.result;
                 countAliasesServer = blockInfo.alias_count;
                 countAltBlocksServer = blockInfo.alt_blocks_count;
+                countTrPoolServer = blockInfo.tx_pool_size;
 
-                if (now_pool_sync === false) {
-                    now_pool_sync = true;
-                    syncPool();
+                if (statusSyncPool === false) {
+                    db.get("SELECT COUNT(*) AS transactions FROM pool", function (err, rows) {
+                        if (err) log(err);
+                        if (rows) {
+                            if (rows.transactions !== countTrPoolServer) {
+                                log("need update pool transactions db=" + rows.transactions + ' server=' + countTrPoolServer);
+                                syncPool();
+                            }
+                        }
+                    });
                 }
+
                 if (statusSyncAltBlocks === false) {
                     if (countAltBlocksServer !== countAltBlocksDB) {
                         log("need update alt-blocks db=" + countAltBlocksDB + ' server=' + countAltBlocksServer);
@@ -1126,7 +1158,32 @@ app.get('/api/get_info/:flags', (req, res) => {
             res.send(JSON.stringify(response.data));
         })
         .catch(function (error) {
-           log('api get_info', error);
+            log('api get_info', error);
+        });
+});
+
+app.get('/api/get_total_coins', (req, res) => {
+    axios({
+        method: 'get',
+        url: api,
+        data: {
+            method: 'getinfo',
+            params: {'flags': parseInt(4294967295)},
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then((response) => {
+            let str = response.data.result.total_coins;
+            let result;
+            let totalCoins = Number(str);
+            if (typeof totalCoins === 'number') {
+                result = parseInt(totalCoins) / 1000000000000;
+            }
+            let r2 = result.toFixed(2);
+            res.send(r2);
+        })
+        .catch(function (error) {
+            log('api get_info', error);
         });
 });
 
@@ -1194,7 +1251,7 @@ app.get('/api/get_alt_blocks_details/:offset/:count', (req, res) => {
             res.send(JSON.stringify(response.data));
         })
         .catch(function (error) {
-            log('api get_alt_blocks_details failed' ,error);
+            log('api get_alt_blocks_details failed', error);
         });
 });
 
@@ -1219,31 +1276,29 @@ app.get('/api/get_alt_block_details/:id', (req, res) => {
         });
 });
 
-// app.get('/api/get_all_pool_tx_list', (req, res) => {
-//     axios({
-//         method: 'get',
-//         url: api,
-//         data: {
-//             method: 'get_pool_txs_details',
-//         },
-//         transformResponse: [data => JSONbig.parse(data)]
-//     })
-//         .then((response) => {
-//             res.send(JSON.stringify(response.data));
-//         })
-//         .catch(function (error) {
-//             log('api get_all_pool_tx_list failed', error);
-//         });
-// });
+app.get('/api/get_all_pool_tx_list', (req, res) => {
+    axios({
+        method: 'get',
+        url: api,
+        data: {
+            method: 'get_all_pool_tx_list',
+        },
+        transformResponse: [data => JSONbig.parse(data)]
+    })
+        .then((response) => {
+            res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+            log('api get_all_pool_tx_list failed', error);
+        });
+});
 
 app.get('/api/get_pool_txs_details', (req, res) => {
-    // let count = req.params.count;
     axios({
         method: 'get',
         url: api,
         data: {
             method: 'get_pool_txs_details',
-            // params: {'ids': count},
         },
         transformResponse: [data => JSONbig.parse(data)]
     })
@@ -1256,13 +1311,11 @@ app.get('/api/get_pool_txs_details', (req, res) => {
 });
 
 app.get('/api/get_pool_txs_brief_details', (req, res) => {
-    // let count = req.params.count;
     axios({
         method: 'get',
         url: api,
         data: {
             method: 'get_pool_txs_brief_details',
-            // params: {'ids': count},
         },
         transformResponse: [data => JSONbig.parse(data)]
     })
@@ -1313,7 +1366,7 @@ app.get('/api/get_tx_details/:tx_hash', (req, res) => {
 //         });
 // });
 
-app.use(function(req, res) {
+app.use(function (req, res) {
     res.sendFile(__dirname + '/dist/index.html');
 });
 
