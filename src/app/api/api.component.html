@@ -33,6 +33,25 @@
 </div>
 
 <div class="item_box">
+    <div class="heading">Request current total coins</div>
+    <div class="info">
+        <div class="row method">
+            <div class="title">Method:</div>
+            <div class="value">get_total_coins</div>
+        </div>
+        <div class="row">
+            <div class="title">Example:</div>
+            <div class="value">{{objectLinks.utl_get_total_coins}}</div>
+        </div>
+    </div>
+    <div class="response">
+        <div class="title" (click)="clickEvent('current_info')"><div class="toggler"></div>JSON Response</div>
+        <ngx-json-viewer *ngIf="dropdowns['current_info']" [json]="currentinfoExample" [expanded]="false"></ngx-json-viewer>
+    </div>
+</div>
+
+
+<div class="item_box">
     <div class="heading">Request blocks (offset and count)</div>
     <div class="info">
         <div class="row method">
@@ -110,7 +129,7 @@
     <div class="info">
         <div class="row method">
             <div class="title">Method:</div>
-            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#get_all_pool_tx_list">get_all_pool_tx_list</a></div>
+            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#get_pool_txs_details">get_pool_txs_details</a></div>
         </div>
         <div class="row">
             <div class="title">Example:</div>
@@ -140,6 +159,25 @@
         <ngx-json-viewer *ngIf="dropdowns['brief_pool_transact']" [json]="getPoolTXSbriefDetails" [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
+
+<div class="item_box">
+    <div class="heading">Request IDs for all txs from the pool</div>
+    <div class="info">
+        <div class="row method">
+            <div class="title">Method:</div>
+            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#get_all_pool_tx_list">get_all_pool_tx_list</a></div>
+        </div>
+        <div class="row">
+            <div class="title">Example:</div>
+            <div class="value">{{objectLinks.url_request_ids_all_txs_pool}}</div>
+        </div>
+    </div>
+    <div class="response">
+        <div class="title" (click)="clickEvent('tx_ids_pool')"><div class="toggler"></div>JSON Response</div>
+        <ngx-json-viewer *ngIf="dropdowns['tx_ids_pool']" [json]="getTxIdsForPool" [expanded]="false"></ngx-json-viewer>
+    </div>
+</div>
+
 
 <div class="item_box">
     <div class="heading">Request a given transaction by hash</div>

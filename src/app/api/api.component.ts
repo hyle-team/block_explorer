@@ -8,6 +8,7 @@ import {Component, OnInit} from '@angular/core';
 export class ApiComponent implements OnInit {
     objectLinks: any;
     infoExample: any;
+    currentinfoExample: any;
     getBlocksDetails: any;
     getMainBlockDetails: any;
     getAltBlocksDetails: any;
@@ -15,6 +16,7 @@ export class ApiComponent implements OnInit {
     geAllPoolTXlist: any;
     getPoolTXSbriefDetails: any;
     getTXdetails: any;
+    getTxIdsForPool: any;
 
     dropdowns = {
         'info': false,
@@ -34,16 +36,30 @@ export class ApiComponent implements OnInit {
         this.objectLinks = {
             url_request_format: 'https://explorer.zano.org/api/{method}/{param1}/{param2}',
             utl_get_info: 'https://explorer.zano.org/api/get_info/4294967295',
+            utl_get_total_coins: 'https://explorer.zano.org/api/get_total_coins',
             url_get_blocks_details: 'https://explorer.zano.org/api/get_blocks_details/{:offset}/{:count}',
             url_get_main_block_details: 'https://explorer.zano.org/api/get_main_block_details/{:hash}',
             url_get_alt_blocks_details: 'https://explorer.zano.org/api/get_alt_blocks_details/{:offset}/{:count}',
             url_get_alt_block_details: 'https://explorer.zano.org/api/get_alt_block_details/{:hash}',
 
             url_get_all_pool_tx_list: 'https://explorer.zano.org/api/get_all_pool_tx_list',
-            url_get_pool_txs_details: 'https://explorer.zano.org/api/api/get_pool_txs_details',
-            url_get_pool_txs_brief_details: 'https://explorer.zano.org/api/api/get_pool_txs_brief_details',
+            url_get_pool_txs_details: 'https://explorer.zano.org/api/get_pool_txs_details',
+            url_get_pool_txs_brief_details: 'https://explorer.zano.org/api/get_pool_txs_brief_details',
+            url_request_ids_all_txs_pool: 'https://explorer.zano.org/api/get_all_pool_tx_list',
 
             url_get_tx_details: 'https://explorer.zano.org/api/get_tx_details/{:tx_hash}'
+        };
+        this.currentinfoExample = {
+            total_coins: 15285792000000000
+        };
+        this.getTxIdsForPool = {
+            id: 0,
+            jsonrpc: '2.0',
+            result: {
+                ids: ['313f363308ec6e5ada8e2c7b5faec8a41ccebf87b0a5adcf978af080d2669f32',
+                    '7300c0ac204304e068f5f7ea813974a557cd174193ac81253f5b1d17cbc32a43'],
+                status: 'OK'
+            }
         };
         this.infoExample = {
             'alias_count': 84,
