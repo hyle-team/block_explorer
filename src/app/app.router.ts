@@ -65,6 +65,13 @@ export const router: Routes = [
     }
   },
   {
+      path: 'aliases/:id',
+      component: AliasesComponent,
+      resolve: {
+          MainInfo: ServiceResolver
+      }
+  },
+  {
     path: 'charts',
     children: [
       {
