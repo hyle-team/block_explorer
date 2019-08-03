@@ -20,6 +20,7 @@ export class AliasesComponent implements OnInit, OnDestroy {
   currentPage: number;
   offset: number;
   getAliasesSubscription: Subscription;
+  paramSubscription: Subscription;
   limitList: any;
   visiblePagination: boolean;
   trackingKey: boolean;
@@ -66,6 +67,9 @@ export class AliasesComponent implements OnInit, OnDestroy {
     this.count = 20;
     this.offset = 0;
     this.search = '';
+    this.paramSubscription = this.route.params.subscribe(params => {
+      this.search = params.id;
+    })
     if (this._cookieService.get('setCountAliasesCookie')) {
       this.count = parseInt(this._cookieService.get('setCountAliasesCookie'), 10);
     }

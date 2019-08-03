@@ -69,6 +69,8 @@ export class SearchComponent implements OnInit, OnDestroy {
                 this.router.navigate(['/block', this.setSearch], {relativeTo: this.route});
               } else if (this.searchId.result === 'alt_block') {
                 this.router.navigate(['/alt-blocks', this.setSearch], {relativeTo: this.route});
+              } else if (this.searchId.result === 'alias') {
+                  this.router.navigate(['/aliases', this.setSearch], {relativeTo: this.route});
               } else {
                 this.searchNotFound = true;
                 this.ngZone.runOutsideAngular(() => {
