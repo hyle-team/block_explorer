@@ -467,13 +467,7 @@ app.get('/search_by_id/:id', (req, res) => {
                                     }
                                 });
                             } else {
-                                db.all("SELECT * FROM aliases WHERE enabled == 1 AND (alias LIKE '%" + id + "%' OR address LIKE '%" + id + "%' OR comment LIKE '%" + id + "%') ORDER BY block DESC limit ? offset ?", [1, 0], function (err, rows) {
-                                    if(rows.length>0) {
-                                        res.send(JSON.stringify({result: 'alias'}));
-                                    } else {
-                                        res.send(JSON.stringify({result: "NOT FOUND"}));
-                                    }
-                                });
+                                res.send(JSON.stringify({result: "tx"}));
                             }
                         });
                     } else {
