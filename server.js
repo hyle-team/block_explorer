@@ -404,7 +404,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'pos-difficulty') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=0 ORDER BY actual_timestamp", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, case when (max(difficulty)-avg(difficulty))>(avg(difficulty)-min(difficulty)) then max(difficulty) else min(difficulty) end as d FROM charts WHERE type=0 GROUP BY strftime('%Y-%m-%d, %H', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('pos-difficulty', err);
                     } else {
@@ -414,7 +414,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'pow-difficulty') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=1  ORDER BY actual_timestamp", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, case when (max(difficulty)-avg(difficulty))>(avg(difficulty)-min(difficulty)) then max(difficulty) else min(difficulty) end as d FROM charts WHERE type=1 GROUP BY strftime('%Y-%m-%d, %H', datetime(actual_timestamp, 'unixepoch'))  ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('pow-difficulty', err);
                     } else {
