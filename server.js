@@ -408,7 +408,14 @@ app.get('/get_chart/:chart/:period', (req, res) => {
                     if (err) {
                         log('pos-difficulty', err);
                     } else {
-                        res.send(JSON.stringify(rows));
+                        db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=0 ORDER BY actual_timestamp", function (err, rows2) {
+                            if (err) {
+                                log('pow-difficulty', err);
+                            } else {
+
+                                res.send(JSON.stringify({aggregated:rows, detailed:rows2}));
+                            }
+                        });
                     }
                 });
             });
@@ -418,7 +425,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
                     if (err) {
                         log('pow-difficulty', err);
                     } else {
-                        db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=0 ORDER BY actual_timestamp", function (err, rows2) {
+                        db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=1 ORDER BY actual_timestamp", function (err, rows2) {
                             if (err) {
                                 log('pow-difficulty', err);
                             } else {
