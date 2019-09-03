@@ -423,7 +423,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
                                 log('pow-difficulty', err);
                             } else {
 
-                                res.send(JSON.stringify({row1:rows, row2:rows2}));
+                                res.send(JSON.stringify({aggregated:rows, detailed:rows2}));
                             }
                         });
                         // res.send(JSON.stringify(rows));

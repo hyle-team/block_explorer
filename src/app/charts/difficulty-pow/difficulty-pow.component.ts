@@ -243,21 +243,18 @@ export class DifficultyPowComponent implements OnInit {
   changeSource(value: string) {
       if (this.seriesType !== value) {
           this.seriesType = value;
+          let chartData = [];
         if (value === 'day') {
-            const powDifficultyArray = [];
-            for (let i = 1; i < this.powDifficulty.row2.length; i++) {
-                powDifficultyArray.push([this.powDifficulty.row2[i].at * 1000, parseInt(this.powDifficulty.row2[i].d, 10)]);
-            }
-            console.log(powDifficultyArray);
-          this.difficultyChart.addSeries(powDifficultyArray, true, true );
+            chartData = this.powDifficulty.detailed;
         } else {
-            const powDifficultyArray = [];
-            for (let i = 1; i < this.powDifficulty.row1.length; i++) {
-                powDifficultyArray.push([this.powDifficulty.row1[i].at * 1000, parseInt(this.powDifficulty.row1[i].d, 10)]);
-            }
-            console.log(powDifficultyArray);
-            this.difficultyChart.addSeries(powDifficultyArray, true, true );
+            chartData = this.powDifficulty.aggregated;
         }
+        const powDifficultyArray = [];
+        for (let i = 1; i < chartData.length; i++) {
+            powDifficultyArray.push([chartData[i].at * 1000, parseInt(chartData[i].d, 10)]);
+        }
+        this.difficultyChart.removeSeries(0);
+        this.difficultyChart.addSeries({type: 'area', name: 'PoW difficulty', data: powDifficultyArray}, true, true);
       }
   }
   onIsVisible($event): void {
@@ -287,8 +284,8 @@ export class DifficultyPowComponent implements OnInit {
     this.chartSubscription = this.httpService.getChart(this.activeChart, this.period).subscribe(data => {
           this.powDifficulty = data;
           const powDifficultyArray = [];
-          for (let i = 1; i < this.powDifficulty.row1.length; i++) {
-            powDifficultyArray.push([this.powDifficulty.row1[i].at * 1000, parseInt(this.powDifficulty.row1[i].d, 10)]);
+          for (let i = 1; i < this.powDifficulty.aggregated.length; i++) {
+            powDifficultyArray.push([this.powDifficulty.aggregated[i].at * 1000, parseInt(this.powDifficulty.aggregated[i].d, 10)]);
           }
           this.difficultyChart = this.drawChart(
               false,
