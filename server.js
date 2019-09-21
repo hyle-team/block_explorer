@@ -669,7 +669,7 @@ db.serialize(function () {
 var block_array = [];
 var pools_array = [];
 
-var serverTimeout = 3000;
+var serverTimeout = 30;
 
 function syncPool() {
     statusSyncPool = true;
