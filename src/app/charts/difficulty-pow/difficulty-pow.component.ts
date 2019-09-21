@@ -19,8 +19,12 @@ export class DifficultyPowComponent implements OnInit {
   difficultyChart: Chart;
   seriesData: any;
   loader: boolean;
+  seriesType: string = 'other';
 
-  static drawChart(activeChart, titleText, yText, chartsData): Chart {
+
+
+  drawChart(activeChart, titleText, yText, chartsData): Chart {
+    const that = this;
     return new Chart({
       chart: {
         type: 'line',
@@ -116,26 +120,56 @@ export class DifficultyPowComponent implements OnInit {
         buttons: [{
           type: 'day',
           count: 1,
-          text: 'day'
+          text: 'day',
+          events: {
+              click: function (e) {
+                  that.changeSource('day');
+              }
+          }
         }, {
           type: 'week',
           count: 1,
-          text: 'week'
+          text: 'week',
+          events: {
+              click: function (e) {
+                  that.changeSource('other');
+              }
+          }
         }, {
           type: 'month',
           count: 1,
-          text: 'month'
+          text: 'month',
+          events: {
+              click: function (e) {
+                  that.changeSource('other');
+              }
+          }
         }, {
           type: 'month',
           count: 3,
-          text: 'quarter'
+          text: 'quarter',
+          events: {
+              click: function (e) {
+                  that.changeSource('other');
+              }
+          }
         }, {
           type: 'year',
           count: 1,
-          text: 'year'
+          text: 'year',
+          events: {
+              click: function (e) {
+                  that.changeSource('other');
+              }
+          }
         }, {
           type: 'all',
-          text: 'all'
+          text: 'all',
+          events: {
+              click: function (e) {
+                  that.changeSource('other');
+              }
+          }
         }],
         selected: 1,
         labelStyle: {
@@ -206,7 +240,23 @@ export class DifficultyPowComponent implements OnInit {
     });
   }
 
-
+  changeSource(value: string) {
+      if (this.seriesType !== value) {
+          this.seriesType = value;
+          let chartData = [];
+        if (value === 'day') {
+            chartData = this.powDifficulty.detailed;
+        } else {
+            chartData = this.powDifficulty.aggregated;
+        }
+        const powDifficultyArray = [];
+        for (let i = 1; i < chartData.length; i++) {
+            powDifficultyArray.push([chartData[i].at * 1000, parseInt(chartData[i].d, 10)]);
+        }
+        this.difficultyChart.removeSeries(0);
+        this.difficultyChart.addSeries({type: 'area', name: 'PoW difficulty', data: powDifficultyArray}, true, true);
+      }
+  }
   onIsVisible($event): void {
     this.searchIsOpen = $event;
   }
@@ -234,10 +284,10 @@ export class DifficultyPowComponent implements OnInit {
     this.chartSubscription = this.httpService.getChart(this.activeChart, this.period).subscribe(data => {
           this.powDifficulty = data;
           const powDifficultyArray = [];
-          for (let i = 1; i < this.powDifficulty.length; i++) {
-            powDifficultyArray.push([this.powDifficulty[i].at * 1000, parseInt(this.powDifficulty[i].d, 10)]);
+          for (let i = 1; i < this.powDifficulty.aggregated.length; i++) {
+            powDifficultyArray.push([this.powDifficulty.aggregated[i].at * 1000, parseInt(this.powDifficulty.aggregated[i].d, 10)]);
           }
-          this.difficultyChart = DifficultyPowComponent.drawChart(
+          this.difficultyChart = this.drawChart(
               false,
               'PoW Difficulty',
               'PoW Difficulty',

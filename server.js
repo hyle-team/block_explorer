@@ -344,7 +344,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
         if (chart === 'all') {
             db.serialize(function () {
                 // Charts AvgBlockSize, AvgTransPerBlock, difficultyPoS, difficultyPoW
-                db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs, tr_count as trc, difficulty as d, type as t FROM charts WHERE actual_timestamp > " + period, function (err, arrayAll) {
+                db.all("SELECT actual_timestamp as at, block_cumulative_size as bcs, tr_count as trc, difficulty as d, type as t FROM charts WHERE actual_timestamp > " + period+' ORDER BY actual_timestamp;', function (err, arrayAll) {
                     if (err) {
                         log('all charts error', err);
                     } else {
@@ -354,7 +354,7 @@ app.get('/get_chart/:chart/:period', (req, res) => {
                                 log('all charts confirmed-transactions-per-day', err);
                             } else {
                                 // Chart HashRate
-                                db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1 AND actual_timestamp > " + period2, function (err, rows1) {
+                                db.all("SELECT actual_timestamp as at, difficulty120 as d120, hashrate100 as h100, hashrate400 as h400 FROM charts WHERE type=1 AND actual_timestamp > " + period2+' ORDER BY actual_timestamp;', function (err, rows1) {
                                     if (err) {
                                         log('all hashrate', err);
                                     } else {
@@ -404,21 +404,36 @@ app.get('/get_chart/:chart/:period', (req, res) => {
             });
         } else if (chart === 'pos-difficulty') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, avg(difficulty) as d FROM charts WHERE type=0 GROUP BY strftime('%Y-%m-%d, %H', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, case when (max(difficulty)-avg(difficulty))>(avg(difficulty)-min(difficulty)) then max(difficulty) else min(difficulty) end as d FROM charts WHERE type=0 GROUP BY strftime('%Y-%m-%d, %H', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('pos-difficulty', err);
                     } else {
-                        res.send(JSON.stringify(rows));
+                        db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=0 ORDER BY actual_timestamp", function (err, rows2) {
+                            if (err) {
+                                log('pow-difficulty', err);
+                            } else {
+
+                                res.send(JSON.stringify({aggregated:rows, detailed:rows2}));
+                            }
+                        });
                     }
                 });
             });
         } else if (chart === 'pow-difficulty') {
             db.serialize(function () {
-                db.all("SELECT actual_timestamp as at, avg(difficulty) as d FROM charts WHERE type=1 GROUP BY strftime('%Y-%m-%d %H', datetime(actual_timestamp, 'unixepoch')) ORDER BY actual_timestamp", function (err, rows) {
+                db.all("SELECT actual_timestamp as at, case when (max(difficulty)-avg(difficulty))>(avg(difficulty)-min(difficulty)) then max(difficulty) else min(difficulty) end as d FROM charts WHERE type=1 GROUP BY strftime('%Y-%m-%d, %H', datetime(actual_timestamp, 'unixepoch'))  ORDER BY actual_timestamp", function (err, rows) {
                     if (err) {
                         log('pow-difficulty', err);
                     } else {
-                        res.send(JSON.stringify(rows));
+                        db.all("SELECT actual_timestamp as at, difficulty as d FROM charts WHERE type=1 ORDER BY actual_timestamp", function (err, rows2) {
+                            if (err) {
+                                log('pow-difficulty', err);
+                            } else {
+
+                                res.send(JSON.stringify({aggregated:rows, detailed:rows2}));
+                            }
+                        });
+                        // res.send(JSON.stringify(rows));
                     }
                 });
             });
@@ -467,13 +482,7 @@ app.get('/search_by_id/:id', (req, res) => {
                                     }
                                 });
                             } else {
-                                db.all("SELECT * FROM aliases WHERE enabled == 1 AND (alias LIKE '%" + id + "%' OR address LIKE '%" + id + "%' OR comment LIKE '%" + id + "%') ORDER BY block DESC limit ? offset ?", [1, 0], function (err, rows) {
-                                    if(rows.length>0) {
-                                        res.send(JSON.stringify({result: 'alias'}));
-                                    } else {
-                                        res.send(JSON.stringify({result: "NOT FOUND"}));
-                                    }
-                                });
+                                res.send(JSON.stringify({result: "tx"}));
                             }
                         });
                     } else {
@@ -660,7 +669,7 @@ db.serialize(function () {
 var block_array = [];
 var pools_array = [];
 
-var serverTimeout = 3000;
+var serverTimeout = 30;
 
 function syncPool() {
     statusSyncPool = true;

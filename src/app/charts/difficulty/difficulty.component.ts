@@ -19,9 +19,11 @@ export class DifficultyComponent implements OnInit {
     difficultyChart: Chart;
     seriesData: any;
     loader: boolean;
+    seriesType: string = 'other';
 
     // PoS Difficulty
-    static drawChart(activeChart, titleText, yText, chartsData): Chart {
+    drawChart(activeChart, titleText, yText, chartsData): Chart {
+        const that = this;
         return new Chart({
             chart: {
                 type: 'line',
@@ -117,26 +119,56 @@ export class DifficultyComponent implements OnInit {
                 buttons: [{
                     type: 'day',
                     count: 1,
-                    text: 'day'
+                    text: 'day',
+                    events: {
+                        click: function (e) {
+                            that.changeSource('day');
+                        }
+                    }
                 }, {
                     type: 'week',
                     count: 1,
-                    text: 'week'
+                    text: 'week',
+                    events: {
+                        click: function (e) {
+                            that.changeSource('other');
+                        }
+                    }
                 }, {
                     type: 'month',
                     count: 1,
-                    text: 'month'
+                    text: 'month',
+                    events: {
+                        click: function (e) {
+                            that.changeSource('other');
+                        }
+                    }
                 }, {
                     type: 'month',
                     count: 3,
-                    text: 'quarter'
+                    text: 'quarter',
+                    events: {
+                        click: function (e) {
+                            that.changeSource('other');
+                        }
+                    }
                 }, {
                     type: 'year',
                     count: 1,
-                    text: 'year'
+                    text: 'year',
+                    events: {
+                        click: function (e) {
+                            that.changeSource('other');
+                        }
+                    }
                 }, {
                     type: 'all',
-                    text: 'all'
+                    text: 'all',
+                    events: {
+                        click: function (e) {
+                            that.changeSource('other');
+                        }
+                    }
                 }],
                 selected: 1,
                 labelStyle: {
@@ -207,7 +239,23 @@ export class DifficultyComponent implements OnInit {
         });
     }
 
-
+    changeSource(value: string) {
+        if (this.seriesType !== value) {
+            this.seriesType = value;
+            let chartData = [];
+            if (value === 'day') {
+                chartData = this.posDifficulty.detailed;
+            } else {
+                chartData = this.posDifficulty.aggregated;
+            }
+            const posDifficultyArray = [];
+            for (let i = 1; i < chartData.length; i++) {
+                posDifficultyArray.push([chartData[i].at * 1000, parseInt(chartData[i].d, 10)]);
+            }
+            this.difficultyChart.removeSeries(0);
+            this.difficultyChart.addSeries({type: 'area', name: 'PoS difficulty', data: posDifficultyArray}, true, true);
+        }
+    }
     onIsVisible($event): void {
         this.searchIsOpen = $event;
     }
@@ -235,10 +283,10 @@ export class DifficultyComponent implements OnInit {
         this.chartSubscription = this.httpService.getChart(this.activeChart, this.period).subscribe(data => {
                 this.posDifficulty = data;
                 const posDifficultyArray = [];
-                for (let i = 1; i < this.posDifficulty.length; i++) {
-                    posDifficultyArray.push([this.posDifficulty[i].at * 1000, parseInt(this.posDifficulty[i].d, 10)]);
+                for (let i = 1; i < this.posDifficulty.aggregated.length; i++) {
+                    posDifficultyArray.push([this.posDifficulty.aggregated[i].at * 1000, parseInt(this.posDifficulty.aggregated[i].d, 10)]);
                 }
-                this.difficultyChart = DifficultyComponent.drawChart(
+                this.difficultyChart = this.drawChart(
                     false,
                     'PoS Difficulty',
                     'PoS Difficulty',
