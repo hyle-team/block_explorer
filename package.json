@@ -34,7 +34,7 @@
     "body-parser": "^1.18.3",
     "core-js": "^2.5.7",
     "express": "^4.16.4",
-    "highcharts": "^6.2.0",
+    "highcharts": "^8.2.0",
     "json-bigint": "^0.3.0",
     "json-bignum": "0.0.3",
     "json-bignumber": "^1.0.1",
