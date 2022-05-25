@@ -1,145 +1,173 @@
 <div class="top_box" *ngIf="navIsOpen === false">
-  <div class="left_box">
-    <a [routerLink]="['/alt-blocks']" class="back_btn" [ngClass]="{'hide_back_btn': searchIsOpen === true}">Back</a>
-  </div>
-  <app-search (isVisible)='onIsVisible($event)'></app-search>
+    <div class="left_box">
+        <a
+            [routerLink]="['/alt-blocks']"
+            class="back_btn"
+            [ngClass]="{ hide_back_btn: searchIsOpen === true }"
+            >Back</a
+        >
+    </div>
+    <app-search (isVisible)="onIsVisible($event)"></app-search>
 </div>
 
 <app-main-info></app-main-info>
 
-
 <div class="block_details">
+    <div class="heading_block" *ngIf="altBlocksDetails">
+        <h2 class="currency_name">Zano block</h2>
+        <h3 class="height_block">
+            {{ altBlocksDetails.height }}
+        </h3>
+        <span class="hash_block">{{ altBlocksDetails.hash }}</span>
+    </div>
 
-  <div class="heading_block" *ngIf="altBlocksDetails">
-    <h2 class="currency_name">Zano block</h2>
-    <h3 class="height_block">
-      {{altBlocksDetails.height}}
-    </h3>
-    <span class="hash_block">{{altBlocksDetails.hash}}</span>
-  </div>
+    <div class="wrapper_table_block_details" *ngIf="altBlocksDetails">
+        <table class="left_table">
+            <tr class="block_type">
+                <td>Type:</td>
+                <td>
+                    <span *ngIf="altBlocksDetails.type == 0" class="pos"
+                        >PoS</span
+                    >
+                    <span *ngIf="altBlocksDetails.type == 1" class="pow"
+                        >PoW</span
+                    >
+                </td>
+            </tr>
+            <tr>
+                <td>Timestamp (UTC):</td>
+                <td>
+                    <span *ngIf="altBlocksDetails.timestamp > 0">{{
+                        altBlocksDetails.timestamp * 1000 | date: 'YYYY-MM-dd HH:mm:ss':'+0000'
+                    }}</span>
+                    <span *ngIf="altBlocksDetails.timestamp == 0">0</span>
+                </td>
+            </tr>
+            <tr>
+                <td>Actual Timestamp (UTC):</td>
+                <td>
+                    <span *ngIf="altBlocksDetails.actual_timestamp > 0">{{
+                        altBlocksDetails.actual_timestamp * 1000 | date: 'YYYY-MM-dd HH:mm:ss':'+0000'
+                    }}</span>
+                    <span *ngIf="altBlocksDetails.actual_timestamp == 0"
+                        >0</span
+                    >
+                </td>
+            </tr>
+            <tr>
+                <td>Difficulty:</td>
+                <td>{{ altBlocksDetails.difficulty | bitNumber }}</td>
+            </tr>
+            <tr>
+                <td>Miner text info:</td>
+                <td
+                    *ngIf="
+                        altBlocksDetails.miner_text_info;
+                        else noneMinerTextInfo
+                    ">
+                    {{ altBlocksDetails.miner_text_info }}
+                </td>
+                <ng-template #noneMinerTextInfo><td>-</td></ng-template>
+            </tr>
+            <tr class="cumulative_diff_adjusted">
+                <td>Cumulative diff adjusted:</td>
+                <td>{{
+                    altBlocksDetails.cumulative_diff_adjusted | bitNumber
+                }}</td>
+            </tr>
+            <tr class="cumulative_diff_presize">
+                <td>Cumulative diff presize:</td>
+                <td>{{
+                    altBlocksDetails.cumulative_diff_precise | bitNumber
+                }}</td>
+            </tr>
+            <tr>
+                <td>Orphan:</td>
+                <td>{{ altBlocksDetails.is_orphan ? 'yes' : 'no' }}</td>
+            </tr>
+            <tr>
+                <td>Base reward:</td>
+                <td>{{ altBlocksDetails.base_reward }}</td>
+            </tr>
+            <tr>
+                <td>Transactions fee:</td>
+                <td>{{ altBlocksDetails.total_fee | moneyParse }}</td>
+            </tr>
+        </table>
 
-  <div class="wrapper_table_block_details" *ngIf="altBlocksDetails">
-      <table class="left_table">
-        <tr class="block_type">
-          <td>Type:</td>
-          <td>
-            <span *ngIf="altBlocksDetails.type==0" class="pos">PoS</span>
-            <span *ngIf="altBlocksDetails.type==1" class="pow">PoW</span>
-          </td>
-        </tr>
-        <tr>
-          <td>Timestamp (UTC):</td>
-          <td>
-            <span *ngIf="altBlocksDetails.timestamp>0">{{altBlocksDetails.timestamp*1000 | amUtc | amDateFormat: 'YYYY.MM.DD HH:mm:ss'}}</span>
-            <span *ngIf="altBlocksDetails.timestamp==0">0</span>
-          </td>
-        </tr>
-        <tr>
-          <td>Actual Timestamp (UTC):</td>
-          <td>
-            <span *ngIf="altBlocksDetails.actual_timestamp>0">{{altBlocksDetails.actual_timestamp*1000 | amUtc | amDateFormat: 'YYYY.MM.DD HH:mm:ss'}}</span>
-            <span *ngIf="altBlocksDetails.actual_timestamp==0">0</span>
-          </td>
-        </tr>
-        <tr>
-          <td>Difficulty:</td>
-          <td>{{altBlocksDetails.difficulty | bitNumber}}</td>
-        </tr>
-        <tr>
-          <td>Miner text info:</td>
-          <td *ngIf="altBlocksDetails.miner_text_info;else noneMinerTextInfo">{{altBlocksDetails.miner_text_info}}</td>
-          <ng-template #noneMinerTextInfo><td>-</td></ng-template>
-        </tr>
-        <tr class="cumulative_diff_adjusted">
-          <td>Cumulative diff adjusted:</td>
-          <td>{{altBlocksDetails.cumulative_diff_adjusted | bitNumber}}</td>
-        </tr>
-        <tr class="cumulative_diff_presize">
-          <td>Cumulative diff presize:</td>
-          <td>{{altBlocksDetails.cumulative_diff_precise | bitNumber}}</td>
-        </tr>
-        <tr>
-          <td>Orphan:</td>
-          <td>{{(altBlocksDetails.is_orphan)?"yes":"no"}}</td>
-        </tr>
-        <tr>
-          <td>Base reward:</td>
-          <td>{{altBlocksDetails.base_reward}}</td>
-        </tr>
-        <tr>
-          <td>Transactions fee:</td>
-          <td>{{altBlocksDetails.total_fee | moneyParse}}</td>
-        </tr>
-      </table>
-
-      <table class="right_table">
-        <tbody>
-          <tr>
-            <td>Reward penalty:</td>
-            <td>{{altBlocksDetails.penalty | moneyParse}}</td>
-          </tr>
-          <tr>
-            <td>Reward:</td>
-            <td>{{altBlocksDetails.summary_reward | moneyParse}}</td>
-          </tr>
-          <tr>
-            <td>Total block size, bytes:</td>
-            <td>{{altBlocksDetails.block_cumulative_size}}</td>
-          </tr>
-          <tr class="effective_txs_median">
-            <td>Effective txs median, bytes: </td>
-            <td>-</td>
-          </tr>
-          <tr>
-            <td>This block fee median</td>
-            <td>{{altBlocksDetails.this_block_fee_median | moneyParse}}</td>
-          </tr>
-          <tr>
-            <td>Effective fee median</td>
-            <td>{{altBlocksDetails.effective_fee_median | moneyParse}}</td>
-          </tr>
-          <tr class="current_txs_median">
-            <td>Current txs median, bytes: </td>
-            <td>-</td>
-          </tr>
-          <tr>
-            <td>Transactions:</td>
-            <td>
-              {{ transactList?.length }}
-            </td>
-          </tr>
-          <tr class="total_transactions_size">
-            <td>Total transactions size, bytes:</td>
-            <td>{{ altBlocksDetails.total_txs_size }}</td>
-          </tr>
-          <tr class="tr_empty">
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-  </div>
+        <table class="right_table">
+            <tbody>
+                <tr>
+                    <td>Reward penalty:</td>
+                    <td>{{ altBlocksDetails.penalty | moneyParse }}</td>
+                </tr>
+                <tr>
+                    <td>Reward:</td>
+                    <td>{{ altBlocksDetails.summary_reward | moneyParse }}</td>
+                </tr>
+                <tr>
+                    <td>Total block size, bytes:</td>
+                    <td>{{ altBlocksDetails.block_cumulative_size }}</td>
+                </tr>
+                <tr class="effective_txs_median">
+                    <td>Effective txs median, bytes:</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>This block fee median</td>
+                    <td>{{
+                        altBlocksDetails.this_block_fee_median | moneyParse
+                    }}</td>
+                </tr>
+                <tr>
+                    <td>Effective fee median</td>
+                    <td>{{
+                        altBlocksDetails.effective_fee_median | moneyParse
+                    }}</td>
+                </tr>
+                <tr class="current_txs_median">
+                    <td>Current txs median, bytes:</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Transactions:</td>
+                    <td>
+                        {{ transactList?.length }}
+                    </td>
+                </tr>
+                <tr class="total_transactions_size">
+                    <td>Total transactions size, bytes:</td>
+                    <td>{{ altBlocksDetails.total_txs_size }}</td>
+                </tr>
+                <tr class="tr_empty">
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-
 <div class="block_transactions_list" *ngIf="transactList">
-  <div class="title">Transactions</div>
-  <table class="table_block_transaction">
-    <thead>
-    <tr>
-      <th class="hash">Hash</th>
-      <th class="fee">Fee</th>
-      <th class="total_amount">Total amount</th>
-      <th class="size">Size</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let tr of transactList">
-      <td class="hash"><span>{{ tr.id }}</span></td>
-      <td class="fee">{{tr.fee | moneyParse}}</td>
-      <td class="total_amount">{{tr.amount | moneyParse}}</td>
-      <td class="size">{{tr.blob_size}} bytes</td>
-    </tr>
-    </tbody>
-  </table>
+    <div class="title">Transactions</div>
+    <table class="table_block_transaction">
+        <thead>
+            <tr>
+                <th class="hash">Hash</th>
+                <th class="fee">Fee</th>
+                <th class="total_amount">Total amount</th>
+                <th class="size">Size</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let tr of transactList">
+                <td class="hash">
+                    <span>{{ tr.id }}</span>
+                </td>
+                <td class="fee">{{ tr.fee | moneyParse }}</td>
+                <td class="total_amount">{{ tr.amount | moneyParse }}</td>
+                <td class="size">{{ tr.blob_size }} bytes</td>
+            </tr>
+        </tbody>
+    </table>
 </div>

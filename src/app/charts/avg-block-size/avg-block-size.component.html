@@ -1,8 +1,13 @@
 <div class="top_box" *ngIf="navIsOpen === false">
     <div class="left_box">
-        <a [routerLink]="['/charts']" class="back_btn" [ngClass]="{'hide_back_btn': searchIsOpen === true}">Back</a>
+        <a
+            [routerLink]="['/charts']"
+            class="back_btn"
+            [ngClass]="{ hide_back_btn: searchIsOpen === true }"
+            >Back</a
+        >
     </div>
-    <app-search (isVisible)='onIsVisible($event)'></app-search>
+    <app-search (isVisible)="onIsVisible($event)"></app-search>
 </div>
 
 <div class="wrap_charts">

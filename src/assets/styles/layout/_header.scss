@@ -1,104 +1,106 @@
 header {
-  display: flex;
-  align-items: center;
-  height: 80px;
-  border-bottom: 1px solid rgba(#fff, .1);
-  position: relative;
-  #mobile-nav-btn {
-    display: none;
-    width: 22px;
-    height: 16px;
-    background-image: $mobileMenuIco;
-    background-repeat: no-repeat;
-    background-position: 0 0;
-    background-color: transparent;
-    border: none;
-    @include max761 {
-      display: flex;
-      position: absolute;
-      right: 0;
-    }
-  }
-  nav {
-    @include max761 {
-      display: none;
-    }
-    ul {
-      display: flex;
-      > li {
-        margin-right: 45px;
-        > a {
-          font-size: 16px;
-          font-weight: 400;
-          color: #fff;
-          &.active {
-            font-weight: 600;
-            color: #fff;
-          }
+    display: flex;
+    align-items: center;
+    height: 80px;
+    border-bottom: 1px solid rgba(#fff, 0.1);
+    position: relative;
+    #mobile-nav-btn {
+        display: none;
+        width: 22px;
+        height: 16px;
+        background-image: $mobileMenuIco;
+        background-repeat: no-repeat;
+        background-position: 0 0;
+        background-color: transparent;
+        border: none;
+        @include max761 {
+            display: flex;
+            position: absolute;
+            right: 0;
         }
-      }
     }
-  }
-  .logo {
-    width: 140px;
-    height: 40px;
-    margin-right: 60px;
-    background-image: $logo;
-    background-repeat: no-repeat;
-    background-position: 0 center;
-    font-size: 26px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    color: #fff;
-    text-transform: uppercase;
-    padding-left: 60px;
-    cursor: pointer;
-    @include unSelect;
-    outline: none;
-    @include max575 {
-      margin-right: 10px;
+    nav {
+        @include max761 {
+            display: none;
+        }
+        ul {
+            display: flex;
+            > li {
+                margin-right: 45px;
+                > a {
+                    font-size: 16px;
+                    font-weight: 400;
+                    color: #fff;
+                    &.active {
+                        font-weight: 600;
+                        color: #fff;
+                    }
+                }
+            }
+        }
     }
-  }
-
-  .case_testnet_mainnet {
-    position: absolute;
-    right: 0;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    border-radius: 10px;
-    overflow: hidden;
-    font-size: 14px;
-    @include max761 {
-      right: 80px;
-    }
-    @include max575 {
-      font-size: 13px;
-    }
-    @include mobile {
-      display: none;
-    }
-    > div {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      padding: 0 15px;
-      //cursor: pointer;
-      background-color: #2b3768;
-      color: #9eaacc;
-      @include unSelect;
-      @include max575 {
-        padding: 0 10px;
-      }
-      &.testnet {}
-      &.mainnet {}
-      &.active {
+    .logo {
+        width: 140px;
+        height: 40px;
+        margin-right: 60px;
+        background-image: $logo;
+        background-repeat: no-repeat;
+        background-position: 0 center;
+        font-size: 26px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
         color: #fff;
-        background: linear-gradient(to right, #1b3a8a, #32439f);
-        font-weight: 600;
-      }
+        text-transform: uppercase;
+        padding-left: 60px;
+        cursor: pointer;
+        @include unSelect;
+        outline: none;
+        @include max575 {
+            margin-right: 10px;
+        }
     }
-  }
+
+    .case_testnet_mainnet {
+        position: absolute;
+        right: 0;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        border-radius: 10px;
+        overflow: hidden;
+        font-size: 14px;
+        @include max761 {
+            right: 80px;
+        }
+        @include max575 {
+            font-size: 13px;
+        }
+        @include mobile {
+            display: none;
+        }
+        > div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0 15px;
+            //cursor: pointer;
+            background-color: #2b3768;
+            color: #9eaacc;
+            @include unSelect;
+            @include max575 {
+                padding: 0 10px;
+            }
+            &.testnet {
+            }
+            &.mainnet {
+            }
+            &.active {
+                color: #fff;
+                background: linear-gradient(to right, #1b3a8a, #32439f);
+                font-weight: 600;
+            }
+        }
+    }
 }

@@ -1,0 +1,76 @@
+.wrapper_table {
+    .table_title {
+        padding: 13px 24px;
+        padding-left: 0;
+        font-size: 24px;
+        font-weight: 300;
+        color: #fff;
+        @include max991 {
+            padding: 12px 20px;
+        }
+    }
+}
+
+.no_data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 180px;
+    font-size: 20px;
+    font-weight: 300;
+    color: #9eaacc;
+    background-color: rgba(#234ee2, 0.1);
+}
+
+table {
+    width: 100%;
+    cursor: default;
+    thead {
+        tr {
+            background: linear-gradient(to right, #1b3a8a, #32439f);
+            th {
+                font-size: 14px;
+                text-transform: uppercase;
+                color: #fff;
+                text-align: left;
+                padding: 12px 20px;
+                @include max1170 {
+                    padding: 12px 15px;
+                }
+            }
+        }
+    }
+    tbody {
+        tr {
+            td {
+                font-size: 13px;
+                color: #fff;
+                padding: 12px 20px;
+                white-space: nowrap;
+                @include max1170 {
+                    padding: 12px 15px;
+                }
+                > a {
+                    color: #68a1ff;
+                }
+                &.height {
+                    > span {
+                        color: #fff;
+                        padding-left: 5px;
+                    }
+                }
+            }
+            &:nth-child(2n) {
+                background-color: #263163;
+            }
+            //&.pow {background-color: rgba(#47effb, .3);}
+            //&.pos {background-color: rgba(#0c69fe, .3);}
+            &.new-block {
+                background-color: rgba(#e06a6a, 0.5);
+            }
+            &.select {
+                background-color: rgba(#e06a6a, 0.5);
+            }
+        }
+    }
+}

@@ -1,104 +1,110 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import 'rxjs/add/operator/map'
-import {HttpService, MobileNavState} from '../http.service';
-import {Subscription} from 'rxjs/Subscription';
-import {CookieService} from 'angular2-cookie/core';
+import { Component, OnInit, OnDestroy } from '@angular/core'
+import { ActivatedRoute } from '@angular/router'
+import { HttpService, MobileNavState } from '../services/http.service'
+import { CookieService } from 'ngx-cookie-service'
+import { SubscriptionTracker } from '../subscription-tracker/subscription-tracker'
 
 @Component({
-  selector: 'app-alt-blocks',
-  templateUrl: './alt-blocks.component.html',
-  styleUrls: ['./alt-blocks.component.scss'],
-  providers: [],
+    selector: 'app-alt-blocks',
+    templateUrl: './alt-blocks.component.html',
+    styleUrls: ['./alt-blocks.component.scss'],
+    providers: []
 })
+export class AltBlocksComponent
+    extends SubscriptionTracker
+    implements OnInit, OnDestroy
+{
+    altBlocks: any
+    count: number
+    maxCount: number
+    currentPage: number
+    offset: number
+    limitList: any
+    visiblePagination: boolean
+    loader: boolean
+    navIsOpen: boolean
+    searchIsOpen: boolean = false
 
-export class AltBlocksComponent implements OnInit, OnDestroy {
-  altBlocks: any;
-  getAltBlocksSubscription: Subscription;
-  count: number;
-  maxCount: number;
-  currentPage: number;
-  offset: number;
-  limitList: any;
-  visiblePagination: boolean;
-  loader: boolean;
-  navIsOpen: boolean;
-  searchIsOpen: boolean = false;
-
-  onIsVisible($event): void {
-    this.searchIsOpen = $event;
-  }
-
-  constructor(
-    private route: ActivatedRoute,
-    private httpService: HttpService,
-    private _cookieService: CookieService,
-    private mobileNavState: MobileNavState
-  ) {
-    this.maxCount = 1000;
-    this.visiblePagination = false;
-    this.navIsOpen = false;
-  }
-
-  ngOnInit() {
-    this.currentPage = 1;
-    this.count = 20;
-    this.offset = 0;
-    if (this._cookieService.get('setCountAltBlocksCookie')) {
-      this.count = parseInt(this._cookieService.get('setCountAltBlocksCookie'), 10);
+    onIsVisible($event): void {
+        this.searchIsOpen = $event
     }
-    this.onChange();
 
-    this.mobileNavState.change.subscribe(navIsOpen => {
-      this.navIsOpen = navIsOpen;
-    });
-  }
+    constructor(
+        private route: ActivatedRoute,
+        private httpService: HttpService,
+        private cookieService: CookieService,
+        private mobileNavState: MobileNavState
+    ) {
+        super()
+        this.maxCount = 1000
+        this.visiblePagination = false
+        this.navIsOpen = false
+    }
 
-  onChange() {
-    this.loader = true;
-    if (this.count > this.maxCount) {
-      this.count = this.maxCount;
-    }
-    if (!this.count) {
-      this.count = 1;
-    }
-    this.limitList = +this.count;
-    this._cookieService.put('setCountAltBlocksCookie', this.limitList);
-    this.offset = (this.currentPage - 1) * this.count;
-    this.getAltBlocksSubscription = this.httpService.getAltBlocks(this.offset, this.count).subscribe(
-      data => {
-        this.altBlocks = data;
-        for (let i = 0; i < this.altBlocks.length; i++) {
-          this.altBlocks[i].transactions_details = JSON.parse(this.altBlocks[i].transactions_details);
+    ngOnInit() {
+        this.currentPage = 1
+        this.count = 20
+        this.offset = 0
+        if (this.cookieService.get('setCountAltBlocksCookie')) {
+            this.count = parseInt(
+                this.cookieService.get('setCountAltBlocksCookie'),
+                10
+            )
         }
-      }, err => {
-        console.log('getAltBlocks', err);
-      },
-      () => {
-        this.loader = false;
-        this.visiblePagination = true;
-      }
-    );
-  }
+        this.onChange()
 
-  nextPage() {
-    if (this.altBlocks.length >= +this.count) {
-      this.currentPage++;
-      this.onChange();
+        this.mobileNavState.change.subscribe((navIsOpen) => {
+            this.navIsOpen = navIsOpen
+        })
     }
-  }
 
-  prevPage() {
-    if ( (this.currentPage - 1) > 0) {
-      this.currentPage--;
-      this.onChange();
+    onChange() {
+        this.loader = true
+        if (this.count > this.maxCount) {
+            this.count = this.maxCount
+        }
+        if (!this.count) {
+            this.count = 1
+        }
+        this.limitList = +this.count
+        this.cookieService.set('setCountAltBlocksCookie', this.limitList)
+        this.offset = (this.currentPage - 1) * this.count
+        this._track(
+            this.httpService.getAltBlocks(this.offset, this.count).subscribe({
+                next: (data) => {
+                    this.altBlocks = data
+                    for (let i = 0; i < this.altBlocks.length; i++) {
+                        this.altBlocks[i].transactions_details = JSON.parse(
+                            this.altBlocks[i].transactions_details
+                        )
+                    }
+                },
+                error: (err) => {
+                    console.log('getAltBlocks', err)
+                },
+                complete: () => {
+                    this.loader = false
+                    this.visiblePagination = true
+                }
+            })
+        )
     }
-  }
 
-  ngOnDestroy() {
-    if (this.getAltBlocksSubscription) { this.getAltBlocksSubscription.unsubscribe(); }
-  }
+    nextPage() {
+        if (this.altBlocks.length >= +this.count) {
+            this.currentPage++
+            this.onChange()
+        }
+    }
 
+    prevPage() {
+        if (this.currentPage - 1 > 0) {
+            this.currentPage--
+            this.onChange()
+        }
+    }
+
+    ngOnDestroy() {
+        super.ngOnDestroy()
+    }
 }
-
-

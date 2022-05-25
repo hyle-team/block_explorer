@@ -1,47 +1,36 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { BlockchainComponent } from './blockchain.component';
-import { MomentModule } from 'angular2-moment';
-import { RouterTestingModule } from '@angular/router/testing';
-import { HttpService } from './../http.service';
-import { HttpModule } from '@angular/http';
-import { CookieService } from 'angular2-cookie/core';
-import { OrderPipe, BitNumberPipe, TruncatePipe, TimeAgoPipe } from '.././pipes.pipe';
-
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { BlockchainComponent } from './blockchain.component'
+import { RouterTestingModule } from '@angular/router/testing'
+import { HttpService, MobileNavState } from './../services/http.service'
+import { CookieService } from 'ngx-cookie-service'
+import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
+import { PipesModule } from '../pipes/pipes.module'
 
 describe('BlockchainComponent', () => {
-  let component: BlockchainComponent;
-  let fixture: ComponentFixture<BlockchainComponent>;
+    let component: BlockchainComponent
+    let fixture: ComponentFixture<BlockchainComponent>
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        BlockchainComponent,
-        OrderPipe,
-        BitNumberPipe,
-        TruncatePipe,
-        TimeAgoPipe
-      ],
-      providers: [
-        HttpService,
-        CookieService
-      ],
-      imports: [
-        HttpModule,
-        MomentModule,
-        RouterTestingModule
-      ]
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            declarations: [BlockchainComponent],
+            providers: [MobileNavState, HttpService, CookieService],
+            imports: [
+                HttpClientTestingModule,
+                RouterTestingModule,
+                PipesModule
+            ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        }).compileComponents()
+    }))
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(BlockchainComponent)
+        component = fixture.componentInstance
+        fixture.detectChanges()
     })
-    .compileComponents();
-  }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(BlockchainComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should be created', () => {
-    expect(component).toBeTruthy();
-  });
-});
+    it('should be created', () => {
+        expect(component).toBeTruthy()
+    })
+})

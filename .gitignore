@@ -1,5 +1,1 @@
-/.idea/
-/node_modules/
-/db
-/package-lock.json
-/dist
+node_modules

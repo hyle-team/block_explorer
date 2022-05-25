@@ -5,11 +5,11 @@
     <div class="info">
         <div class="row">
             <div class="title">API ENDPOINT</div>
-            <div class="value">https://explorer.zano.org/api/</div>
+            <div class="value">{{ apiEndpoint }}</div>
         </div>
         <div class="row">
             <div class="title">URL Request Format</div>
-            <div class="value">{{objectLinks.url_request_format}}</div>
+            <div class="value">{{ objectLinks.url_request_format }}</div>
         </div>
     </div>
 </div>
@@ -19,16 +19,24 @@
     <div class="info">
         <div class="row method">
             <div class="title">Method:</div>
-            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#getinfo">get_info</a></div>
+            <div class="value">
+                <a target="_blank" [href]="createLink('#getinfo')">get_info</a>
+            </div>
         </div>
         <div class="row">
             <div class="title">Example:</div>
-            <div class="value">{{objectLinks.utl_get_info}}</div>
+            <div class="value">{{ objectLinks.utl_get_info }}</div>
         </div>
     </div>
     <div class="response">
-        <div class="title" (click)="clickEvent('info')"><div class="toggler"></div>JSON Response</div>
-        <ngx-json-viewer *ngIf="dropdowns['info']" [json]="infoExample" [expanded]="false"></ngx-json-viewer>
+        <div class="title" (click)="clickEvent('info')">
+            <div class="toggler"></div>
+            JSON Response
+        </div>
+        <ngx-json-viewer
+            *ngIf="dropdowns['info']"
+            [json]="infoExample"
+            [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
 
@@ -41,31 +49,46 @@
         </div>
         <div class="row">
             <div class="title">Example:</div>
-            <div class="value">{{objectLinks.utl_get_total_coins}}</div>
+            <div class="value">{{ objectLinks.utl_get_total_coins }}</div>
         </div>
     </div>
     <div class="response">
-        <div class="title" (click)="clickEvent('current_info')"><div class="toggler"></div>JSON Response</div>
-        <ngx-json-viewer *ngIf="dropdowns['current_info']" [json]="currentinfoExample" [expanded]="false"></ngx-json-viewer>
+        <div class="title" (click)="clickEvent('current_info')">
+            <div class="toggler"></div>
+            JSON Response
+        </div>
+        <ngx-json-viewer
+            *ngIf="dropdowns['current_info']"
+            [json]="currentinfoExample"
+            [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
-
 
 <div class="item_box">
     <div class="heading">Request blocks (offset and count)</div>
     <div class="info">
         <div class="row method">
             <div class="title">Method:</div>
-            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#get_blocks_details">get_blocks_details</a></div>
+            <div class="value">
+                <a target="_blank" [href]="createLink('#get_blocks_details')"
+                    >get_blocks_details</a
+                >
+            </div>
         </div>
         <div class="row">
             <div class="title">Example:</div>
-            <div class="value">{{objectLinks.url_get_blocks_details}}</div>
+            <div class="value">{{ objectLinks.url_get_blocks_details }}</div>
         </div>
     </div>
     <div class="response">
-        <div class="title" (click)="clickEvent('blocks')"><div class="toggler"></div>JSON Response</div>
-        <ngx-json-viewer *ngIf="dropdowns['blocks']" [json]="getBlocksDetails" [expanded]="false"></ngx-json-viewer>
+        <div class="title" (click)="clickEvent('blocks')">
+            <div class="toggler"></div>
+            JSON Response
+        </div>
+        <ngx-json-viewer
+            *ngIf="dropdowns['blocks']"
+            [json]="getBlocksDetails"
+            [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
 
@@ -74,16 +97,30 @@
     <div class="info">
         <div class="row method">
             <div class="title">Method:</div>
-            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#get_main_block_details">get_main_block_details</a></div>
+            <div class="value">
+                <a
+                    target="_blank"
+                    [href]="createLink('#get_main_block_details')"
+                    >get_main_block_details</a
+                >
+            </div>
         </div>
         <div class="row">
             <div class="title">Example:</div>
-            <div class="value">{{objectLinks.url_get_main_block_details}}</div>
+            <div class="value">{{
+                objectLinks.url_get_main_block_details
+            }}</div>
         </div>
     </div>
     <div class="response">
-        <div class="title" (click)="clickEvent('block')"><div class="toggler"></div>JSON Response</div>
-        <ngx-json-viewer *ngIf="dropdowns['block']" [json]="getMainBlockDetails" [expanded]="false"></ngx-json-viewer>
+        <div class="title" (click)="clickEvent('block')">
+            <div class="toggler"></div>
+            JSON Response
+        </div>
+        <ngx-json-viewer
+            *ngIf="dropdowns['block']"
+            [json]="getMainBlockDetails"
+            [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
 
@@ -92,35 +129,58 @@
     <div class="info">
         <div class="row method">
             <div class="title">Method:</div>
-            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#get_alt_blocks_details">get_alt_blocks_details</a></div>
+            <div class="value">
+                <a
+                    target="_blank"
+                    [href]="createLink('#get_alt_blocks_details')"
+                    >get_alt_blocks_details</a
+                >
+            </div>
         </div>
         <div class="row">
             <div class="title">Example:</div>
-            <div class="value">{{objectLinks.url_get_alt_blocks_details}}</div>
+            <div class="value">{{
+                objectLinks.url_get_alt_blocks_details
+            }}</div>
         </div>
     </div>
     <div class="response">
-        <div class="title" (click)="clickEvent('altblocks')"><div class="toggler"></div>JSON Response</div>
-        <ngx-json-viewer *ngIf="dropdowns['altblocks']" [json]="getAltBlocksDetails" [expanded]="false"></ngx-json-viewer>
+        <div class="title" (click)="clickEvent('altblocks')">
+            <div class="toggler"></div>
+            JSON Response
+        </div>
+        <ngx-json-viewer
+            *ngIf="dropdowns['altblocks']"
+            [json]="getAltBlocksDetails"
+            [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
-
 
 <div class="item_box">
     <div class="heading">Request a given Alt-block by hash</div>
     <div class="info">
         <div class="row method">
             <div class="title">Method:</div>
-            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#get_alt_block_details">get_alt_block_details</a></div>
+            <div class="value">
+                <a target="_blank" [href]="createLink('#get_alt_block_details')"
+                    >get_alt_block_details</a
+                >
+            </div>
         </div>
         <div class="row">
             <div class="title">Example:</div>
-            <div class="value">{{objectLinks.url_get_alt_block_details}}</div>
+            <div class="value">{{ objectLinks.url_get_alt_block_details }}</div>
         </div>
     </div>
     <div class="response">
-        <div class="title" (click)="clickEvent('altblock')"><div class="toggler"></div>JSON Response</div>
-        <ngx-json-viewer *ngIf="dropdowns['altblock']" [json]="getAltBlockDetails" [expanded]="false"></ngx-json-viewer>
+        <div class="title" (click)="clickEvent('altblock')">
+            <div class="toggler"></div>
+            JSON Response
+        </div>
+        <ngx-json-viewer
+            *ngIf="dropdowns['altblock']"
+            [json]="getAltBlockDetails"
+            [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
 
@@ -129,34 +189,60 @@
     <div class="info">
         <div class="row method">
             <div class="title">Method:</div>
-            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#get_pool_txs_details">get_pool_txs_details</a></div>
+            <div class="value">
+                <a target="_blank" [href]="createLink('#get_pool_txs_details')"
+                    >get_pool_txs_details</a
+                >
+            </div>
         </div>
         <div class="row">
             <div class="title">Example:</div>
-            <div class="value">{{objectLinks.url_get_pool_txs_details}}</div>
+            <div class="value">{{ objectLinks.url_get_pool_txs_details }}</div>
         </div>
     </div>
     <div class="response">
-        <div class="title" (click)="clickEvent('pool_transact')"><div class="toggler"></div>JSON Response</div>
-        <ngx-json-viewer *ngIf="dropdowns['pool_transact']" [json]="geAllPoolTXlist" [expanded]="false"></ngx-json-viewer>
+        <div class="title" (click)="clickEvent('pool_transact')">
+            <div class="toggler"></div>
+            JSON Response
+        </div>
+        <ngx-json-viewer
+            *ngIf="dropdowns['pool_transact']"
+            [json]="geAllPoolTXlist"
+            [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
 
 <div class="item_box">
-    <div class="heading">Request brief information transactions from the pool</div>
+    <div class="heading">
+        Request brief information transactions from the pool
+    </div>
     <div class="info">
         <div class="row method">
             <div class="title">Method:</div>
-            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#get_pool_txs_brief_details">get_pool_txs_brief_details</a></div>
+            <div class="value">
+                <a
+                    target="_blank"
+                    [href]="createLink('#get_pool_txs_brief_details')"
+                    >get_pool_txs_brief_details</a
+                >
+            </div>
         </div>
         <div class="row">
             <div class="title">Example:</div>
-            <div class="value">{{objectLinks.url_get_pool_txs_brief_details}}</div>
+            <div class="value">{{
+                objectLinks.url_get_pool_txs_brief_details
+            }}</div>
         </div>
     </div>
     <div class="response">
-        <div class="title" (click)="clickEvent('brief_pool_transact')"><div class="toggler"></div>JSON Response</div>
-        <ngx-json-viewer *ngIf="dropdowns['brief_pool_transact']" [json]="getPoolTXSbriefDetails" [expanded]="false"></ngx-json-viewer>
+        <div class="title" (click)="clickEvent('brief_pool_transact')">
+            <div class="toggler"></div>
+            JSON Response
+        </div>
+        <ngx-json-viewer
+            *ngIf="dropdowns['brief_pool_transact']"
+            [json]="getPoolTXSbriefDetails"
+            [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
 
@@ -165,34 +251,55 @@
     <div class="info">
         <div class="row method">
             <div class="title">Method:</div>
-            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#get_all_pool_tx_list">get_all_pool_tx_list</a></div>
+            <div class="value">
+                <a target="_blank" [href]="createLink('#get_all_pool_tx_list')"
+                    >get_all_pool_tx_list</a
+                >
+            </div>
         </div>
         <div class="row">
             <div class="title">Example:</div>
-            <div class="value">{{objectLinks.url_request_ids_all_txs_pool}}</div>
+            <div class="value">{{
+                objectLinks.url_request_ids_all_txs_pool
+            }}</div>
         </div>
     </div>
     <div class="response">
-        <div class="title" (click)="clickEvent('tx_ids_pool')"><div class="toggler"></div>JSON Response</div>
-        <ngx-json-viewer *ngIf="dropdowns['tx_ids_pool']" [json]="getTxIdsForPool" [expanded]="false"></ngx-json-viewer>
+        <div class="title" (click)="clickEvent('tx_ids_pool')">
+            <div class="toggler"></div>
+            JSON Response
+        </div>
+        <ngx-json-viewer
+            *ngIf="dropdowns['tx_ids_pool']"
+            [json]="getTxIdsForPool"
+            [expanded]="false"></ngx-json-viewer>
     </div>
 </div>
-
 
 <div class="item_box">
     <div class="heading">Request a given transaction by hash</div>
     <div class="info">
         <div class="row method">
             <div class="title">Method:</div>
-            <div class="value"><a target="_blank" href="https://docs.zano.org/reference#get_tx_details">get_tx_details</a></div>
+            <div class="value">
+                <a target="_blank" [href]="createLink('#get_tx_details')"
+                    >get_tx_details</a
+                >
+            </div>
         </div>
         <div class="row">
             <div class="title">Example:</div>
-            <div class="value">{{objectLinks.url_get_tx_details}}</div>
+            <div class="value">{{ objectLinks.url_get_tx_details }}</div>
         </div>
     </div>
     <div class="response">
-        <div class="title" (click)="clickEvent('transaction')"><div class="toggler"></div>JSON Response</div>
-        <ngx-json-viewer *ngIf="dropdowns['transaction']" [json]="getTXdetails" [expanded]="false"></ngx-json-viewer>
+        <div class="title" (click)="clickEvent('transaction')">
+            <div class="toggler"></div>
+            JSON Response
+        </div>
+        <ngx-json-viewer
+            *ngIf="dropdowns['transaction']"
+            [json]="getTXdetails"
+            [expanded]="false"></ngx-json-viewer>
     </div>
 </div>

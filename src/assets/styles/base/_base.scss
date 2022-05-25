@@ -1,20 +1,27 @@
 @import 'mixins';
 
-html, body {
-  width: 100%;
-  min-width: 100%;
+html,
+body {
+    width: 100%;
+    min-width: 100%;
+    min-height: 100%;
 }
 body {
-  font-family: $font;
-  background-image: $background;
-  background-repeat: no-repeat;
-  background-size: cover;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-attachment: scroll;
-}
-input, textarea, button {
-  font-family: $font;
-}
+    font-family: $font;
+    background: rgb(54,80,153);
+    background: radial-gradient(circle at 50% 2%, rgba(54,80,153,1) 0%, rgba(33,48,105,1) 15%, rgba(9,18,51,1) 39%);
 
+    // background-image: $background;
+    background-repeat: no-repeat;
+    // background-size: 100% 100%;
+    // background-size: cover;
+    // -webkit-background-size: cover;
+    // -moz-background-size: cover;
+    // -o-background-size: cover;
+    // background-attachment: scroll;
+}
+input,
+textarea,
+button {
+    font-family: $font;
+}

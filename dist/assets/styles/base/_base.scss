@@ -1,0 +1,22 @@
+@import 'mixins';
+
+html,
+body {
+    width: 100%;
+    min-width: 100%;
+}
+body {
+    font-family: $font;
+    background-image: $background;
+    background-repeat: no-repeat;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-attachment: scroll;
+}
+input,
+textarea,
+button {
+    font-family: $font;
+}

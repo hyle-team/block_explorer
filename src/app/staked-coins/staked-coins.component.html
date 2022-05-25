@@ -1,0 +1,14 @@
+<div class="staked_coins">
+    <div class="title">
+        <p>{{ title }}</p>
+    </div>
+    <div class="details">
+        <div class="amount">{{ amount | moneyParse | bitNumber }} ZANO</div>
+        <div class="distribution">
+            <div class="supply_percentage"
+                >{{ percentage | bitNumber}}%</div
+            >
+            <div class="supply_detail">from total supply</div>
+        </div>
+    </div>
+</div>

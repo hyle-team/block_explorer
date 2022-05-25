@@ -1,8 +1,12 @@
 <div class="top_box" *ngIf="navIsOpen === false">
     <div class="left_box">
-        <div class="mobile_heading" [ngClass]="{'hide_heading': searchIsOpen === true}">Charts</div>
+        <div
+            class="mobile_heading"
+            [ngClass]="{ hide_heading: searchIsOpen === true }">
+            Charts
+        </div>
     </div>
-    <app-search (isVisible)='onIsVisible($event)'></app-search>
+    <app-search (isVisible)="onIsVisible($event)"></app-search>
 </div>
 
 <div class="wrap_links_chart">
@@ -36,4 +40,3 @@
 </div>
 
 <!--<router-outlet></router-outlet>-->
-
