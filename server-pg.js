@@ -1162,7 +1162,7 @@ const getVisibilityInfo = async () => {
             let stakedCoinsLast7Days = new BigNumber(0)
             if ('mined_entries' in res2.data.result) {
                 for (const item of res2.data.result.mined_entries) {
-                    stakedCoinsLast7Days = stakedCoinsLast7Days.plus(item.a)
+                    stakedCoinsLast7Days.plus(item.a)
                 }
             }
 
