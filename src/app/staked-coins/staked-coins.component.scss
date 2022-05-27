@@ -73,6 +73,7 @@
             background-color: rgba(#0c69fe, 1);
         }
         .supply_detail {
+            padding-left: 8px;
             @include max991 {
                 padding-top: 4px;
             }

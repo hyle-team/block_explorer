@@ -355,7 +355,7 @@ app.get(
                 let response = await get_out_info(amount, i)
                 res.json({ tx_id: response.data.result.tx_id })
             } else {
-                res.json(result.rows)
+                res.json(result.rows[0])
             }
         } else {
             res.status({ status: 500 }).json({
