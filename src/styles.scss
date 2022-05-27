@@ -131,6 +131,11 @@ app-search {
     .wrap_loader {
         height: 700px;
     }
+    > div {
+        @include max991 {
+            overflow: auto !important;
+        }
+    }
 }
 
 .dialog-open {
