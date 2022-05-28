@@ -24,7 +24,7 @@
         "@angular/platform-browser": "^13.3.8",
         "@angular/platform-browser-dynamic": "^13.3.8",
         "@angular/platform-server": "^13.3.8",
-        "@angular/router": "^13.3.8",
+        "@angular/router": "^13.3.10",
         "@ngxs/devtools-plugin": "^3.7.3",
         "@ngxs/logger-plugin": "^3.7.3",
         "@ngxs/store": "^3.7.3",
