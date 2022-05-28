@@ -49,8 +49,8 @@ CREATE INDEX IF NOT EXISTS index_transaction_keeper ON transactions(keeper_block
 CREATE INDEX IF NOT EXISTS index_transaction_id ON transactions(id);
 
 CREATE TABLE IF NOT EXISTS aliases (
-        alias text,
-        address text unique,
+        alias text unique,
+        address text,
         comment text,
         tracking_key text,
         block bigint,

@@ -648,7 +648,7 @@ const parseComment = (comment) => {
 }
 
 const parseTrackingKey = (trackingKey) => {
-    let splitKey = trackingKey.split(/\s*,\s*/) //.filter((el) => !!el)
+    let splitKey = trackingKey.split(/\s*,\s*/)
     let resultKey = splitKey[5]
     if (resultKey) {
         let key = resultKey.split(':')
@@ -664,7 +664,6 @@ const parseTrackingKey = (trackingKey) => {
 }
 
 const decodeString = (str) => {
-    // str = str.replace("'", "''")
     if (!!str) {
         str = str.replace(/'/g, "''")
         return str.replace(/\u0000/g, '', (unicode) => {
@@ -674,11 +673,6 @@ const decodeString = (str) => {
         })
     }
     return str
-    // str = str.replace("'", "''")
-    // if (/str/.unicode)
-    //     return str.replace(/str/.source)
-    // return str
-    //return str.replace("\u0000", "").replace("0x00", "").replace("'","''")
 }
 
 const syncTransactions = async () => {
@@ -728,7 +722,7 @@ const syncTransactions = async () => {
                                         `${aliasBlock},` +
                                         `'${aliasTransaction}',` +
                                         `${1}` +
-                                        `) ON CONFLICT (address) ` +
+                                        `) ON CONFLICT (alias) ` +
                                         `DO UPDATE SET ` +
                                         `alias='${decodeString(aliasName)}',` +
                                         `address='${aliasAddress}',` +
@@ -842,56 +836,29 @@ const syncTransactions = async () => {
             //build block inserts
             {
                 blockInserts.push(
-                    [
-                        bl.height,
-                        bl.actual_timestamp,
-                        bl.base_reward,
-                        bl.blob,
-                        bl.block_cumulative_size,
-                        bl.block_tself_size,
-                        bl.cumulative_diff_adjusted,
-                        bl.cumulative_diff_precise,
-                        bl.difficulty,
-                        bl.effective_fee_median,
-                        bl.id,
-                        bl.is_orphan,
-                        bl.penalty,
-                        bl.prev_id,
-                        bl.summary_reward,
-                        bl.this_block_fee_median,
-                        bl.timestamp,
-                        bl.total_fee,
-                        bl.total_txs_size,
-                        bl.tr_count ? bl.tr_count : 0,
-                        bl.type,
-                        decodeString(bl.miner_text_info),
-                        bl.pow_seed
-                    ]
-
-                    // `(${bl.height},` +
-                    //     `${bl.actual_timestamp},` +
-                    //     `${bl.base_reward},` +
-                    //     `'${bl.blob}',` +
-                    //     `${bl.block_cumulative_size},` +
-                    //     `${bl.block_tself_size},` +
-                    //     `${bl.cumulative_diff_adjusted},` +
-                    //     `${bl.cumulative_diff_precise},` +
-                    //     `${bl.difficulty},` +
-                    //     `${bl.effective_fee_median},` +
-                    //     `'${bl.id}',` +
-                    //     `${bl.is_orphan},` +
-                    //     `${bl.penalty},` +
-                    //     `'${bl.prev_id}',` +
-                    //     `${bl.summary_reward},` +
-                    //     `${bl.this_block_fee_median},` +
-                    //     `${bl.timestamp},` +
-                    //     `${bl.total_fee},` +
-                    //     `${bl.total_txs_size},` +
-                    //     `${bl.tr_count ? bl.tr_count : 0},` +
-                    //     `${bl.type},` +
-                    //     //`'',` +
-                    //     "'" + bl.miner_text_info.toString().replace("'","''") + "'," +
-                    //     `'${bl.pow_seed}')`
+                    `(${bl.height},` +
+                        `${bl.actual_timestamp},` +
+                        `${bl.base_reward},` +
+                        `'${bl.blob}',` +
+                        `${bl.block_cumulative_size},` +
+                        `${bl.block_tself_size},` +
+                        `${bl.cumulative_diff_adjusted},` +
+                        `${bl.cumulative_diff_precise},` +
+                        `${bl.difficulty},` +
+                        `${bl.effective_fee_median},` +
+                        `'${bl.id}',` +
+                        `${bl.is_orphan},` +
+                        `${bl.penalty},` +
+                        `'${bl.prev_id}',` +
+                        `${bl.summary_reward},` +
+                        `${bl.this_block_fee_median},` +
+                        `${bl.timestamp},` +
+                        `${bl.total_fee},` +
+                        `${bl.total_txs_size},` +
+                        `${bl.tr_count ? bl.tr_count : 0},` +
+                        `${bl.type},` +
+                        "'" + decodeString(bl.miner_text_info) + "'," +
+                        `'${bl.pow_seed}')`
                 )
             }
         }
@@ -930,69 +897,34 @@ const syncTransactions = async () => {
         //save blocks
         {
             let sql = ''
-            let i = null
             if (blockInserts.length > 0) {
-                for (const item of blockInserts) {
-                    sql =
-                        'INSERT INTO blocks (height,' +
-                        'actual_timestamp,' +
-                        'base_reward,' +
-                        'blob,' +
-                        'block_cumulative_size,' +
-                        'block_tself_size,' +
-                        'cumulative_diff_adjusted,' +
-                        'cumulative_diff_precise,' +
-                        'difficulty,' +
-                        'effective_fee_median,' +
-                        'id,' +
-                        'is_orphan,' +
-                        'penalty,' +
-                        'prev_id,' +
-                        'summary_reward,' +
-                        'this_block_fee_median,' +
-                        'timestamp,' +
-                        'total_fee,' +
-                        'total_txs_size,' +
-                        'tr_count,' +
-                        'type,' +
-                        'miner_text_info,' +
-                        'pow_seed) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23);'
-                    // item.split(',') +
-                    // ';'
-                    try {
-                        await db.query(sql, item)
-                    } catch (error) {
-                        fs.appendFile('log.json', item + '\r\n', (err) => {})
-                        console.log(i, error)
-                    }
-                }
-                // sql =
-                //     'INSERT INTO blocks (height,' +
-                //     'actual_timestamp,' +
-                //     'base_reward,' +
-                //     'blob,' +
-                //     'block_cumulative_size,' +
-                //     'block_tself_size,' +
-                //     'cumulative_diff_adjusted,' +
-                //     'cumulative_diff_precise,' +
-                //     'difficulty,' +
-                //     'effective_fee_median,' +
-                //     'id,' +
-                //     'is_orphan,' +
-                //     'penalty,' +
-                //     'prev_id,' +
-                //     'summary_reward,' +
-                //     'this_block_fee_median,' +
-                //     'timestamp,' +
-                //     'total_fee,' +
-                //     'total_txs_size,' +
-                //     'tr_count,' +
-                //     'type,' +
-                //     'miner_text_info,' +
-                //     'pow_seed) VALUES ' +
-                //     blockInserts.join(',') +
-                //     ';'
-                // await db.query(sql)
+                sql =
+                    'INSERT INTO blocks (height,' +
+                    'actual_timestamp,' +
+                    'base_reward,' +
+                    'blob,' +
+                    'block_cumulative_size,' +
+                    'block_tself_size,' +
+                    'cumulative_diff_adjusted,' +
+                    'cumulative_diff_precise,' +
+                    'difficulty,' +
+                    'effective_fee_median,' +
+                    'id,' +
+                    'is_orphan,' +
+                    'penalty,' +
+                    'prev_id,' +
+                    'summary_reward,' +
+                    'this_block_fee_median,' +
+                    'timestamp,' +
+                    'total_fee,' +
+                    'total_txs_size,' +
+                    'tr_count,' +
+                    'type,' +
+                    'miner_text_info,' +
+                    'pow_seed) VALUES ' +
+                    blockInserts.join(',') +
+                    ';'
+                await db.query(sql)
             }
         }
         try {
@@ -1127,18 +1059,7 @@ const getTxPoolDetails = async (count) => {
         values: [count ? count : 500]
     }
     let result = await db.query(query)
-    // let a = [{blob_size: 10, fee: 10000000000, id:"734e0acf588a051abe774e766f611606096d401a7cd4623bdfad7ad57bc2542a", timestamp: "1652919533"},
-    // {blob_size: 11, fee: 10000000000, id:"734e0acf588a051abe774e766f611606096d401a7cd4623bdfad7ad57bc2542a", timestamp: "1652919533"},
-    // {blob_size: 12, fee: 10000000000, id:"734e0acf588a051abe774e766f611606096d401a7cd4623bdfad7ad57bc2542b", timestamp: "1652919533"},
-    // {blob_size: 13, fee: 10000000000, id:"734e0acf588a051abe774e766f611606096d401a7cd4623bdfad7ad57bc2542c", timestamp: "1652919533"},
-    // {blob_size: 14, fee: 10000000000, id:"734e0acf588a051abe774e766f611606096d401a7cd4623bdfad7ad57bc2542d", timestamp: "1652919533"},
-    // {blob_size: 15, fee: 10000000000, id:"734e0acf588a051abe774e766f611606096d401a7cd4623bdfad7ad57bc2542e", timestamp: "1652919533"},
-    // {blob_size: 16, fee: 10000000000, id:"734e0acf588a051abe774e766f611606096d401a7cd4623bdfad7ad57bc2542f", timestamp: "1652919533"},
-    // {blob_size: 17, fee: 10000000000, id:"734e0acf588a051abe774e766f611606096d401a7cd4623bdfad7ad57bc2543a", timestamp: "1652919533"},
-    // {blob_size: 18, fee: 10000000000, id:"734e0acf588a051abe774e766f611606096d401a7cd4623bdfad7ad57bc2543b", timestamp: "1652919533"},
-    // {blob_size: 19, fee: 10000000000, id:"734e0acf588a051abe774e766f611606096d401a7cd4623bdfad7ad57bc2543c", timestamp: "1652919533"}]
     return result && result.rowCount > 0 ? result.rows : []
-    // return a
 }
 
 const getVisibilityInfo = async () => {
