@@ -572,8 +572,6 @@ const syncPool = async () => {
                             if (pools_array[j] === result.rows[i].id) {
                                 find = true
                                 break
-                            } else {
-                                log('pools_array[j] !== result.rows[i].id')
                             }
                         }
                         if (!find) {
@@ -1129,7 +1127,7 @@ const getInfoTimer = async () => {
                     countTrPoolDB = result.rows[0].transactions
                 if (countTrPoolDB !== countTrPoolServer) {
                     log(
-                        'need update pool transactions db=' +
+                        'need to update pool transactions, db=' +
                             countTrPoolDB +
                             ' server=' +
                             countTrPoolServer
@@ -1141,7 +1139,7 @@ const getInfoTimer = async () => {
             if (statusSyncAltBlocks === false) {
                 if (countAltBlocksServer !== countAltBlocksDB) {
                     log(
-                        'need update alt-blocks db=' +
+                        'need to update alt-blocks, db=' +
                             countAltBlocksDB +
                             ' server=' +
                             countAltBlocksServer
@@ -1154,14 +1152,18 @@ const getInfoTimer = async () => {
                 now_blocks_sync === false
             ) {
                 log(
-                    'need update blocks db=' +
+                    'need to update blocks, db=' +
                         lastBlock.height +
                         ' server=' +
                         blockInfo.height
                 )
+                let result = await db.query(
+                    'SELECT COUNT(*)::integer AS height FROM aliases;'
+                )
+                countAliasesDB = result && result.rowCount ? result.rows[0].height : 0
                 if (countAliasesDB !== countAliasesServer) {
                     log(
-                        'need update aliases db=' +
+                        'need to update aliases, db=' +
                             countAliasesDB +
                             ' server=' +
                             countAliasesServer
