@@ -1,0 +1,49 @@
+@import '../../assets/styles/base/mixins';
+:host {
+    flex-basis: 50%;
+    color: #fff;
+}
+.dev_fund {
+    display: flex;
+    height: 100%;
+    @include max991 {
+        background: linear-gradient(to right, #1b3a8a, #32439f);
+        border-radius: 0 0 10px 10px;
+    }
+    .title {
+        background: linear-gradient(to right, #1b3a8a, #32439f);
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 35%;
+        justify-content: center;
+        border-radius: 10px 0 0 10px;
+        @include max991 {
+            border-radius: 0 0 0 10px;
+            background: transparent;
+            padding: 12px 20px;
+            align-items: flex-start;
+        }
+    }
+    .details {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 65%;
+        justify-content: center;
+        border-radius: 0 10px 10px 0;
+        background-color: #2b3768;
+        @include max991 {
+            border-radius: 0 0 10px 0;
+            background: transparent;
+        }
+    }
+    .amount {
+        width: 100%;
+        text-align: center;
+        font-size: 25px;
+        @include max991 {
+            font-size: 14px;
+            background: transparent;
+        }
+    }
+}

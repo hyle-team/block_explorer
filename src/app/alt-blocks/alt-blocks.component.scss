@@ -1,66 +1,65 @@
 @import '../../assets/styles/base/mixins';
 .wrapper_table {
-  border-radius: 10px;
-  overflow: hidden;
-  @include max1170 {
-    overflow-x: auto;
-  }
+    border-radius: 10px;
+    overflow: hidden;
+    @include max1170 {
+        overflow-x: auto;
+    }
 }
 .table_alt_blocks {
-  table-layout: auto;
-  width: 100%;
-  white-space: nowrap;
-  .hash {
+    table-layout: auto;
     width: 100%;
-    white-space:nowrap;
-    .cont_hash {
-      position: relative;
-      max-width: 100%;
-      padding: 0 !important;
-      display: -webkit-flex;
-      display: -moz-flex;
-      display: flex;
-      vertical-align: text-bottom !important;
-      &:after {
-        content: '-';
-        display: inline;
-        visibility: hidden;
-        width: 0;
-      }
-      > a {
-        color: #68a1ff;
-        position: absolute;
+    white-space: nowrap;
+    .hash {
+        width: 100%;
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        -ms-text-overflow: ellipsis;
-        -o-text-overflow: ellipsis;
-        max-width: 100%;
-        min-width: 0;
-        width:100%;
-        top: 0;
-        left: 0;
+        .cont_hash {
+            position: relative;
+            max-width: 100%;
+            padding: 0 !important;
+            display: -webkit-flex;
+            display: -moz-flex;
+            display: flex;
+            vertical-align: text-bottom !important;
+            &:after {
+                content: '-';
+                display: inline;
+                visibility: hidden;
+                width: 0;
+            }
+            > a {
+                color: #68a1ff;
+                position: absolute;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                -ms-text-overflow: ellipsis;
+                -o-text-overflow: ellipsis;
+                max-width: 100%;
+                min-width: 0;
+                width: 100%;
+                top: 0;
+                left: 0;
 
-        &:after {
-          content: '-';
-          display: inline;
-          visibility: hidden;
-          width: 0;
+                &:after {
+                    content: '-';
+                    display: inline;
+                    visibility: hidden;
+                    width: 0;
+                }
+            }
         }
-      }
     }
-  }
 
-  @include max761 {
-    min-width: 850px;
-  }
+    @include max761 {
+        min-width: 850px;
+    }
 
-  @include max1170 {
-
-  }
+    @include max1170 {
+    }
 }
 .pagination {
-  @include max761 {
-    min-width: 850px;
-  }
+    @include max761 {
+        min-width: 850px;
+    }
 }

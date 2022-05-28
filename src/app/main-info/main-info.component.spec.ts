@@ -1,39 +1,30 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 
-import { MainInfoComponent } from './main-info.component';
-import {BitNumberPipe} from '.././pipes.pipe';
-import {HttpModule} from '@angular/http';
-import {RouterTestingModule} from '@angular/router/testing';
-import {HttpService} from './../http.service';
+import { MainInfoComponent } from './main-info.component'
+import { RouterTestingModule } from '@angular/router/testing'
+import { HttpService } from './../services/http.service'
+import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { PipesModule } from '../pipes/pipes.module'
 
 describe('MainInfoComponent', () => {
-  let component: MainInfoComponent;
-  let fixture: ComponentFixture<MainInfoComponent>;
+    let component: MainInfoComponent
+    let fixture: ComponentFixture<MainInfoComponent>
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        MainInfoComponent,
-        BitNumberPipe
-      ],
-      providers: [
-        HttpService
-      ],
-      imports: [
-        HttpModule,
-        RouterTestingModule
-      ],
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            declarations: [MainInfoComponent],
+            providers: [HttpService],
+            imports: [HttpClientTestingModule, RouterTestingModule, PipesModule]
+        }).compileComponents()
+    }))
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(MainInfoComponent)
+        component = fixture.componentInstance
+        fixture.detectChanges()
     })
-    .compileComponents();
-  }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(MainInfoComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+    it('should create', () => {
+        expect(component).toBeTruthy()
+    })
+})

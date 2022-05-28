@@ -1,260 +1,331 @@
 <div class="top_box" *ngIf="navIsOpen === false">
-  <div class="left_box">
-    <a [routerLink]="['/block', blockHash]" class="back_btn" [ngClass]="{'hide_back_btn': searchIsOpen === true}">Back</a>
-  </div>
-  <app-search (isVisible)='onIsVisible($event)'></app-search>
+    <div class="left_box">
+        <a
+            [routerLink]="['/block', blockHash]"
+            class="back_btn"
+            [ngClass]="{ hide_back_btn: searchIsOpen === true }"
+            >Back</a
+        >
+    </div>
+    <app-search (isVisible)="onIsVisible($event)"></app-search>
 </div>
-
 
 <div class="main_info">
-  <div class="height">
-    <div class="title">Height</div>
-    <div class="value">{{height | bitNumber}}</div>
-  </div>
-  <div class="difficulty">
-    <div class="title">Difficulty</div>
-    <div class="value">
-      <div class="pos"><span>PoS:</span>{{posDifficulty | bitNumber}} </div>
-      <div class="pow"><span>PoW:</span>{{powDifficulty | bitNumber}}</div>
+    <div class="height">
+        <div class="title">Height</div>
+        <div class="value">{{ height | bitNumber }}</div>
     </div>
-  </div>
-  <div class="coins_emitted">
-    <div class="title">Coins Emitted</div>
-    <div class="value">{{totalCoins | moneyParse | bitNumber}}</div>
-  </div>
-  <div class="transactions">
-    <div class="title">Transactions</div>
-    <div class="value">{{ (txCount + height) | bitNumber}}</div>
-  </div>
-  <div class="hash_rate">
-    <div class="title">Hash Rate (aprox):</div>
-    <div class="value">{{NetworkHashrate | hashPowerConverter : 'speed'}}</div>
-  </div>
+    <div class="difficulty">
+        <div class="title">Difficulty</div>
+        <div class="value">
+            <div class="pos"
+                ><span>PoS:</span>{{ posDifficulty | bitNumber }}</div
+            >
+            <div class="pow"
+                ><span>PoW:</span>{{ powDifficulty | bitNumber }}</div
+            >
+        </div>
+    </div>
+    <div class="coins_emitted">
+        <div class="title">Coins Emitted</div>
+        <div class="value">{{ totalCoins | moneyParse | bitNumber }}</div>
+    </div>
+    <div class="transactions">
+        <div class="title">Transactions</div>
+        <div class="value">{{ txCount + height | bitNumber }}</div>
+    </div>
+    <div class="hash_rate">
+        <div class="title">Hash Rate (aprox):</div>
+        <div class="value">{{
+            NetworkHashrate | hashPowerConverter: 'speed'
+        }}</div>
+    </div>
 </div>
-
 
 <div *ngIf="transactionNotFount === false; else elseBlock">
-<div class="transaction_details" >
-  <div class="title_transaction">Transaction</div>
+    <div class="transaction_details">
+        <div class="title_transaction">Transaction</div>
 
-  <table class="transaction_details">
-    <tr class="hash">
-      <td>Hash</td>
-      <td><span>{{Transaction?.id}}</span></td>
-    </tr>
-    <tr>
-      <td>Amount</td>
-      <td>{{Transaction?.amount | moneyParse}}</td>
-    </tr>
-    <tr>
-      <td>Fee</td>
-      <td>{{Transaction?.fee | moneyParse}}</td>
-    </tr>
-    <tr>
-      <td>Size</td>
-      <td>{{Transaction?.blob_size | bitNumber}} bytes</td>
-    </tr>
-    <tr [ngClass]="{'unconfirmed': unconfirmed === true, 'confirmed': unconfirmed === false}">
-      <td>Confirmations</td>
-      <td>{{confirmations | bitNumber}}</td>
-    </tr>
-    <tr class="one_time_public_key">
-      <td>One-time public key</td>
-      <td><span>{{Transaction?.pub_key}}</span></td>
-    </tr>
-    <tr>
-      <td>Mixin</td>
-      <td>-</td>
-    </tr>
-    <tr class="extra_items">
-      <td>Extra items</td>
-      <td class="value_extra_item">
-        <ul>
-          <li *ngFor="let extraItem of ExtraItem let $index = index" >
-            [{{$index + 1}}] ({{extraItem.type}}) {{extraItem.short_view}}
-            <span class="is_extra_item" *ngIf="(extraItem.datails_view !== extraItem?.short_view) && extraItem.datails_view.length ">
-              {{extraItem?.datails_view}}
-            </span>
-          </li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>Attachments</td>
-      <td class="value_attachment">
-        <ul>
-          <li *ngIf="!attachments">-</li>
+        <table class="transaction_details">
+            <tr class="hash">
+                <td>Hash</td>
+                <td>
+                    <span>{{ Transaction?.id }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>Amount</td>
+                <td>{{ Transaction?.amount | moneyParse }}</td>
+            </tr>
+            <tr>
+                <td>Fee</td>
+                <td>{{ Transaction?.fee | moneyParse }}</td>
+            </tr>
+            <tr>
+                <td>Size</td>
+                <td>{{ Transaction?.blob_size | bitNumber }} bytes</td>
+            </tr>
+            <tr
+                [ngClass]="{
+                    unconfirmed: unconfirmed === true,
+                    confirmed: unconfirmed === false
+                }">
+                <td>Confirmations</td>
+                <td>{{ confirmations | bitNumber }}</td>
+            </tr>
+            <tr class="one_time_public_key">
+                <td>One-time public key</td>
+                <td>
+                    <span>{{ Transaction?.pub_key }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>Mixin</td>
+                <td>-</td>
+            </tr>
+            <tr class="extra_items">
+                <td>Extra items</td>
+                <td class="value_extra_item">
+                    <ul>
+                        <li
+                            *ngFor="
+                                let extraItem of ExtraItem;
+                                let $index = index
+                            ">
+                            [{{ $index + 1 }}] ({{ extraItem.type }})
+                            {{ extraItem.short_view }}
+                            <span
+                                class="is_extra_item"
+                                *ngIf="
+                                    extraItem.datails_view !==
+                                        extraItem?.short_view &&
+                                    extraItem.datails_view.length
+                                ">
+                                {{ extraItem?.datails_view }}
+                            </span>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>Attachments</td>
+                <td class="value_attachment">
+                    <ul>
+                        <li *ngIf="!attachments">-</li>
 
-          <li *ngFor="let item of attachments let $index = index">
-            [ {{$index + 1}} ] (  {{item.type}} {{item.short_view}} )
-            <span class="is_extra_item" *ngIf="(item.datails_view !== item?.short_view) && item.datails_view.length ">
-            {{item?.datails_view}}
-            </span>
-          </li>
-        </ul>
-      </td>
-    </tr>
-  </table>
-</div>
-
-<!-- FROM BLOCK unconfirmed transaction -->
-<div class="wrapper_table" *ngIf="unconfirmed === true">
-  <div class="table_title">From Block <span class="unconfirmed_transaction">unconfirmed transaction</span></div>
-  <table class="fixed_table table_unconfirmed_transaction">
-    <thead>
-      <tr>
-        <th class="_hash">Hash</th>
-        <th class="_height">Height</th>
-        <th class="_timestamp">Timestamp (UTC)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="_hash">pending</td>
-        <td class="_height">pending</td>
-        <td class="_timestamp">pending</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-
-
-<!-- FROM BLOCK confirmed transaction-->
-<div class="wrapper_table" *ngIf="keeperBlock >= 0">
-  <div class="table_title">From Block</div>
-  <table class="fixed_table table_confirmed_transaction">
-    <thead>
-    <tr>
-      <th class="_hash">Hash</th>
-      <th class="_height">Height</th>
-      <th class="_timestamp">Timestamp (UTC)</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td class="_hash"><a [routerLink]="['/block', blockHash]">{{blockHash}}</a></td>
-      <td class="_height">{{keeperBlock | bitNumber}}</td>
-      <td class="_timestamp">{{blockTimestamp* 1000 | amUtc | amDateFormat: 'YYYY.MM.DD HH:mm:ss'}}</td>
-    </tr>
-    </tbody>
-  </table>
-</div>
-
-
-<!-- INPUTS -->
-<div class="wrapper_table">
-  <div class="table_title">
-    Inputs <span class="tr_count">( {{Inputs?.length}} )</span>
-  </div>
-  <table class="fixed_table transaction_inputs_table">
-    <thead>
-      <tr>
-        <th class="_amount">Amount</th>
-        <th class="_image_multisig">Image / Multisig id</th>
-        <th class="_mixin_count">Mixin count</th>
-        <th class="_global_index">Global Index</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let inConn of Inputs | slice:0:inputsLimit">
-        <td class="_amount"><!-- Amount -->
-          <span>{{inConn.amount | moneyParse}}</span>
-        </td>
-
-        <!-- Image/Multisig id-->
-        <td class="_image_multisig">
-          <a *ngIf="ImageMultisig === 1" href="">{{inConn.kimage_or_ms_id + ' (ms-' + inConn.multisig_count + ')'}}</a>
-          <span *ngIf="ImageMultisig === 2" >{{inConn.kimage_or_ms_id}}</span>
-          <span *ngIf="ImageMultisig === 3">coinbase</span>
-        </td>
-
-        <!--Mixin count-->
-        <td class="_mixin_count">
-          <span *ngIf="inConn.global_indexes" class="has_indexes"
-                (click)="showDialogMixinCount = !showDialogMixinCount"
-                (click)="getConnectTransaction(inConn)">
-                {{inConn.global_indexes.length}}
-          </span>
-          <span *ngIf="!inConn.global_indexes">0</span>
-        </td>
-
-
-        <!--Global Index-->
-        <td class="_global_index">
-          <span *ngIf="inConn.global_indexes?.length === 1" (click)="goToTransaction(inConn)" class="has-indexes">{{inConn.global_indexes[0]}}</span>
-          <span *ngIf="inConn.global_indexes?.length > 1">untraceable</span>
-        </td>
-
-      </tr>
-    </tbody>
-  </table>
-  <div class="box_load_more" *ngIf="inputsLimit < Inputs?.length">
-    <div class="title_load_more">{{inputsLimit}} items shown of {{Inputs?.length}} total</div>
-    <button type="button" (click)="inputsLimit = inputsLimit + 100">Load more</button>
-  </div>
-</div>
-
-
-
-
-  <app-dialog [(visible)]="showDialogMixinCount">
-    <div class="dialog_title">Global Index mixins({{mixinCount}}) for amount {{connection?.amount | moneyParse}}</div>
-    <div class="wrap_content">
-      <div *ngFor="let index of connection?.global_indexes" (click)="SetIndexItem(index)">
-        <span class="emulation_link">{{index}}{{link}}</span>
-      </div>
+                        <li
+                            *ngFor="
+                                let item of attachments;
+                                let $index = index
+                            ">
+                            [ {{ $index + 1 }} ] ( {{ item.type }}
+                            {{ item.short_view }} )
+                            <span
+                                class="is_extra_item"
+                                *ngIf="
+                                    item.datails_view !== item?.short_view &&
+                                    item.datails_view.length
+                                ">
+                                {{ item?.datails_view }}
+                            </span>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
     </div>
-  </app-dialog>
 
+    <!-- FROM BLOCK unconfirmed transaction -->
+    <div class="wrapper_table" *ngIf="unconfirmed === true">
+        <div class="table_title">
+            From Block
+            <span class="unconfirmed_transaction">unconfirmed transaction</span>
+        </div>
+        <table class="fixed_table table_unconfirmed_transaction">
+            <thead>
+                <tr>
+                    <th class="_hash">Hash</th>
+                    <th class="_height">Height</th>
+                    <th class="_timestamp">Timestamp (UTC)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="_hash">pending</td>
+                    <td class="_height">pending</td>
+                    <td class="_timestamp">pending</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
+    <!-- FROM BLOCK confirmed transaction-->
+    <div class="wrapper_table" *ngIf="keeperBlock >= 0">
+        <div class="table_title">From Block</div>
+        <table class="fixed_table table_confirmed_transaction">
+            <thead>
+                <tr>
+                    <th class="_hash">Hash</th>
+                    <th class="_height">Height</th>
+                    <th class="_timestamp">Timestamp (UTC)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="_hash">
+                        <a [routerLink]="['/block', blockHash]">{{
+                            blockHash
+                        }}</a>
+                    </td>
+                    <td class="_height">{{ keeperBlock | bitNumber }}</td>
+                    <td class="_timestamp">
+                        {{
+                            blockTimestamp * 1000 | date: 'YYYY-MM-dd HH:mm:ss':'+0000'
+                        }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
+    <!-- INPUTS -->
+    <div class="wrapper_table">
+        <div class="table_title">
+            Inputs <span class="tr_count">( {{ Inputs?.length }} )</span>
+        </div>
+        <table class="fixed_table transaction_inputs_table">
+            <thead>
+                <tr>
+                    <th class="_amount">Amount</th>
+                    <th class="_image_multisig">Image / Multisig id</th>
+                    <th class="_mixin_count">Mixin count</th>
+                    <th class="_global_index">Global Index</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let inConn of Inputs | slice: 0:inputsLimit">
+                    <td class="_amount">
+                        <!-- Amount -->
+                        <span>{{ inConn.amount | moneyParse }}</span>
+                    </td>
 
+                    <!-- Image/Multisig id-->
+                    <td class="_image_multisig">
+                        <a *ngIf="ImageMultisig === 1" href="">{{
+                            inConn.kimage_or_ms_id +
+                                ' (ms-' +
+                                inConn.multisig_count +
+                                ')'
+                        }}</a>
+                        <span *ngIf="ImageMultisig === 2">{{
+                            inConn.kimage_or_ms_id
+                        }}</span>
+                        <span *ngIf="ImageMultisig === 3">coinbase</span>
+                    </td>
 
+                    <!--Mixin count-->
+                    <td class="_mixin_count">
+                        <span
+                            *ngIf="inConn.global_indexes"
+                            class="has_indexes"
+                            (click)="
+                                showDialogMixinCount = !showDialogMixinCount
+                            "
+                            (click)="getConnectTransaction(inConn)">
+                            {{ inConn.global_indexes.length }}
+                        </span>
+                        <span *ngIf="!inConn.global_indexes">0</span>
+                    </td>
 
-<!-- OUTPUTS -->
-<div class="wrapper_table" *ngIf="Outputs?.length">
-  <div class="table_title">
-    Outputs <span class="tr_count">( {{Outputs?.length}} )</span>
-  </div>
+                    <!--Global Index-->
+                    <td class="_global_index">
+                        <span
+                            *ngIf="inConn.global_indexes?.length === 1"
+                            (click)="goToTransaction(inConn)"
+                            class="has-indexes"
+                            >{{ inConn.global_indexes[0] }}</span
+                        >
+                        <span *ngIf="inConn.global_indexes?.length > 1"
+                            >untraceable</span
+                        >
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="box_load_more" *ngIf="inputsLimit < Inputs?.length">
+            <div class="title_load_more">
+                {{ inputsLimit }} items shown of {{ Inputs?.length }} total
+            </div>
+            <button type="button" (click)="inputsLimit = inputsLimit + 100">
+                Load more
+            </button>
+        </div>
+    </div>
 
-  <table class="fixed_table transaction_outputs_table">
-    <thead>
-      <tr>
-        <th class="_amount">Amount</th>
-        <th class="_key">Key</th>
-        <th class="_global_index_multisig">Global index / Multisig id</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of Outputs | slice:0:outputsLimit" [class]="{'out-selected':($index==out_selected)}">
-        <td class="_amount">
-          <span>{{item.amount | moneyParse}}</span>
-        </td>
-        <td class="_key">
-          <span *ngFor="let key of item.pub_keys">
-            {{ key }}
-          </span>
-          <span *ngIf="item.is_spent === true">[SPENT]</span>
-          <span *ngIf="item.minimum_sigs !== 0">({{item.minimum_sigs}})</span>
-        </td>
-        <td class="_global_index_multisig">
-          <span>{{item.global_index}}</span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <app-dialog [(visible)]="showDialogMixinCount">
+        <div class="dialog_title">
+            Global Index mixins({{ mixinCount }}) for amount
+            {{ connection?.amount | moneyParse }}
+        </div>
+        <div class="wrap_content">
+            <div
+                *ngFor="let index of connection?.global_indexes"
+                (click)="SetIndexItem(index)">
+                <span class="emulation_link">{{ index }}{{ link }}</span>
+            </div>
+        </div>
+    </app-dialog>
 
-  <div class="box_load_more" *ngIf="outputsLimit < Outputs?.length">
-    <div class="title_load_more">{{outputsLimit}} items shown of {{Outputs?.length}} total</div>
-    <button type="button" (click)="outputsLimit = outputsLimit + 100">Load more</button>
-  </div>
+    <!-- OUTPUTS -->
+    <div class="wrapper_table" *ngIf="Outputs?.length">
+        <div class="table_title">
+            Outputs <span class="tr_count">( {{ Outputs?.length }} )</span>
+        </div>
+
+        <table class="fixed_table transaction_outputs_table">
+            <thead>
+                <tr>
+                    <th class="_amount">Amount</th>
+                    <th class="_key">Key</th>
+                    <th class="_global_index_multisig"
+                        >Global index / Multisig id</th
+                    >
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                    *ngFor="let item of Outputs | slice: 0:outputsLimit"
+                    [class]="{ 'out-selected': $index == out_selected }">
+                    <td class="_amount">
+                        <span>{{ item.amount | moneyParse }}</span>
+                    </td>
+                    <td class="_key">
+                        <span *ngFor="let key of item.pub_keys">
+                            {{ key }}
+                        </span>
+                        <span *ngIf="item.is_spent === true">[SPENT]</span>
+                        <span *ngIf="item.minimum_sigs !== 0"
+                            >({{ item.minimum_sigs }})</span
+                        >
+                    </td>
+                    <td class="_global_index_multisig">
+                        <span>{{ item.global_index }}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="box_load_more" *ngIf="outputsLimit < Outputs?.length">
+            <div class="title_load_more">
+                {{ outputsLimit }} items shown of {{ Outputs?.length }} total
+            </div>
+            <button type="button" (click)="outputsLimit = outputsLimit + 100">
+                Load more
+            </button>
+        </div>
+    </div>
 </div>
-</div>
-
 
 <ng-template #elseBlock>
-  <div class="not-found">
-    Transaction not found
-  </div>
+    <div class="not-found">Transaction not found</div>
 </ng-template>

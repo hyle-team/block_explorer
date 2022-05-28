@@ -1,27 +1,71 @@
 <h1 class="hidden">Welcome to Block Explorer!</h1>
 <header>
-  <button type="button" id="mobile-nav-btn" (click)="btnToggleMenu()" [ngClass]="{'show': navIsOpen === true }"></button>
-  <div class="logo" [routerLink]="['/']" routerLinkActive="active">Zano</div>
-  <nav class="desktop_nav">
-    <ul>
-      <li><a [routerLink]="['/']" routerLinkActive="active" id="blockchain-li" [routerLinkActiveOptions]="{exact: true}">Blockchain</a></li>
-      <li><a [routerLink]="['alt-blocks']" routerLinkActive="active">Alt-blocks</a></li>
-      <li><a [routerLink]="['aliases']" routerLinkActive="active">Aliases</a></li>
-      <li><a [routerLink]="['charts']" routerLinkActive="active">Charts</a></li>
-      <li><a [routerLink]="['api']" routerLinkActive="active">API</a></li>
-    </ul>
-  </nav>
+    <button
+        type="button"
+        id="mobile-nav-btn"
+        (click)="btnToggleMenu()"
+        [ngClass]="{ show: navIsOpen === true }"></button>
+    <div class="logo" [routerLink]="['/']" routerLinkActive="active">Zano</div>
+    <nav class="desktop_nav">
+        <ul>
+            <li>
+                <a
+                    [routerLink]="['/']"
+                    routerLinkActive="active"
+                    id="blockchain-li"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    >Blockchain</a
+                >
+            </li>
+            <li>
+                <a [routerLink]="['alt-blocks']" routerLinkActive="active"
+                    >Alt-blocks</a
+                >
+            </li>
+            <li>
+                <a [routerLink]="['aliases']" routerLinkActive="active"
+                    >Aliases</a
+                >
+            </li>
+            <li
+                ><a [routerLink]="['charts']" routerLinkActive="active"
+                    >Charts</a
+                ></li
+            >
+            <li><a [routerLink]="['api']" routerLinkActive="active">API</a></li>
+        </ul>
+    </nav>
 </header>
 
 <main>
-  <nav class="mobile_nav" [ngClass]="{'show': navIsOpen === true}">
-    <ul>
-      <li><a [routerLink]="['/']" routerLinkActive="active" id="blockchain-mobile-li" [routerLinkActiveOptions]="{exact: true}">Blockchain</a></li>
-      <li><a [routerLink]="['alt-blocks']" routerLinkActive="active">Alt-blocks</a></li>
-      <li><a [routerLink]="['aliases']" routerLinkActive="active">Aliases</a></li>
-      <li><a [routerLink]="['charts']" routerLinkActive="active">Charts</a></li>
-      <li><a [routerLink]="['api']" routerLinkActive="active">API</a></li>
-    </ul>
-  </nav>
-  <router-outlet></router-outlet>
+    <nav class="mobile_nav" [ngClass]="{ show: navIsOpen === true }">
+        <ul>
+            <li>
+                <a
+                    [routerLink]="['/']"
+                    routerLinkActive="active"
+                    id="blockchain-mobile-li"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    >Blockchain</a
+                >
+            </li>
+            <li>
+                <a [routerLink]="['alt-blocks']" routerLinkActive="active"
+                    >Alt-blocks</a
+                >
+            </li>
+            <li>
+                <a [routerLink]="['aliases']" routerLinkActive="active"
+                    >Aliases</a
+                >
+            </li>
+            <li
+                ><a [routerLink]="['charts']" routerLinkActive="active"
+                    >Charts</a
+                ></li
+            >
+            <li><a [routerLink]="['api']" routerLinkActive="active">API</a></li>
+        </ul>
+    </nav>
+    <router-outlet></router-outlet>
 </main>

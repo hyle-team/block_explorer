@@ -1,14 +1,14 @@
-import { Blockexplorer } from './app.po';
+import { Blockexplorer } from './app.po'
 
 describe('Blockexplorer App', () => {
-  let page: Blockexplorer;
+    let page: Blockexplorer
 
-  beforeEach(() => {
-    page = new Blockexplorer();
-  });
+    beforeEach(() => {
+        page = new Blockexplorer()
+    })
 
-  it('should display welcome message', () => {
-    page.navigateTo();
-    // expect(page.getParagraphText()).toEqual('Welcome to Block Explorer!');
-  });
-});
+    it('should display welcome message', () => {
+        page.navigateTo()
+        // expect(page.getParagraphText()).toEqual('Welcome to Block Explorer!');
+    })
+})

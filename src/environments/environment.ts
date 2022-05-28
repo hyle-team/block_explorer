@@ -4,5 +4,12 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false
-};
+    production: false,
+    backend: 'https://zano.smartcoinpool.net',
+    documentionApi: 'https://docs.zano.org',
+    decimalPlaces: 2,
+    transactionPoolLimit: 5,
+    initialChartLoadDelayMs: 5000,
+    frequencyOfChartRefreshingMs: 3600000,
+    enableVisibilityInfo: true
+}

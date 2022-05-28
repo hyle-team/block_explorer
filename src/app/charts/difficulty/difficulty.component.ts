@@ -1,51 +1,66 @@
-import {Component, OnInit} from '@angular/core';
-import {HttpService, MobileNavState} from '../../http.service';
-import {Chart} from 'angular-highcharts';
-import {Subscription} from 'rxjs';
+import { Component, OnInit } from '@angular/core'
+import { HttpService, MobileNavState } from '../../services/http.service'
+import { Chart } from 'angular-highcharts'
+import { SubscriptionTracker } from '../../subscription-tracker/subscription-tracker'
+import { take } from 'rxjs/operators'
+import { Select } from '@ngxs/store'
+import { Observable } from 'rxjs'
+import { ChartsState } from 'app/states/charts-state'
+import { SeriesOptionsType } from 'highcharts'
 
 @Component({
     selector: 'app-difficulty',
     templateUrl: './difficulty.component.html',
     styleUrls: ['./difficulty.component.scss']
 })
-export class DifficultyComponent implements OnInit {
-    navIsOpen: boolean;
-    searchIsOpen: boolean;
+export class DifficultyComponent extends SubscriptionTracker implements OnInit {
+    navIsOpen: boolean
+    searchIsOpen: boolean
+    activeChart: string
+    period: string
+    posDifficulty: any
+    difficultyChart: Chart
+    loader: boolean
+    seriesType: string = 'other'
 
-    activeChart: string;
-    period: string;
-    posDifficulty: any;
-    chartSubscription: Subscription;
-    difficultyChart: Chart;
-    seriesData: any;
-    loader: boolean;
-    seriesType: string = 'other';
+    @Select(ChartsState.selectAllPOSDifficulty) allPOSDifficulty$: Observable<any[]>
+
+    constructor(private mobileNavState: MobileNavState) {
+        super()
+        this.navIsOpen = false
+        this.searchIsOpen = false
+        this.activeChart = 'pos-difficulty'
+        this.period = 'all'
+    }
 
     // PoS Difficulty
-    drawChart(activeChart, titleText, yText, chartsData): Chart {
-        const that = this;
+    drawChart(titleText, yText, chartsData: SeriesOptionsType[]): Chart {
+        const that = this
         return new Chart({
             chart: {
                 type: 'line',
                 backgroundColor: '#2b3768',
                 height: 700,
                 width: null,
-                zoomType: 'x',
+                zoomType: 'x'
+            },
+            accessibility: {
+                enabled: false
             },
             title: {
                 text: titleText,
                 style: {
                     color: '#fff',
-                    fontSize: '18px',
-                },
+                    fontSize: '18px'
+                }
             },
-            credits: {enabled: false},
-            exporting: {enabled: false},
+            credits: { enabled: false },
+            exporting: { enabled: false },
             legend: {
                 enabled: false,
                 itemStyle: {
                     color: '#9eaacc',
-                    fontFamily: 'Helvetica',
+                    fontFamily: 'Helvetica'
                 },
                 itemHoverStyle: {
                     color: '#9eaacc'
@@ -58,11 +73,19 @@ export class DifficultyComponent implements OnInit {
                 xDateFormat: '%Y/%m/%d %H:%M',
 
                 pointFormatter: function () {
-                    const point = this;
-                    return '<b style="color:' + point.color + '">\u25CF</b> ' + point.series.name + ': <b>' + (point.y) + '</b><br/>';
+                    const point = this
+                    return (
+                        '<b style="color:' +
+                        point.color +
+                        '">\u25CF</b> ' +
+                        point.series.name +
+                        ': <b>' +
+                        point.y +
+                        '</b><br/>'
+                    )
                 },
-                crosshairs: true,
-                shared: true,
+                // crosshairs: true,
+                shared: true
             },
             plotOptions: {
                 area: {
@@ -95,7 +118,7 @@ export class DifficultyComponent implements OnInit {
                         fontSize: '11px'
                     },
                     format: '{value:%d.%b}'
-                },
+                }
             },
             yAxis: {
                 floor: 0,
@@ -109,74 +132,81 @@ export class DifficultyComponent implements OnInit {
                     style: {
                         color: '#9eaacc',
                         fontSize: '11px'
-                    },
-                },
+                    }
+                }
             },
-            navigator: {enabled: true},
+            navigator: { enabled: true },
             rangeSelector: {
                 enabled: true,
                 allButtonsEnabled: true,
-                buttons: [{
-                    type: 'day',
-                    count: 1,
-                    text: 'day',
-                    events: {
-                        click: function (e) {
-                            that.changeSource('day');
+                buttons: [
+                    {
+                        type: 'day',
+                        count: 1,
+                        text: 'day',
+                        events: {
+                            click: function (e) {
+                                that.changeSource('day')
+                            }
+                        }
+                    },
+                    {
+                        type: 'week',
+                        count: 1,
+                        text: 'week',
+                        events: {
+                            click: function (e) {
+                                that.changeSource('other')
+                            }
+                        }
+                    },
+                    {
+                        type: 'month',
+                        count: 1,
+                        text: 'month',
+                        events: {
+                            click: function (e) {
+                                that.changeSource('other')
+                            }
+                        }
+                    },
+                    {
+                        type: 'month',
+                        count: 3,
+                        text: 'quarter',
+                        events: {
+                            click: function (e) {
+                                that.changeSource('other')
+                            }
+                        }
+                    },
+                    {
+                        type: 'year',
+                        count: 1,
+                        text: 'year',
+                        events: {
+                            click: function (e) {
+                                that.changeSource('other')
+                            }
+                        }
+                    },
+                    {
+                        type: 'all',
+                        text: 'all',
+                        events: {
+                            click: function (e) {
+                                that.changeSource('other')
+                            }
                         }
                     }
-                }, {
-                    type: 'week',
-                    count: 1,
-                    text: 'week',
-                    events: {
-                        click: function (e) {
-                            that.changeSource('other');
-                        }
-                    }
-                }, {
-                    type: 'month',
-                    count: 1,
-                    text: 'month',
-                    events: {
-                        click: function (e) {
-                            that.changeSource('other');
-                        }
-                    }
-                }, {
-                    type: 'month',
-                    count: 3,
-                    text: 'quarter',
-                    events: {
-                        click: function (e) {
-                            that.changeSource('other');
-                        }
-                    }
-                }, {
-                    type: 'year',
-                    count: 1,
-                    text: 'year',
-                    events: {
-                        click: function (e) {
-                            that.changeSource('other');
-                        }
-                    }
-                }, {
-                    type: 'all',
-                    text: 'all',
-                    events: {
-                        click: function (e) {
-                            that.changeSource('other');
-                        }
-                    }
-                }],
+                ],
                 selected: 1,
                 labelStyle: {
-                    color: '#9eaacc',
+                    color: '#9eaacc'
                 },
                 inputStyle: {
                     color: '#9eaacc',
-                    backgroundColor: '#2b3768',
+                    backgroundColor: '#2b3768'
                 },
                 inputBoxBorderColor: '#9eaacc',
                 inputBoxWidth: 120,
@@ -189,11 +219,11 @@ export class DifficultyComponent implements OnInit {
                         fontSize: '14px',
                         fontFamily: 'Helvetica',
                         fontWeight: '300',
-                        opacity: 1,
+                        opacity: 1
                     },
                     states: {
                         hover: {
-                            fill: '#32439f',
+                            fill: '#32439f'
                         },
                         select: {
                             fill: '#32439f',
@@ -202,7 +232,7 @@ export class DifficultyComponent implements OnInit {
                             style: {
                                 color: '#fff',
                                 opacity: 1,
-                                fontWeight: 400,
+                                fontWeight: 400
                             }
                         },
                         disabled: {
@@ -211,93 +241,123 @@ export class DifficultyComponent implements OnInit {
                                 color: '#fff',
                                 opacity: 0.5,
                                 fontWeight: 400,
-                                cursor: 'default',
+                                cursor: 'default'
                             }
                         }
                     }
-                },
+                }
             },
             series: chartsData,
             responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 575,
-                    },
-                    chartOptions: {
-                        chart: {
-                            width: 575
+                rules: [
+                    {
+                        condition: {
+                            maxWidth: 575
                         },
-                        rangeSelector: {
-                            height: 100,
-                            inputPosition: {
-                                align: 'left',
+                        chartOptions: {
+                            chart: {
+                                width: 575
+                            },
+                            rangeSelector: {
+                                // height: 100,
+                                inputPosition: {
+                                    align: 'left'
+                                }
                             }
                         }
                     }
-                }]
+                ]
             }
-        });
+        })
     }
 
     changeSource(value: string) {
         if (this.seriesType !== value) {
-            this.seriesType = value;
-            let chartData = [];
+            this.seriesType = value
+            let chartData = []
             if (value === 'day') {
-                chartData = this.posDifficulty.detailed;
+                chartData = this.posDifficulty.detailed
             } else {
-                chartData = this.posDifficulty.aggregated;
+                chartData = this.posDifficulty.aggregated
             }
-            const posDifficultyArray = [];
+            const posDifficultyArray = []
             for (let i = 1; i < chartData.length; i++) {
-                posDifficultyArray.push([chartData[i].at * 1000, parseInt(chartData[i].d, 10)]);
+                posDifficultyArray.push([
+                    chartData[i].at * 1000,
+                    parseInt(chartData[i].d, 10)
+                ])
             }
-            this.difficultyChart.removeSeries(0);
-            this.difficultyChart.addSeries({type: 'area', name: 'PoS difficulty', data: posDifficultyArray}, true, true);
+            this.difficultyChart.removeSeries(0)
+            this.difficultyChart.addSeries(
+                {
+                    type: 'area',
+                    name: 'PoS difficulty',
+                    data: posDifficultyArray
+                },
+                true,
+                true
+            )
         }
     }
     onIsVisible($event): void {
-        this.searchIsOpen = $event;
-    }
-
-    constructor(private httpService: HttpService, private mobileNavState: MobileNavState) {
-        this.navIsOpen = false;
-        this.searchIsOpen = false;
-        this.activeChart = 'pos-difficulty';
-        this.period = 'all';
+        this.searchIsOpen = $event
     }
 
     ngOnInit() {
-        this.mobileNavState.change.subscribe(navIsOpen => {
-            this.navIsOpen = navIsOpen;
-        });
-        this.initialChart();
+        this.mobileNavState.change.pipe(take(1)).subscribe((navIsOpen) => {
+            this.navIsOpen = navIsOpen
+        })
+        this.initialChart()
     }
 
+    ngOnDestroy(): void {
+        super.ngOnDestroy()
+        if (this.difficultyChart)
+            this.difficultyChart.destroy()
+    }
 
     initialChart() {
-        this.loader = true;
-        if (this.chartSubscription) {
-            this.chartSubscription.unsubscribe();
-        }
-        this.chartSubscription = this.httpService.getChart(this.activeChart, this.period).subscribe(data => {
-                this.posDifficulty = data;
-                const posDifficultyArray = [];
-                for (let i = 1; i < this.posDifficulty.aggregated.length; i++) {
-                    posDifficultyArray.push([this.posDifficulty.aggregated[i].at * 1000, parseInt(this.posDifficulty.aggregated[i].d, 10)]);
+        this.loader = true
+        this._track(
+            this.allPOSDifficulty$.subscribe(data => {
+                if (data.length === 0)
+                    return
+                this.posDifficulty = data
+                const posDifficultyArray = []
+                for (
+                    let i = 1;
+                    i < this.posDifficulty.aggregated.length;
+                    i++
+                ) {
+                    posDifficultyArray.push([
+                        this.posDifficulty.aggregated[i].at * 1000,
+                        parseInt(this.posDifficulty.aggregated[i].d, 10)
+                    ])
                 }
-                this.difficultyChart = this.drawChart(
-                    false,
-                    'PoS Difficulty',
-                    'PoS Difficulty',
-                    this.seriesData = [
-                        {type: 'area', name: 'PoS difficulty', data: posDifficultyArray}
-                    ]
-                );
-            }, err => console.log(err),
-            () => {
-                this.loader = false;
-            }
-        );
+                let seriesData: SeriesOptionsType[] = [
+                    {
+                        type: 'area',
+                        name: 'PoS difficulty',
+                        data: posDifficultyArray
+                    }
+                ]
+                if (this.difficultyChart) {
+                    while (this.difficultyChart.ref.series.length > 0)
+                        this.difficultyChart.ref.series[0].remove(false)
+                    this.difficultyChart.addSeries(seriesData[0], 
+                    true, 
+                    true)
+                }
+                else
+                {
+                    this.difficultyChart = this.drawChart(
+                        'PoS Difficulty',
+                        'PoS Difficulty',
+                        seriesData
+                    )
+                }
+                this.loader = false
+            })
+        )
     }
 }

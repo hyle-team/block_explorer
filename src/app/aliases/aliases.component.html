@@ -1,105 +1,159 @@
 <div class="overlay" *ngIf="loader === true">
-  <div class="loader"></div>
+    <div class="loader"></div>
 </div>
 
 <div class="top_box aliases_top_box" *ngIf="navIsOpen === false">
-  <div class="row_heading_search">
-    <div class="left_box">
-      <div class="mobile_heading" [ngClass]="{'hide_heading': searchIsOpen === true}">Aliases</div>
-      <input type="text" class="alias_input_search desktop" placeholder="name / address / comment" (change)="searchAlias()" (keyup)="searchAlias()" [(ngModel)]="searchValue" >
+    <div class="row_heading_search">
+        <div class="left_box">
+            <div
+                class="mobile_heading"
+                [ngClass]="{ hide_heading: searchIsOpen === true }">
+                Aliases
+            </div>
+            <input
+                type="text"
+                class="alias_input_search desktop"
+                placeholder="name / address / comment"
+                (change)="searchAlias()"
+                (keyup)="searchAlias()"
+                [(ngModel)]="searchValue" />
+        </div>
+        <app-search (isVisible)="onIsVisible($event)"></app-search>
     </div>
-    <app-search (isVisible)="onIsVisible($event)"></app-search>
-  </div>
-  <input type="text" class="alias_input_search mobile" placeholder="name / address / comment" (change)="searchAlias()" (keyup)="searchAlias()" [(ngModel)]="searchValue" >
+    <input
+        type="text"
+        class="alias_input_search mobile"
+        placeholder="name / address / comment"
+        (change)="searchAlias()"
+        (keyup)="searchAlias()"
+        [(ngModel)]="searchValue" />
 </div>
 
-<div class="wrapper_table" *ngIf="Aliases" (mouseup) = "selectText()" >
-  <table class="table_aliases">
-    <thead *ngIf="Aliases.length !== 0">
-      <tr>
-        <th>Name</th>
-        <th>Address</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let alias of Aliases" (click)="highlightedText === true || setAlias(alias)" (click)="highlightedText === true || (showDialog = !showDialog)">
-        <td>
-          <span class="alias-name" >{{alias.alias}}</span>
-        </td>
-        <td>
-          <span class="alias-address">{{alias.address}}</span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div class="wrapper_table" *ngIf="Aliases" (mouseup)="selectText()">
+    <table class="table_aliases">
+        <thead *ngIf="Aliases.length !== 0">
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr
+                *ngFor="let alias of Aliases"
+                (click)="highlightedText === true || setAlias(alias)"
+                (click)="
+                    highlightedText === true || (showDialog = !showDialog)
+                ">
+                <td>
+                    <span class="alias-name">{{ alias.alias }}</span>
+                </td>
+                <td>
+                    <span class="alias-address">{{ alias.address }}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-  <div class="no_data" *ngIf="Aliases.length === 0">No data</div>
+    <div class="no_data" *ngIf="Aliases.length === 0">No data</div>
 
-  <div class="pagination" *ngIf="(visiblePagination === true) && (Aliases.length !== 0)">
-    <div class="left_position">
-      <span>Pages:</span>
-      <button type="button" class="prev_btn" [disabled]="currentPage<=1" (click)="prevPage()">
-        <svg x="0px" y="0px" viewBox="0 0 477.175 477.175">
-          <g>
-            <path d="M145.188,238.575l215.5-215.5c5.3-5.3,5.3-13.8,0-19.1s-13.8-5.3-19.1,0l-225.1,225.1c-5.3,5.3-5.3,13.8,0,19.1l225.1,225
-              c2.6,2.6,6.1,4,9.5,4s6.9-1.3,9.5-4c5.3-5.3,5.3-13.8,0-19.1L145.188,238.575z"/>
-          </g>
-        </svg>
-      </button>
-      <button type="button" class="next_btn" [disabled]="Aliases.length<count" (click)="nextPage()">
-        <svg x="0px" y="0px" viewBox="0 0 477.175 477.175">
-          <g>
-            <path d="M360.731,229.075l-225.1-225.1c-5.3-5.3-13.8-5.3-19.1,0s-5.3,13.8,0,19.1l215.5,215.5l-215.5,215.5
+    <div
+        class="pagination"
+        *ngIf="visiblePagination === true && Aliases.length !== 0">
+        <div class="left_position">
+            <span>Pages:</span>
+            <button
+                type="button"
+                class="prev_btn"
+                [disabled]="currentPage <= 1"
+                (click)="prevPage()">
+                <svg x="0px" y="0px" viewBox="0 0 477.175 477.175">
+                    <g>
+                        <path
+                            d="M145.188,238.575l215.5-215.5c5.3-5.3,5.3-13.8,0-19.1s-13.8-5.3-19.1,0l-225.1,225.1c-5.3,5.3-5.3,13.8,0,19.1l225.1,225
+              c2.6,2.6,6.1,4,9.5,4s6.9-1.3,9.5-4c5.3-5.3,5.3-13.8,0-19.1L145.188,238.575z" />
+                    </g>
+                </svg>
+            </button>
+            <button
+                type="button"
+                class="next_btn"
+                [disabled]="Aliases.length < count"
+                (click)="nextPage()">
+                <svg x="0px" y="0px" viewBox="0 0 477.175 477.175">
+                    <g>
+                        <path
+                            d="M360.731,229.075l-225.1-225.1c-5.3-5.3-13.8-5.3-19.1,0s-5.3,13.8,0,19.1l215.5,215.5l-215.5,215.5
               c-5.3,5.3-5.3,13.8,0,19.1c2.6,2.6,6.1,4,9.5,4c3.4,0,6.9-1.3,9.5-4l225.1-225.1C365.931,242.875,365.931,234.275,360.731,229.075z
-              "/>
-          </g>
-        </svg>
-      </button>
-      <input type="text" [value]="currentPage" (input)="currentPage=$event.target.value" (change)="onChange()">
+              " />
+                    </g>
+                </svg>
+            </button>
+            <input
+                type="text"
+                [value]="currentPage"
+                (input)="currentPage = $event.target.value"
+                (change)="onChange()" />
+        </div>
+        <div class="right_position">
+            <span>Items on page:</span>
+            <input
+                type="text"
+                [value]="count"
+                (input)="count = $event.target.value"
+                (change)="onChange()" />
+        </div>
     </div>
-    <div class="right_position">
-      <span>Items on page:</span>
-      <input type="text" [value]="count" (input)="count=$event.target.value" (change)="onChange()">
-    </div>
-  </div>
-
 </div>
 
-
-<app-dialog [(visible)]="showDialog" >
-  <div class="dialog_title">@{{currentAlias?.alias}}</div>
-  <div class="wrap_content">
-    <div class="address">
-      <div class="title_value">
-        <span class="title">Address:</span>
-        <div type="text" class="value" id="address-text">{{ currentAlias?.address }}</div>
-        <span class="address_copied_to_clipboard" *ngIf="copiedClipboard === true">Address copied to clipboard</span>
-      </div>
-      <button type="button" class="btn_copy_address" (click)="copyAddress()">Copy address</button>
+<app-dialog [(visible)]="showDialog">
+    <div class="dialog_title">@{{ currentAlias?.alias }}</div>
+    <div class="wrap_content">
+        <div class="address">
+            <div class="title_value">
+                <span class="title">Address:</span>
+                <div type="text" class="value" id="address-text">
+                    {{ currentAlias?.address }}
+                </div>
+                <span
+                    class="address_copied_to_clipboard"
+                    *ngIf="copiedClipboard === true"
+                    >Address copied to clipboard</span
+                >
+            </div>
+            <button
+                type="button"
+                class="btn_copy_address"
+                (click)="copyAddress()">
+                Copy address
+            </button>
+        </div>
+        <div class="comment" *ngIf="comment === true">
+            <div class="title_value">
+                <span class="title">Comment:</span>
+                <span class="value">{{ currentAlias?.comment }}</span>
+            </div>
+        </div>
+        <div class="tracking_key" *ngIf="trackingKey === true">
+            <div class="title_value">
+                <span class="title">Tracking key:</span>
+                <span class="value">{{ currentAlias?.tracking_key }}</span>
+            </div>
+        </div>
+        <div class="height">
+            <div class="title_value">
+                <span class="title">Height:</span>
+                <span class="value">{{ currentAlias?.block }}</span>
+            </div>
+        </div>
+        <div class="transact">
+            <div class="title_value">
+                <span class="title">Transaction:</span>
+                <a
+                    class="value"
+                    routerLink="/transaction/{{ currentAlias?.transact }}"
+                    >{{ currentAlias?.transact }}</a
+                >
+            </div>
+        </div>
     </div>
-    <div class="comment" *ngIf="comment === true">
-      <div class="title_value">
-        <span class="title">Comment:</span>
-        <span class="value">{{currentAlias?.comment}}</span>
-      </div>
-    </div>
-    <div class="tracking_key" *ngIf="trackingKey === true">
-      <div class="title_value">
-        <span class="title">Tracking key:</span>
-        <span class="value">{{currentAlias?.tracking_key}}</span>
-      </div>
-    </div>
-    <div class="height">
-      <div class="title_value">
-        <span class="title">Height:</span>
-        <span class="value">{{currentAlias?.block}}</span>
-      </div>
-    </div>
-    <div class="transact">
-      <div class="title_value">
-        <span class="title">Transaction:</span>
-        <a class="value" routerLink="/transaction/{{currentAlias?.transact}}">{{currentAlias?.transact}}</a>
-      </div>
-    </div>
-  </div>
 </app-dialog>
