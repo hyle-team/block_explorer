@@ -2,6 +2,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { RouterTestingModule } from '@angular/router/testing'
+import { NgxsModule } from '@ngxs/store'
+import { ChartsState } from 'app/states/charts-state'
 import { HttpService, MobileNavState } from '../../services/http.service'
 
 import { HashrateComponent } from './hashrate.component'
@@ -14,7 +16,8 @@ describe('HashrateComponent', () => {
         TestBed.configureTestingModule({
             declarations: [HashrateComponent],
             providers: [HttpService, MobileNavState],
-            imports: [HttpClientTestingModule, RouterTestingModule],
+            imports: [HttpClientTestingModule, RouterTestingModule,
+                NgxsModule.forRoot([ChartsState], {developmentMode: true})],
             schemas: [CUSTOM_ELEMENTS_SCHEMA]
         }).compileComponents()
     }))
