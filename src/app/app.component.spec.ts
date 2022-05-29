@@ -1,6 +1,6 @@
 import { TestBed, waitForAsync } from '@angular/core/testing'
 
-import { HttpService } from './http.service'
+import { HttpService } from './services/http.service'
 import { AppComponent } from './app.component'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
