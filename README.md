@@ -78,7 +78,7 @@ ng build --configuration production
 
 ```
 sudo apt update && sudo apt install postgresql postgresql-contrib \
-sudo system start postgresql
+sudo systemctl start postgresql
 ```
 
 ## Add a New Role
