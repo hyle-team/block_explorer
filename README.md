@@ -92,7 +92,8 @@ sudo -u postgres psql
 2. Create a new role
 
 ```
-sudo -u createuser --interactive --pwprompt
+sudo adduser zano
+sudo usermod -aG sudo zano
 ```
 
 `Output`
