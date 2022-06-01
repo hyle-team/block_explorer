@@ -32,5 +32,5 @@ jobs:
     #     known_hosts: ${{ secrets.KNOWN_HOSTS }}
     #     if_key_exists: ignore
     # - name: Copy Artifact
-    #   run: rsync -avz ./dist ${{ secrets.SSH_USER }}@{{ secrets.SSH_HOST }}:/home/zano/block_explorer/dist/
+    #   run: rsync -avz ./dist ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_HOST }}/block_explorer/dist/
     
