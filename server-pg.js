@@ -534,7 +534,7 @@ const start = async () => {
         if (result) countAltBlocksDB = result.rows[0].height
         getInfoTimer()
     } catch (error) {
-        log('Start Error', error)
+        log(`Start ERROR: ${error}`)
     }
 }
 
@@ -561,7 +561,7 @@ const syncPool = async () => {
                         )}' )`
                     )
                 } catch (error) {
-                    log('pool delete', error)
+                    log(`Delete From Pool ERROR: ${error}`)
                 }
                 try {
                     let result = await db.query('SELECT id FROM pool')
@@ -616,7 +616,7 @@ const syncPool = async () => {
                         statusSyncPool = false
                     }
                 } catch (error) {
-                    log('select id from pool', error)
+                    log(`Select id from pool ERROR: ${error}`)
                 }
             } else {
                 statusSyncPool = false
@@ -735,7 +735,7 @@ const syncTransactions = async () => {
                                         `enabled=${1};`
                                     await db.query(sql)
                                 } catch (error) {
-                                    console.log(error, sql)
+                                    log(`SyncTransactions() Insert into aliases ERROR: ${error}\nsql: ${sql}`)
                                 }
                             }
                         }
@@ -776,7 +776,7 @@ const syncTransactions = async () => {
                         )
                     }
                 } catch (error) {
-                    log('syncTransactions: Error inserting aliases: ', error)
+                    log(`SyncTransactions() Inserting aliases ERROR: ${error}`)
                 }
             }
 
@@ -825,7 +825,7 @@ const syncTransactions = async () => {
                             await db.query(sql)
                         }
                     } catch (error) {
-                        console.log(error)
+                        log(`SyncTransactions() Insert Into out_info ERROR: ${error}`)
                     }
                 }
                 await db.query('end')
@@ -873,7 +873,7 @@ const syncTransactions = async () => {
                     await db.query(sql)
                 }
             } catch (error) {
-                console.log(error)
+                log(`SyncTransactions() Insert Into transaction ERROR: ${error}`)
             }
         }
 
@@ -888,7 +888,7 @@ const syncTransactions = async () => {
                     await db.query(sql)
                 }
             } catch (error) {
-                console.log(error)
+                log(`SyncTransactions() Insert Into charts ERROR: ${error}`)
             }
         }
 
@@ -930,10 +930,7 @@ const syncTransactions = async () => {
             elementOne = block_array[0]
             lastBlock = block_array.pop()
             log(
-                'BLOCKS: db =' +
-                    lastBlock.height +
-                    '/ server =' +
-                    blockInfo.height
+                `BLOCKS: db = ${lastBlock.height}/ server = ${blockInfo.height}`
             )
             await db.query(
                 `call update_statistics(${Math.min(
@@ -943,7 +940,7 @@ const syncTransactions = async () => {
             )
             block_array = []
         } catch (error) {
-            console.log(error)
+            log(`SyncTransactions() Update_Statistics Store Proc ERROR: ${error}`)
         }
     }
 }
@@ -993,7 +990,7 @@ const syncBlocks = async () => {
             await syncBlocks()
         }
     } catch (error) {
-        log('syncBlocks() get_blocks_details ERROR', error)
+        log(`SyncBlocks() get_blocks_details ERROR: ${error}`)
         now_blocks_sync = false
     }
 }
@@ -1040,7 +1037,7 @@ const syncAltBlocks = async () => {
         )
         countAltBlocksDB = result && result.rowCount ? result.rows[0].height : 0
     } catch (error) {
-        log('syncAltBlocks() ERROR', error)
+        log(`SyncAltBlocks() ERROR: ${error}`)
         await db.query('ROLLBACK')
     }
     statusSyncAltBlocks = false
@@ -1097,13 +1094,13 @@ const getVisibilityInfo = async () => {
             result.percentage = totalCoinsInvolvedInStaking.dividedBy(totalSupply).multipliedBy(100).toFixed(2)
         }
     } catch (error) {
-        log('getVisibilityInfo() ERROR', error)
+        log(`getVisibilityInfo() ERROR ${error}`)
     }
     return JSON.stringify(result)
 }
 
 const emitSocketInfo = async () => {
-    if (enabled_during_sync) {
+    if (enabled_during_sync && lastBlock) {
         blockInfo.lastBlock = lastBlock.height
         io.emit('get_info', JSON.stringify(blockInfo))
         io.emit('get_visibility_info', await getVisibilityInfo())        
@@ -1127,10 +1124,7 @@ const getInfoTimer = async () => {
                     countTrPoolDB = result.rows[0].transactions
                 if (countTrPoolDB !== countTrPoolServer) {
                     log(
-                        'need to update pool transactions, db=' +
-                            countTrPoolDB +
-                            ' server=' +
-                            countTrPoolServer
+                        `need to update pool transactions, db=${countTrPoolDB} server=${countTrPoolServer}`
                     )
                     await syncPool()
                 }
@@ -1139,10 +1133,7 @@ const getInfoTimer = async () => {
             if (statusSyncAltBlocks === false) {
                 if (countAltBlocksServer !== countAltBlocksDB) {
                     log(
-                        'need to update alt-blocks, db=' +
-                            countAltBlocksDB +
-                            ' server=' +
-                            countAltBlocksServer
+                        `need to update alt-blocks, db=${countAltBlocksDB} server=${countAltBlocksServer}`
                     )
                     await syncAltBlocks()
                 }
@@ -1152,10 +1143,7 @@ const getInfoTimer = async () => {
                 now_blocks_sync === false
             ) {
                 log(
-                    'need to update blocks, db=' +
-                        lastBlock.height +
-                        ' server=' +
-                        blockInfo.height
+                    `need to update blocks, db=${lastBlock.height} server=${blockInfo.height}`
                 )
                 let result = await db.query(
                     'SELECT COUNT(*)::integer AS height FROM aliases;'
@@ -1163,10 +1151,7 @@ const getInfoTimer = async () => {
                 countAliasesDB = result && result.rowCount ? result.rows[0].height : 0
                 if (countAliasesDB !== countAliasesServer) {
                     log(
-                        'need to update aliases, db=' +
-                            countAliasesDB +
-                            ' server=' +
-                            countAliasesServer
+                        `need to update aliases, db=${countAliasesDB} server=${countAliasesServer}`
                     )
                 }
                 now_blocks_sync = true
@@ -1176,7 +1161,7 @@ const getInfoTimer = async () => {
             await pause(10000)
             await getInfoTimer()
         } catch (error) {
-            log('getInfoTimer() get_info error')
+            log(`getInfoTimer() ERROR: ${error}`)
             blockInfo.daemon_network_state = 0
             await pause(300000)
             await getInfoTimer()
