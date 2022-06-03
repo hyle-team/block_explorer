@@ -6,6 +6,16 @@
 
 ___
 
+## Obtain the source
+```
+git clone https://github.com/hyle-team/block_explorer.git && cd block_explorer
+```
+
+#### Install the NodeJS dependencies for the Backend and Frontend
+```
+npm install
+```
+
 ## Frontend
 
 #### Angular application is compiled into a set of minified js files that reside the build directory, these file should be transfered to your nginx directory for serving.
