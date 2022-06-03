@@ -1103,7 +1103,7 @@ const getVisibilityInfo = async () => {
 }
 
 const emitSocketInfo = async () => {
-    if (enabled_during_sync) {
+    if (enabled_during_sync && lastBlock) {
         blockInfo.lastBlock = lastBlock.height
         io.emit('get_info', JSON.stringify(blockInfo))
         io.emit('get_visibility_info', await getVisibilityInfo())        
