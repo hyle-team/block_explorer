@@ -1,8 +1,26 @@
 # Blockexplorer
 
+## Block Explorer consists of two parts.
+1. Frontend, An angular application, compile and served by nginx
+2. Backend, A nodejs express api and websocket server.
+
+___
+
+## Obtain the source
+```
+git clone https://github.com/hyle-team/block_explorer.git && cd block_explorer
+```
+
+#### Install the NodeJS dependencies for the Backend and Frontend
+```
+npm install
+```
+
 ## Frontend
 
-Edit source/environments.ts and source/environments.prod.ts
+#### Angular application is compiled into a set of minified js files that reside the build directory, these file should be transfered to your nginx directory for serving.
+
+#### The following files `source/environments.ts and source/environments.prod.ts` are configuration file for debug and production builds
 
 ```
 export const environment = {
@@ -23,15 +41,22 @@ export const environment = {
 5. `frequencyOfChartRefreshingMs` how often the chart cache should be refresh, currently 1 hour
 6. `enableVisibilityInfo` show the dev fund wallet information
 
-#### Run Frontend development Server
+#### Once you have adjusted the configuration files to your needs, issue the following command to build the minified js files.
+```bash
+npm run 'build prod'
+```
+
+#### If you prefer to run the site in developer mode issue the following command. 
 
 ```
 ng serve -o
 ```
 
+___
+
 ## Backend Server
 
-Edit `config.json`
+#### The following file contains all the configuration setting required to run your Backend, Edit `config.json`
 
 ```
 {
@@ -58,74 +83,93 @@ Edit `config.json`
 5. `"database"` credentials and location of a postgresql database
 6. `enableVisibilityInfo` stop/start websocket emitting dev fund wallet information
 
-#### Run Backend Server
+#### Once the postgresql database is installed, schema, tables, stored procedures and permissions configurated on the database, you should begin to synchronize zano node information to the database. this process takes around 10hrs
+
+#### Issue the following command to Run the Backend Server.
 
 ```
 node server-pg.js
 ```
 
-## Build Frontend For Production
 
-Following command will produce a `dist` folder that you can copy to your a web server
+# Dependencies Required to run block explorer
 
+# Zano Node
+
+#### Follow the instructions to clone and build a zano node and simple wallet
+[ZANO](https://github.com/hyle-team/zano/blob/master/README.md)
+
+#### Run a node
 ```
-ng build --configuration production
+./zanod
+```
+#### Create a wallet
+```
+./simplewallet --generate-new-wallet my_new_wallet
+```
+#### Run simplewallet as a server. blockexplorer dislays wallet balance and staking information.
+```
+./simplewallet --wallet-file my_new_wallet --password 123456 --rpc-bind-ip 10.0.0.13 --rpc-bind-port 12233 --daemon-address 10.0.0.13:12111
+```
+# Create a new Non root User
+```
+sudo -u createuser zano
+```
+## Add new User to the sudoers group
+```
+sudo usermod -aG sudo zano
 ```
 
 # Postgresql
 
-## Update system and install packages
+#### helpful postgresql commands
+1. `\q` quit the psql shell
+2. `\l` list available databases
+3. `\c [database]` connect to a database
+4. `\dt` list available tables in the database after you connected `\c [database]`
+
+#### Update your system and install packages
 
 ```
 sudo apt update && sudo apt install postgresql postgresql-contrib \
 sudo systemctl start postgresql
 ```
-
-## Add a New Role
-
-1. Connect as postgres user and enter psql prompt
-
+#### Login to database as postgres user and add new user `zano` role for postgres
 ```
 sudo -u postgres psql
+CREATE ROLE zano LOGIN SUPERUSER;
 ```
-
-2. Create a new role
-
+#### Create a new database
 ```
-sudo adduser zano
-sudo usermod -aG sudo zano
+CREATE DATABASE db;
 ```
+#### Run the `database.sql` script to create the tables, stored procedures and grant permissions to these database objects for the `zano` user
+```
+psql -f database.sql
+``` 
 
-`Output`
+# ***If you intend to run Backend and postgresql on different servers you will need to configure postgresql for remote access. Once configured for remote access you will also need to install pgAdmin4 to administer your database remotely.***
 
-`Enter name of role to add: zano`
+# Configure postgresql for remote access.
 
-`Enter Password`
-
-`Enter Pass`
-
-`Shall the new role be a superuser? (y/n) y`
-
-## Configure postgresql for remote access
-
-1. Edit postgresql.conf
-
+#### Edit postgresql.conf
 ```
 sudo nano /etc/postgresql/13/main/postgresql.config
 
-change `list_address = 'localhost' to `listen_address = '*' and uncomment
 ```
+#### locate the entry `#list_address = 'localhost'` uncomment and change to `listen_address = '*'`. This will configure postgresql to listen on all ports.
 
-2. Edit pg_hba.conf and add a new line
-   NOTE: **_For Security reasons you should never use 0.0.0.0/0, limit to an IP address or to a Subnet._**
+---
+
+#### Edit pg_hba.conf and add a new line to the bottom of the file
+# NOTE: ****_For Security reasons you should never use 0.0.0.0/0, limit to an IP address or to a Subnet._****
 
 ```
 # TYPE  DATABASE    USER    ADDRESS       METHOD
-host    all         all     0.0.0.0/0     md5
+host    all         all     10.0.0.15/24     md5
 ```
 
-3. Open firewall port if your ufw is active
-
+#### If you use UFW Open the firewall port to allow remote connections to port 5432
 ```
 sudo ufw allow 5432/tcp
 ```
@@ -133,10 +177,10 @@ sudo ufw allow 5432/tcp
 4. Restart Postgresql Service
 
 ```
-sudo system restart postgresql
+sudo systemctl restart postgresql
 ```
 
-# Install pgAdmin4 postgresql tool on client machine
+# Install pgAdmin4 postgresql tool on client machine [***not neccessary if you administer locally***]
 
 ## Update Ubuntu repositories
 
@@ -163,11 +207,11 @@ sudo apt install pgadmin4
 3. Right click `Database` and select create Database
 4. From the toolbar select `query tool`
 5. In the query editor open file and select `database.sql`
-6. Run the query to create the `db` schema and tables necessary to run block_explorer
+6. Run the query to create the `db` tables, stored procedures and permissions necessary to run block_explorer
 
 # Nginx Setup
 
-## Instal nginx and certbot
+## Instal nginx >= 1.4 and certbot
 
 ```
 sudo apt update && sudo apt install nginx certbot
@@ -176,7 +220,7 @@ sudo apt update && sudo apt install nginx certbot
 2. Start Nginx
 
 ```
-sudo system nginx start
+sudo systemctl nginx start
 ```
 
 ## Create site configuration
@@ -209,25 +253,10 @@ server {
         proxy_set_header Connection "upgrade";
 
     }
-
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/zano.smartcoinpool.net/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/zano.smartcoinpool.net/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
 }
 
 server {
-    if ($host = zano.smartcoinpool.net) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-
     listen 80;
     server_name zano.smartcoinpool.net;
-    return 404; # managed by Certbot
-
-
 }
 ```

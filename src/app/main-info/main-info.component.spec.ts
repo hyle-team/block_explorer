@@ -5,6 +5,8 @@ import { RouterTestingModule } from '@angular/router/testing'
 import { HttpService } from './../services/http.service'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { PipesModule } from '../pipes/pipes.module'
+import { NgxsModule, Store } from '@ngxs/store'
+import { InfoState } from 'app/states/info-state'
 
 describe('MainInfoComponent', () => {
     let component: MainInfoComponent
@@ -14,7 +16,8 @@ describe('MainInfoComponent', () => {
         TestBed.configureTestingModule({
             declarations: [MainInfoComponent],
             providers: [HttpService],
-            imports: [HttpClientTestingModule, RouterTestingModule, PipesModule]
+            imports: [HttpClientTestingModule, RouterTestingModule, PipesModule,
+                NgxsModule.forRoot([InfoState], {developmentMode: true})]
         }).compileComponents()
     }))
 

@@ -6,6 +6,10 @@ import { CookieService } from 'ngx-cookie-service'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { PipesModule } from '../pipes/pipes.module'
+import { NgxsModule } from '@ngxs/store'
+import { InfoState } from 'app/states/info-state'
+import { TransactionPoolState } from 'app/states/transaction-pool-state'
+import { BlockDetailsState } from 'app/states/block-details-state'
 
 describe('BlockchainComponent', () => {
     let component: BlockchainComponent
@@ -18,7 +22,8 @@ describe('BlockchainComponent', () => {
             imports: [
                 HttpClientTestingModule,
                 RouterTestingModule,
-                PipesModule
+                PipesModule,
+                NgxsModule.forRoot([InfoState, TransactionPoolState, BlockDetailsState], {developmentMode: true})
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA]
         }).compileComponents()
