@@ -2,3 +2,4 @@ node_modules
 dist/3rdpartylicenses.txt
 dist/
 .angular/
+package-lock.json
