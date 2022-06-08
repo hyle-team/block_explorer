@@ -46,13 +46,14 @@ header {
         background-image: $logo;
         background-repeat: no-repeat;
         background-position: 0 center;
+        background-size: contain;
         font-size: 26px;
         font-weight: 700;
         display: flex;
         align-items: center;
         color: #fff;
         text-transform: uppercase;
-        padding-left: 60px;
+        padding-left: 50px;
         cursor: pointer;
         @include unSelect;
         outline: none;

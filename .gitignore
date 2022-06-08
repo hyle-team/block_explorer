@@ -3,3 +3,10 @@ dist/3rdpartylicenses.txt
 dist/
 .angular/
 package-lock.json
+/.idea/.gitignore
+/.idea/block_explorer.iml
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/modules.xml
+/.idea/codeStyles/Project.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml
