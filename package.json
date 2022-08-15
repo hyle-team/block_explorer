@@ -27,7 +27,7 @@
         "@angular/router": "^13.3.8",
         "@ngxs/devtools-plugin": "^3.7.3",
         "@ngxs/logger-plugin": "^3.7.3",
-        "@ngxs/store": "^3.7.3",
+        "@ngxs/store": "^3.7.5",
         "angular-highcharts": "^13.0.1",
         "axios": "^0.27.2",
         "better-sqlite3": "^7.5.3",
