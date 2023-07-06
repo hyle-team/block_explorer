@@ -99,7 +99,7 @@
                                 *ngIf="
                                     extraItem.datails_view !==
                                         extraItem?.short_view &&
-                                    extraItem.datails_view.length
+                                    extraItem.datails_view?.length
                                 ">
                                 {{ extraItem?.datails_view }}
                             </span>
@@ -206,7 +206,8 @@
                 <tr *ngFor="let inConn of Inputs | slice: 0:inputsLimit">
                     <td class="_amount">
                         <!-- Amount -->
-                        <span>{{ inConn.amount | moneyParse }}</span>
+                        <span *ngIf="inConn.amount !== 0">{{ inConn.amount | moneyParse }}</span>
+                        <span  *ngIf="inConn.amount === 0">hidden</span>
                     </td>
 
                     <!-- Image/Multisig id-->
@@ -297,7 +298,8 @@
                     *ngFor="let item of Outputs | slice: 0:outputsLimit"
                     [class]="{ 'out-selected': $index == out_selected }">
                     <td class="_amount">
-                        <span>{{ item.amount | moneyParse }}</span>
+                        <span *ngIf="item.amount !== 0">{{ item.amount | moneyParse }}</span>
+                        <span *ngIf="item.amount === 0">hidden</span>
                     </td>
                     <td class="_key">
                         <span *ngFor="let key of item.pub_keys">
