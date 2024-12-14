@@ -97,7 +97,6 @@
             }
         }
     },
-    "defaultProject": "blockexplorer",
     "schematics": {
         "@schematics/angular:component": {
             "prefix": "app",

@@ -1,10 +1,6 @@
 import { Injectable, Output, EventEmitter, Directive } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import {
-    Resolve,
-    ActivatedRouteSnapshot,
-    RouterStateSnapshot
-} from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { Observable } from 'rxjs'
 import { environment } from '../../environments/environment'
 import { VisibilityInfo } from '../models/visibility-info'
@@ -96,7 +92,7 @@ export class HttpService {
 
 // MainInfo resolve
 @Injectable()
-export class ServiceResolver implements Resolve<any> {
+export class ServiceResolver  {
     constructor(private service: HttpService) {}
 
     resolve(
@@ -109,7 +105,7 @@ export class ServiceResolver implements Resolve<any> {
 
 // AltBlock resolve
 @Injectable()
-export class ResolveAltBlock implements Resolve<any> {
+export class ResolveAltBlock  {
     constructor(private service: HttpService) {}
 
     resolve(
