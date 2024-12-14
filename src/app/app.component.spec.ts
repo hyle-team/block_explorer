@@ -3,7 +3,8 @@ import { TestBed, waitForAsync } from '@angular/core/testing'
 import { HttpService } from './services/http.service'
 import { AppComponent } from './app.component'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+// import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+import { MatProgressSpinner, MatProgressSpinnerModule } from '@angular/material/progress-spinner's
 import { RouterTestingModule } from '@angular/router/testing'
 
 describe('AppComponent', () => {
