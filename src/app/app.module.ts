@@ -2,7 +2,7 @@
 import { BrowserModule } from '@angular/platform-browser'
 import { NgModule } from '@angular/core'
 import { FormsModule } from '@angular/forms'
-import { HttpClientModule } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { AppRoutingModule } from './app.router'
 // import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 import { MatProgressSpinner, MatProgressSpinnerModule } from '@angular/material/progress-spinner'
@@ -62,8 +62,7 @@ import { ChartsState } from './states/charts-state'
 
 const config: SocketIoConfig = { url: environment.backend, options: {transports: ['websocket', 'polling']} }
 
-@NgModule({
-    declarations: [
+@NgModule({ declarations: [
         AppComponent,
         MainInfoComponent,
         BlockchainComponent,
@@ -86,10 +85,8 @@ const config: SocketIoConfig = { url: environment.backend, options: {transports:
         StakedCoinsComponent,
         DevFundComponent
     ],
-    imports: [
-        BrowserModule,
+    bootstrap: [AppComponent], imports: [BrowserModule,
         FormsModule,
-        HttpClientModule,
         BrowserAnimationsModule,
         MatProgressSpinnerModule,
         NgxJsonViewerModule,
@@ -99,18 +96,13 @@ const config: SocketIoConfig = { url: environment.backend, options: {transports:
         SocketIoModule.forRoot(config),
         NgxsModule.forRoot([InfoState, VisibilityState, TransactionPoolState, BlockDetailsState, ChartsState], {
             developmentMode: !environment.production
-        }),
-        // NgxsLoggerPluginModule.forRoot({ disabled: environment.production }),
-        // NgxsReduxDevtoolsPluginModule.forRoot()
-    ],
-    providers: [
+        })], providers: [
         HttpService,
         ServiceResolver,
         ResolveAltBlock,
         CookieService,
         MobileNavState,
-        { provide: ChartModule, useFactory: () => [highstock] }
-    ],
-    bootstrap: [AppComponent]
-})
+        { provide: ChartModule, useFactory: () => [highstock] },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule {}

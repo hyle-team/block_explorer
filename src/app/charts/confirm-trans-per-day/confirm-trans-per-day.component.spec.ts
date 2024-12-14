@@ -1,4 +1,4 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { RouterTestingModule } from '@angular/router/testing'
@@ -7,6 +7,7 @@ import { ChartsState } from 'app/states/charts-state'
 import { HttpService, MobileNavState } from '../../services/http.service'
 
 import { ConfirmTransPerDayComponent } from './confirm-trans-per-day.component'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('ConfirmTransPerDayComponent', () => {
     let component: ConfirmTransPerDayComponent
@@ -14,14 +15,12 @@ describe('ConfirmTransPerDayComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [ConfirmTransPerDayComponent],
-            providers: [HttpService, MobileNavState],
-            imports: [HttpClientTestingModule, 
-                RouterTestingModule,
-                NgxsModule.forRoot([ChartsState], {developmentMode: true})
-            ],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA]
-        }).compileComponents()
+    declarations: [ConfirmTransPerDayComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [RouterTestingModule,
+        NgxsModule.forRoot([ChartsState], { developmentMode: true })],
+    providers: [HttpService, MobileNavState, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
     }))
 
     beforeEach(() => {

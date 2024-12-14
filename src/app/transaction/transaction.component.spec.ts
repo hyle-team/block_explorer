@@ -3,9 +3,10 @@ import { HttpService, MobileNavState } from './../services/http.service'
 import { DialogComponent } from './../dialog/dialog.component'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TransactionComponent } from './transaction.component'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { PipesModule } from 'app/pipes/pipes.module'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('TransactionComponent', () => {
     let component: TransactionComponent
@@ -13,15 +14,12 @@ describe('TransactionComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [TransactionComponent, DialogComponent],
-            providers: [HttpService, MobileNavState],
-            imports: [
-                HttpClientTestingModule,
-                RouterTestingModule,
-                PipesModule
-            ],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA]
-        }).compileComponents()
+    declarations: [TransactionComponent, DialogComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [RouterTestingModule,
+        PipesModule],
+    providers: [HttpService, MobileNavState, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
     }))
 
     beforeEach(() => {

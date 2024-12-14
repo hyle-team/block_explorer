@@ -2,11 +2,12 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { BlockDetailsComponent } from './block-details.component'
 import { HttpService, MobileNavState } from './../services/http.service'
 import { RouterTestingModule } from '@angular/router/testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { PipesModule } from '../pipes/pipes.module'
 import { NgxsModule } from '@ngxs/store'
 import { InfoState } from 'app/states/info-state'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('BlockDetailsComponent', () => {
     let component: BlockDetailsComponent
@@ -14,16 +15,13 @@ describe('BlockDetailsComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [BlockDetailsComponent],
-            providers: [HttpService, MobileNavState],
-            imports: [
-                HttpClientTestingModule,
-                RouterTestingModule,
-                PipesModule,
-                NgxsModule.forRoot([InfoState], {developmentMode: true})
-            ],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA]
-        }).compileComponents()
+    declarations: [BlockDetailsComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [RouterTestingModule,
+        PipesModule,
+        NgxsModule.forRoot([InfoState], { developmentMode: true })],
+    providers: [HttpService, MobileNavState, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
     }))
 
     beforeEach(() => {

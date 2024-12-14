@@ -2,8 +2,9 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { AltBlocksComponent } from './alt-blocks.component'
 import { RouterTestingModule } from '@angular/router/testing'
 import { HttpService, MobileNavState } from './../services/http.service'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('AltBlocksComponent', () => {
     let component: AltBlocksComponent
@@ -11,11 +12,11 @@ describe('AltBlocksComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [AltBlocksComponent],
-            providers: [HttpService, MobileNavState],
-            imports: [HttpClientTestingModule, RouterTestingModule],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA]
-        }).compileComponents()
+    declarations: [AltBlocksComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [RouterTestingModule],
+    providers: [HttpService, MobileNavState, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
     }))
 
     beforeEach(() => {

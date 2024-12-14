@@ -49,9 +49,9 @@ export class ChartsComponent
             chart: {
                 type: 'line',
                 backgroundColor: '#2b3768',
-                height: 280,
+                height: 280
                 // width: 375,
-                zoomType: 'x'
+                // zoomType: 'x'
             },
             accessibility: {
                 enabled: false

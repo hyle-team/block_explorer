@@ -33,8 +33,8 @@ export class AvgTransPerBlockComponent
                 type: 'line',
                 backgroundColor: '#2b3768',
                 height: 700,
-                width: null,
-                zoomType: 'x'
+                width: null
+                // zoomType: 'x'
             },
             accessibility: {
                 enabled: false

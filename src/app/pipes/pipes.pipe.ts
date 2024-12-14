@@ -5,7 +5,8 @@ import {
     Pipe,
     PipeTransform
 } from '@angular/core'
-import * as moment from 'moment'
+// import * as moment from 'moment'
+import moment from 'moment'
 
 import BigNumber from 'bignumber.js'
 import { environment } from 'environments/environment'

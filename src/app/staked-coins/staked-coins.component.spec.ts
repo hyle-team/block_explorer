@@ -1,4 +1,4 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { RouterTestingModule } from '@angular/router/testing'
 import { NgxsModule } from '@ngxs/store'
@@ -7,6 +7,7 @@ import { HttpService } from 'app/services/http.service'
 import { VisibilityState } from 'app/states/visibility-state'
 
 import { StakedCoinsComponent } from './staked-coins.component'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('StakedCoinsComponent', () => {
     let component: StakedCoinsComponent
@@ -14,17 +15,16 @@ describe('StakedCoinsComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [StakedCoinsComponent],
-            imports: [
-                PipesModule,
-                HttpClientTestingModule,
-                RouterTestingModule,
-                NgxsModule.forRoot([VisibilityState], {developmentMode: true})
-            ],
-            providers: [
-                HttpService
-            ]
-        }).compileComponents()
+    declarations: [StakedCoinsComponent],
+    imports: [PipesModule,
+        RouterTestingModule,
+        NgxsModule.forRoot([VisibilityState], { developmentMode: true })],
+    providers: [
+        HttpService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+}).compileComponents()
     })
 
     beforeEach(() => {
