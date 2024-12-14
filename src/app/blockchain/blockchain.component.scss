@@ -1,4 +1,5 @@
-@import '../../assets/styles/base/mixins';
+@use '../../assets/styles/base/mixins' as mixins;
+
 .blockchain_info {
     display: flex;
     color: #9eaacc;
@@ -6,13 +7,13 @@
     white-space: nowrap;
     .daemon_state {
         margin-right: 25px;
-        @include max575 {
+        @include mixins.max575 {
             display: none;
         }
     }
     .network_info {
         display: flex;
-        @include max991 {
+        @include mixins.max991 {
             display: none;
         }
         > div {
@@ -22,12 +23,12 @@
 }
 
 .latest_blocks {
-    @include bartblock;
+    @include mixins.bartblock;
     border-radius: 10px;
     margin-bottom: 25px;
     position: relative;
     min-height: 300px;
-    @include max761 {
+    @include mixins.max761 {
         overflow-x: auto;
     }
     .table_title {
@@ -35,7 +36,7 @@
         font-weight: 300;
         color: #fff;
         padding: 18px 20px;
-        @include mobile {
+        @include mixins.mobile {
             font-size: 20px;
         }
     }
@@ -55,10 +56,10 @@
         .hash a {
             color: #68a1ff;
         }
-        @include max761 {
+        @include mixins.max761 {
             min-width: 850px;
         }
-        @include max1170 {
+        @include mixins.max1170 {
             table-layout: auto;
             width: 100%;
             white-space: nowrap;
@@ -104,16 +105,16 @@
         }
     }
     .pagination {
-        @include max761 {
+        @include mixins.max761 {
             min-width: 850px;
         }
     }
 }
 
 .transaction_pool {
-    @include bartblock;
+    @include mixins.bartblock;
     border-radius: 10px;
-    @include max991 {
+    @include mixins.max991 {
         overflow-x: auto;
     }
     thead tr th {
@@ -131,7 +132,7 @@
                 font-weight: 300;
                 color: #fff;
                 margin-right: 15px;
-                @include mobile {
+                @include mixins.mobile {
                     font-size: 20px;
                 }
             }
@@ -146,7 +147,7 @@
                 padding: 5px 30px;
                 transition: 0.2s;
                 border: none;
-                @include mobile {
+                @include mixins.mobile {
                     font-size: 14px;
                     padding: 5px 15px;
                     white-space: nowrap;
@@ -182,10 +183,10 @@
         .hash a {
             color: #68a1ff;
         }
-        @include max761 {
+        @include mixins.max761 {
             min-width: 850px;
         }
-        @include max1170 {
+        @include mixins.max1170 {
             table-layout: auto;
             width: 100%;
             white-space: nowrap;
@@ -242,7 +243,7 @@
         padding-bottom: 25px;
     }
     .pagination {
-        @include max761 {
+        @include mixins.max761 {
             min-width: 850px;
         }
     }
@@ -256,7 +257,7 @@
     margin-bottom: 25px;
     column-gap: 24px;
     font-weight: 300;
-    @include max991 {
+    @include mixins.max991 {
         flex-direction: column;
         height: 110px;
         font-size: 14px;

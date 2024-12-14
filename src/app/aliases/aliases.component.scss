@@ -1,15 +1,15 @@
-@import '../../assets/styles/base/mixins';
+@use '../../assets/styles/base/mixins' as mixins;
 :host {
 }
 
 .wrapper_table {
     border-radius: 10px;
     overflow: hidden;
-    @include max761 {
+    @include mixins.max761 {
         overflow-x: auto;
     }
     .pagination {
-        @include max761 {
+        @include mixins.max761 {
             min-width: 880px;
         }
     }
@@ -32,7 +32,7 @@
         -moz-text-size-adjust: 100%;
         -webkit-text-size-adjust: 100%;
     }
-    @include max761 {
+    @include mixins.max761 {
         min-width: 700px;
     }
     thead {
@@ -79,7 +79,7 @@
                 line-height: 1.5;
                 pointer-events: none;
                 width: 100%;
-                @include textWrap;
+                @include mixins.textWrap;
             }
             .address_copied_to_clipboard {
                 position: absolute;
@@ -99,7 +99,7 @@
 
         &.address {
             display: flex;
-            @include max1170 {
+            @include mixins.max1170 {
                 flex-wrap: wrap;
                 border-bottom: 1px solid #e0e4e2;
                 padding-bottom: 30px;
@@ -112,7 +112,7 @@
                 flex-basis: 100%;
                 width: calc(100% + 140px);
 
-                @include max1170 {
+                @include mixins.max1170 {
                     border-color: transparent;
                     align-items: baseline;
                     margin-bottom: 15px;
@@ -120,8 +120,8 @@
                 .value {
                     display: flex;
                     width: 780px;
-                    @include max991 {
-                        @include textWrap;
+                    @include mixins.max991 {
+                        @include mixins.textWrap;
                         width: 100%;
                     }
                 }
@@ -142,7 +142,7 @@
                 transition: 0.2s;
                 padding: 0 15px;
                 white-space: nowrap;
-                @include max1170 {
+                @include mixins.max1170 {
                     margin-left: 95px;
                 }
                 &:hover,
@@ -169,7 +169,7 @@
                     pointer-events: auto;
                     color: #68a1ff;
                     display: block;
-                    @include text-truncate;
+                    @include mixins.text-truncate;
                 }
             }
         }
@@ -197,13 +197,13 @@
     &.desktop {
         display: flex;
         width: 320px;
-        @include max761 {
+        @include mixins.max761 {
             display: none;
         }
     }
     &.mobile {
         display: none;
-        @include max761 {
+        @include mixins.max761 {
             display: flex;
         }
     }

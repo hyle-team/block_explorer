@@ -1,4 +1,4 @@
-@import '../../assets/styles/base/mixins';
+@use '../../assets/styles/base/mixins' as mixins;
 .back_btn {
     cursor: pointer;
 }
@@ -8,16 +8,16 @@
     grid-column-gap: 20px;
     grid-row-gap: 20px;
     justify-content: center;
-    @include max1199 {
+    @include mixins.max1199 {
         grid-template-columns: repeat(auto-fit, 30%);
     }
-    @include max991 {
+    @include mixins.max991 {
         grid-template-columns: repeat(auto-fit, 45%);
     }
-    @include max761 {
+    @include mixins.max761 {
         grid-template-columns: repeat(auto-fit, 45%);
     }
-    @include max575 {
+    @include mixins.max575 {
         grid-template-columns: repeat(auto-fit, 100%);
     }
     > a {

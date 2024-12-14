@@ -1,8 +1,8 @@
-@import '../../assets/styles/base/mixins';
+@use '../../assets/styles/base/mixins' as mixins;
 .wrapper_table {
     border-radius: 10px;
     overflow: hidden;
-    @include max1170 {
+    @include mixins.max1170 {
         overflow-x: auto;
     }
 }
@@ -51,15 +51,15 @@
         }
     }
 
-    @include max761 {
+    @include mixins.max761 {
         min-width: 850px;
     }
 
-    @include max1170 {
+    @include mixins.max1170 {
     }
 }
 .pagination {
-    @include max761 {
+    @include mixins.max761 {
         min-width: 850px;
     }
 }

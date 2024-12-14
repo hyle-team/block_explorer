@@ -1,4 +1,4 @@
-@import '../../assets/styles/base/mixins';
+@use '../../assets/styles/base/mixins' as mixins;
 :host {
     position: relative;
     z-index: 999;
@@ -32,16 +32,16 @@
             overflow: hidden;
             transition: 0.1s;
             margin: 20px;
-            @include max1199 {
+            @include mixins.max1199 {
                 margin: 0;
             }
-            @include max1170 {
+            @include mixins.max1170 {
                 max-width: 90%;
             }
-            @include max761 {
+            @include mixins.max761 {
                 margin: 0;
             }
-            @include max575 {
+            @include mixins.max575 {
                 padding: 35px 20px;
                 width: 100%;
                 height: 100%;
@@ -61,14 +61,14 @@
                 left: 50%;
                 transform: translate(-50%, -50%);
             }
-            @include max991 {
+            @include mixins.max991 {
                 position: absolute;
                 min-width: 520px;
                 left: 50%;
                 right: auto;
             }
 
-            @include max575 {
+            @include mixins.max575 {
                 min-width: 100%;
                 width: 100%;
                 left: 0;

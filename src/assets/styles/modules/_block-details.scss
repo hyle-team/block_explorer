@@ -1,3 +1,5 @@
+@use "../base/mixins";
+
 .block_details {
     margin-bottom: 30px;
     margin-top: 35px;
@@ -6,7 +8,7 @@
     display: flex;
     align-items: flex-end;
     padding-bottom: 15px;
-    @include max991 {
+    @include mixins.max991 {
         flex-wrap: wrap;
     }
     .currency_name {
@@ -38,11 +40,11 @@
         color: #9eaacc;
         //font-weight: 300;
         text-transform: uppercase;
-        @include max991 {
+        @include mixins.max991 {
             padding-top: 12px;
         }
-        @include max575 {
-            @include textWrap;
+        @include mixins.max575 {
+            @include mixins.textWrap;
             line-height: 1.4;
         }
     }
@@ -52,14 +54,14 @@
     justify-content: space-between;
     color: #fff;
     font-size: 13px;
-    @include max761 {
+    @include mixins.max761 {
         flex-direction: column;
     }
     table {
         width: 50%;
         table-layout: fixed;
 
-        @include max761 {
+        @include mixins.max761 {
             width: 100%;
         }
         tr {
@@ -90,7 +92,7 @@
                 padding: 12px 20px;
             }
             &.tr_empty {
-                @include max761 {
+                @include mixins.max761 {
                     display: none;
                 }
             }
@@ -100,7 +102,7 @@
             &.current_txs_median,
             &.total_transactions_size {
                 td {
-                    @include max575 {
+                    @include mixins.max575 {
                         white-space: normal;
                         line-height: 1.4;
                     }
@@ -109,7 +111,7 @@
             &.tr_seed {
                 height: 50px;
                 td:last-child {
-                    @include textWrap;
+                    @include mixins.textWrap;
                 }
             }
             &.transactions_fee {
@@ -121,23 +123,23 @@
             td {
                 &:first-child {
                     width: 50%;
-                    @include max761 {
+                    @include mixins.max761 {
                         width: 40%;
                     }
-                    @include max575 {
+                    @include mixins.max575 {
                         width: 50%;
                     }
                 }
                 &:last-child {
                     padding-right: 80px;
                     width: 65%;
-                    @include max991 {
+                    @include mixins.max991 {
                         padding-right: 20px;
                     }
-                    @include max761 {
+                    @include mixins.max761 {
                         width: 60%;
                     }
-                    @include max575 {
+                    @include mixins.max575 {
                         width: 50%;
                     }
                 }
@@ -148,30 +150,30 @@
                 &:first-child {
                     padding-left: 80px;
                     width: 50%;
-                    @include max991 {
+                    @include mixins.max991 {
                         padding-left: 60px;
                         width: 60%;
                     }
-                    @include max575 {
+                    @include mixins.max575 {
                         width: 50%;
                     }
-                    @include max761 {
+                    @include mixins.max761 {
                         padding-left: 20px;
                         width: 40%;
                     }
-                    @include max575 {
+                    @include mixins.max575 {
                         width: 50%;
                     }
                 }
                 &:last-child {
                     width: 45%;
-                    @include max991 {
+                    @include mixins.max991 {
                         width: 25%;
                     }
-                    @include max761 {
+                    @include mixins.max761 {
                         width: 60%;
                     }
-                    @include max575 {
+                    @include mixins.max575 {
                         width: 50%;
                     }
                 }
@@ -198,7 +200,7 @@
         //background-color: rgba(#fff, .2);
         background: linear-gradient(to right, #1b3a8a, #32439f);
         th {
-            @include max575 {
+            @include mixins.max575 {
                 padding: 12px;
             }
         }
@@ -209,31 +211,31 @@
                 background-color: rgba(#234ee2, 0.1);
             }
             td {
-                @include max575 {
+                @include mixins.max575 {
                     padding: 12px;
                 }
             }
             .hash {
-                @include max991 {
+                @include mixins.max991 {
                     > a,
                     > span {
                         display: block;
                         width: 280px;
-                        @include max761 {
+                        @include mixins.max761 {
                             width: 190px;
                         }
-                        @include max575 {
+                        @include mixins.max575 {
                             width: 100px;
                         }
-                        @include mobile {
+                        @include mixins.mobile {
                             width: 85px;
                         }
                     }
                     > a {
-                        @include text-truncate; // block-details
+                        @include mixins.text-truncate; // block-details
                     }
                     > span {
-                        @include textWrap; // alt-block-details
+                        @include mixins.textWrap; // alt-block-details
                     }
                 }
             }

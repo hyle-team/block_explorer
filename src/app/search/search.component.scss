@@ -1,4 +1,4 @@
-@import '../../assets/styles/base/mixins';
+@use '../../assets/styles/base/mixins' as mixins;
 :host {
     display: flex;
     position: relative;
@@ -16,10 +16,10 @@
     border-radius: 10px;
     height: 33px;
     padding-right: 15px;
-    @include max761 {
+    @include mixins.max761 {
         padding-left: 15px;
     }
-    @include max575 {
+    @include mixins.max575 {
         height: 32px;
         max-width: 100%;
     }
@@ -47,7 +47,7 @@
             color: #9eaacc;
         }
 
-        @include max575 {
+        @include mixins.max575 {
             opacity: 0;
             width: 0;
             font-size: 16px;
@@ -72,7 +72,7 @@
         padding: 5px 15px;
         padding-left: 10px;
         color: #ff5252;
-        @include max575 {
+        @include mixins.max575 {
             bottom: auto;
             font-size: 13px;
             left: auto;
@@ -80,7 +80,7 @@
             width: 200px;
             height: 100%;
         }
-        @include mobile {
+        @include mixins.mobile {
             width: 150px;
         }
     }

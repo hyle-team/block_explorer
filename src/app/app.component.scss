@@ -1,4 +1,4 @@
-@import '../assets/styles/base/mixins';
+@use '../assets/styles/base/mixins' as mixins;
 nav.mobile_nav {
     height: 0;
     transition: 0.25s;

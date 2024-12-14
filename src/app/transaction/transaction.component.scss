@@ -1,4 +1,4 @@
-@import '../../assets/styles/base/mixins';
+@use '../../assets/styles/base/mixins' as mixins;
 .transaction_details {
     margin-bottom: 25px;
     color: #fff;
@@ -21,18 +21,18 @@
 
             &.hash {
                 span {
-                    @include max761 {
+                    @include mixins.max761 {
                         display: block;
-                        @include textWrap;
+                        @include mixins.textWrap;
                         line-height: 1.4;
                     }
                 }
             }
             &.one_time_public_key {
                 span {
-                    @include max761 {
+                    @include mixins.max761 {
                         display: block;
-                        @include textWrap;
+                        @include mixins.textWrap;
                         line-height: 1.4;
                     }
                 }
@@ -41,9 +41,9 @@
                 .value_extra_item {
                     ul {
                         > li {
-                            @include max761 {
+                            @include mixins.max761 {
                                 display: block;
-                                @include textWrap;
+                                @include mixins.textWrap;
                                 line-height: 1.4;
                             }
                         }
@@ -68,12 +68,12 @@
         li {
             font-size: 13px;
             padding: 5px 0;
-            @include textWrap;
+            @include mixins.textWrap;
             .is_extra_item {
                 display: block;
                 margin-left: 20px;
                 padding-top: 10px;
-                @include max761 {
+                @include mixins.max761 {
                     padding-top: 0;
                 }
             }
@@ -98,7 +98,7 @@
 }
 .wrapper_table {
     margin-bottom: 25px;
-    @include max575 {
+    @include mixins.max575 {
         overflow-x: auto;
     }
     .table_title {
@@ -120,7 +120,7 @@
         }
     }
     table {
-        @include max575 {
+        @include mixins.max575 {
             width: 545px;
         }
         thead {
@@ -140,13 +140,13 @@
             table-layout: fixed;
             ._hash {
                 width: 65%;
-                @include max991 {
+                @include mixins.max991 {
                     width: 50%;
                     > a {
                         display: block;
                         width: 270px;
-                        @include text-truncate;
-                        @include max761 {
+                        @include mixins.text-truncate;
+                        @include mixins.max761 {
                             width: 230px;
                         }
                     }
@@ -154,16 +154,16 @@
             }
             ._height {
                 width: 15%;
-                @include max991 {
+                @include mixins.max991 {
                     width: 20%;
                 }
-                @include max761 {
+                @include mixins.max761 {
                     width: 22%;
                 }
             }
             ._timestamp {
                 width: 20%;
-                @include max991 {
+                @include mixins.max991 {
                     width: 30%;
                 }
             }
@@ -173,9 +173,9 @@
             ._image_multisig {
                 width: 50%;
                 > span {
-                    @include textWrap;
+                    @include mixins.textWrap;
                 }
-                @include max991 {
+                @include mixins.max991 {
                     width: 35%;
                 }
             }
@@ -185,10 +185,10 @@
                     color: #68a1ff;
                     cursor: pointer;
                 }
-                @include max991 {
+                @include mixins.max991 {
                     width: 20%;
                 }
-                @include max761 {
+                @include mixins.max761 {
                     width: 22%;
                 }
             }
@@ -198,20 +198,20 @@
                     color: #68a1ff;
                     cursor: pointer;
                 }
-                @include max991 {
+                @include mixins.max991 {
                     width: 30%;
                 }
             }
             ._key {
                 width: 65%;
-                @include max991 {
+                @include mixins.max991 {
                     width: 55%;
                 }
-                @include max761 {
+                @include mixins.max761 {
                     width: 45%;
                 }
                 > span {
-                    @include max991 {
+                    @include mixins.max991 {
                         display: block;
                         white-space: normal;
                         overflow-wrap: break-word;
@@ -226,9 +226,9 @@
             }
             ._global_index_multisig {
                 width: 20%;
-                @include max991 {
+                @include mixins.max991 {
                     width: 30%;
-                    @include max761 {
+                    @include mixins.max761 {
                         width: 36%;
                     }
                 }
@@ -268,10 +268,10 @@
     font-size: 20px;
     font-weight: 300;
     padding-bottom: 38px;
-    @include textWrap;
+    @include mixins.textWrap;
 }
 .wrap_content {
-    @include max575 {
+    @include mixins.max575 {
         padding: 0 15px;
     }
     > div {
@@ -279,7 +279,7 @@
         .emulation_link {
             color: #68a1ff;
             cursor: pointer;
-            @include textWrap;
+            @include mixins.textWrap;
         }
     }
 }

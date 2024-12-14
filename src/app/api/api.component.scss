@@ -1,11 +1,11 @@
-@import '../../assets/styles/base/mixins';
+@use '../../assets/styles/base/mixins' as mixins;
 .head_page {
     height: 77px;
     display: flex;
     align-items: center;
     color: #9eaacc;
     font-size: 14px;
-    @include max575 {
+    @include mixins.max575 {
         color: #fff;
         font-size: 20px;
     }
@@ -17,7 +17,7 @@
     margin-bottom: 25px;
     overflow: hidden;
     font-size: 13px;
-    @include max575 {
+    @include mixins.max575 {
         overflow-x: auto;
     }
     .heading {
@@ -26,10 +26,10 @@
         color: #fff;
         padding: 18px 20px;
         background: linear-gradient(to right, #1b3a8a, #32439f);
-        @include max575 {
+        @include mixins.max575 {
             min-width: 480px;
         }
-        @include mobile {
+        @include mixins.mobile {
             font-size: 18px;
         }
     }
@@ -40,7 +40,7 @@
             height: 40px;
             padding: 0 20px;
             color: #fff;
-            @include max575 {
+            @include mixins.max575 {
                 flex-direction: column;
                 align-items: flex-start;
                 height: 60px;
@@ -55,7 +55,7 @@
                 &.title {
                     flex-basis: 30%;
                     font-size: 14px;
-                    @include max575 {
+                    @include mixins.max575 {
                         display: flex;
                         flex-basis: 50%;
                         align-items: center;
@@ -66,7 +66,7 @@
                     a {
                         color: #68a1ff;
                     }
-                    @include max575 {
+                    @include mixins.max575 {
                         display: flex;
                         flex-basis: 50%;
                         align-items: center;
@@ -74,7 +74,7 @@
                 }
             }
             &.method {
-                @include max575 {
+                @include mixins.max575 {
                     height: 40px;
                     flex-direction: row;
                     align-items: center;
@@ -104,7 +104,7 @@
                 line-height: 1.2;
                 &:after {
                     display: flex;
-                    @include pseudo;
+                    @include mixins.pseudo;
                     width: 15px;
                     height: 15px;
                     content: '►';
