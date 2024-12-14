@@ -4,17 +4,10 @@ import { NgModule } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { AppRoutingModule } from './app.router'
-// import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatProgressSpinner, MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { NgxJsonViewerModule } from 'ngx-json-viewer'
 import { ChartModule } from 'angular-highcharts'
-import * as highstock from 'highcharts/modules/stock.src'
-
-import * as Highcharts from 'highcharts'
-import StockModule from 'highcharts/modules/stock'
-
-StockModule(Highcharts)
 
 // Services
 import {
@@ -102,7 +95,6 @@ const config: SocketIoConfig = { url: environment.backend, options: {transports:
         ResolveAltBlock,
         CookieService,
         MobileNavState,
-        { provide: ChartModule, useFactory: () => [highstock] },
         provideHttpClient(withInterceptorsFromDi())
     ] })
 export class AppModule {}

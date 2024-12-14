@@ -11,7 +11,8 @@ import { SeriesOptionsType } from 'highcharts'
 @Component({
     selector: 'app-avg-block-size',
     templateUrl: './avg-block-size.component.html',
-    styleUrls: ['./avg-block-size.component.scss']
+    styleUrls: ['./avg-block-size.component.scss'],
+    standalone: false
 })
 export class AvgBlockSizeComponent
     extends SubscriptionTracker

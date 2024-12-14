@@ -8,7 +8,8 @@ import { VisibilityState } from 'app/states/visibility-state'
 @Component({
     selector: 'app-dev-fund',
     templateUrl: './dev-fund.component.html',
-    styleUrls: ['./dev-fund.component.scss']
+    styleUrls: ['./dev-fund.component.scss'],
+    standalone: false
 })
 export class DevFundComponent
     extends SubscriptionTracker

@@ -21,7 +21,8 @@ import { trigger, style, animate, transition } from '@angular/animations'
         trigger('dialog', [
             transition('void => *', [style({ opacity: '0' }), animate(100)])
         ])
-    ]
+    ],
+    standalone: false
 })
 export class DialogComponent
     implements OnInit, AfterViewInit, OnDestroy, OnChanges

@@ -14,7 +14,8 @@ import { environment } from 'environments/environment'
 // bit number format
 @Pipe({
     name: 'bitNumber',
-    pure: false
+    pure: false,
+    standalone: false
 })
 export class BitNumberPipe implements PipeTransform {
     transform(value: any) {
@@ -34,7 +35,8 @@ export class BitNumberPipe implements PipeTransform {
 // money number format
 @Pipe({
     name: 'moneyParse',
-    pure: false
+    pure: false,
+    standalone: false
 })
 export class MoneyParsePipe implements PipeTransform {
     transform(
@@ -53,7 +55,8 @@ export class MoneyParsePipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'hashPowerConverter'
+    name: 'hashPowerConverter',
+    standalone: false
 })
 export class HashPowerConverterPipe implements PipeTransform {
     transform(value: number, args?: any): any {
@@ -103,7 +106,10 @@ export class HashPowerConverterPipe implements PipeTransform {
 }
 
 
-@Pipe({ name: 'amTimeAgo', pure: false })
+@Pipe({
+    name: 'amTimeAgo', pure: false,
+    standalone: false
+})
 export class TimeAgoPipe2 implements PipeTransform, OnDestroy {
     private currentTimer: number | null
 

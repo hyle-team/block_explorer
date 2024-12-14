@@ -15,7 +15,8 @@ import { environment } from 'environments/environment'
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
-    providers: []
+    providers: [],
+    standalone: false
 })
 export class AppComponent
     extends SubscriptionTracker

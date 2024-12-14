@@ -11,7 +11,8 @@ import { SeriesOptionsType } from 'highcharts'
 @Component({
     selector: 'app-difficulty-pow',
     templateUrl: './difficulty-pow.component.html',
-    styleUrls: ['./difficulty-pow.component.scss']
+    styleUrls: ['./difficulty-pow.component.scss'],
+    standalone: false
 })
 export class DifficultyPowComponent
     extends SubscriptionTracker

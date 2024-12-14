@@ -9,7 +9,8 @@ import { CookieService } from 'ngx-cookie-service'
     selector: 'app-aliases',
     templateUrl: './aliases.component.html',
     styleUrls: ['./aliases.component.scss'],
-    providers: []
+    providers: [],
+    standalone: false
 })
 export class AliasesComponent
     extends SubscriptionTracker

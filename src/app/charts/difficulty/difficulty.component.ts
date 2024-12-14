@@ -11,7 +11,8 @@ import { SeriesOptionsType } from 'highcharts'
 @Component({
     selector: 'app-difficulty',
     templateUrl: './difficulty.component.html',
-    styleUrls: ['./difficulty.component.scss']
+    styleUrls: ['./difficulty.component.scss'],
+    standalone: false
 })
 export class DifficultyComponent extends SubscriptionTracker implements OnInit {
     navIsOpen: boolean

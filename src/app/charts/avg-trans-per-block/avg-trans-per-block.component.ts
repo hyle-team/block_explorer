@@ -10,7 +10,8 @@ import { SeriesOptionsType } from 'highcharts'
 @Component({
     selector: 'app-avg-trans-per-block',
     templateUrl: './avg-trans-per-block.component.html',
-    styleUrls: ['./avg-trans-per-block.component.scss']
+    styleUrls: ['./avg-trans-per-block.component.scss'],
+    standalone: false
 })
 export class AvgTransPerBlockComponent
     extends SubscriptionTracker

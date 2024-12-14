@@ -117,7 +117,10 @@ export class ResolveAltBlock  {
     }
 }
 
-@Directive({ selector: '[foo]' })
+@Directive({
+    selector: '[foo]',
+    standalone: false
+})
 @Injectable()
 export class MobileNavState {
     navIsOpen = true

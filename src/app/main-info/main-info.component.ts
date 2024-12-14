@@ -18,7 +18,8 @@ import { Observable } from 'rxjs'
     templateUrl: './main-info.component.html',
     styleUrls: ['./main-info.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    providers: []
+    providers: [],
+    standalone: false
 })
 export class MainInfoComponent
     extends SubscriptionTracker

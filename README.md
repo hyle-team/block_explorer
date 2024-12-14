@@ -79,7 +79,7 @@ ___
 1. `"api"` The address of your zano node.
 2. `"frontEnd_api"` The address of the angular uses for CORS. seems to not like 127.0.0.1
 3. `"server_port"` Port of backend API used by angular to obtain data.
-4. `"auditable_wallet"` FDQN of your auditable wallet running as a service.
+4. `"auditable_wallet"` FQDN of your auditable wallet running as a service.
 5. `"database"` credentials and location of a postgresql database
 6. `enableVisibilityInfo` stop/start websocket emitting dev fund wallet information
 
@@ -131,21 +131,22 @@ sudo usermod -aG sudo zano
 #### Update your system and install packages
 
 ```
-sudo apt update && sudo apt install postgresql postgresql-contrib \
-sudo systemctl start postgresql
+sudo apt update && sudo apt install postgresql postgresql-contrib
 ```
 #### Login to database as postgres user and add new user `zano` role for postgres
 ```
 sudo -u postgres psql
 CREATE ROLE zano LOGIN SUPERUSER;
+ALTER USER zano WITH PASSWORD '123456';
 ```
 #### Create a new database
 ```
 CREATE DATABASE db;
+\q
 ```
 #### Run the `database.sql` script to create the tables, stored procedures and grant permissions to these database objects for the `zano` user
 ```
-psql -f database.sql
+psql -U zano -d db -f database.sql
 ``` 
 
 # ***If you intend to run Backend and postgresql on different servers you will need to configure postgresql for remote access. Once configured for remote access you will also need to install pgAdmin4 to administer your database remotely.***
@@ -154,15 +155,19 @@ psql -f database.sql
 
 #### Edit postgresql.conf
 ```
-sudo nano /etc/postgresql/13/main/postgresql.config
+sudo nano /etc/postgresql/14/main/postgresql.config
 
 ```
-#### locate the entry `#list_address = 'localhost'` uncomment and change to `listen_address = '*'`. This will configure postgresql to listen on all ports.
+#### locate the entry `#listen_address = 'localhost'` uncomment and change to `listen_address = '*'`. This will configure postgresql to listen on all ports.
 
 ---
 
 #### Edit pg_hba.conf and add a new line to the bottom of the file
 # NOTE: ****_For Security reasons you should never use 0.0.0.0/0, limit to an IP address or to a Subnet._****
+```
+sudo nano /etc/postgresql/14/main/pg_hba.config
+
+```
 
 ```
 # TYPE  DATABASE    USER    ADDRESS       METHOD

@@ -8,7 +8,8 @@ import { SubscriptionTracker } from '../subscription-tracker/subscription-tracke
     selector: 'app-alt-blocks',
     templateUrl: './alt-blocks.component.html',
     styleUrls: ['./alt-blocks.component.scss'],
-    providers: []
+    providers: [],
+    standalone: false
 })
 export class AltBlocksComponent
     extends SubscriptionTracker

@@ -7,7 +7,8 @@ import { MobileNavState } from '../services/http.service'
     selector: 'app-alt-blocks-details-component',
     templateUrl: './alt-blocks-details.component.html',
     styleUrls: ['./alt-blocks-details.component.scss'],
-    providers: []
+    providers: [],
+    standalone: false
 })
 export class AltBlocksDetailsComponent
     extends SubscriptionTracker

@@ -11,7 +11,8 @@ import { SeriesOptionsType } from 'highcharts'
 @Component({
     selector: 'app-charts',
     templateUrl: './charts.component.html',
-    styleUrls: ['./charts.component.scss']
+    styleUrls: ['./charts.component.scss'],
+    standalone: false
 })
 export class ChartsComponent
     extends SubscriptionTracker

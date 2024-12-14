@@ -11,7 +11,8 @@ import { InfoState } from 'app/states/info-state'
     selector: 'app-transaction',
     templateUrl: './transaction.component.html',
     styleUrls: ['./transaction.component.scss'],
-    providers: []
+    providers: [],
+    standalone: false
 })
 export class TransactionComponent
     extends SubscriptionTracker

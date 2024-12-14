@@ -10,7 +10,8 @@ import { Observable } from 'rxjs'
     selector: 'app-block-details-component',
     templateUrl: './block-details.component.html',
     styleUrls: ['./block-details.component.scss'],
-    providers: []
+    providers: [],
+    standalone: false
 })
 export class BlockDetailsComponent
     extends SubscriptionTracker

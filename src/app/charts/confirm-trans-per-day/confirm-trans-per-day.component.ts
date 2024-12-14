@@ -11,7 +11,8 @@ import { SeriesOptionsType } from 'highcharts'
 @Component({
     selector: 'app-confirm-trans-per-day',
     templateUrl: './confirm-trans-per-day.component.html',
-    styleUrls: ['./confirm-trans-per-day.component.scss']
+    styleUrls: ['./confirm-trans-per-day.component.scss'],
+    standalone: false
 })
 export class ConfirmTransPerDayComponent
     extends SubscriptionTracker

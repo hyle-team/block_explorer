@@ -4,7 +4,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core'
     selector: 'app-server-error',
     templateUrl: './server-error.component.html',
     styleUrls: ['./server-error.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class ServerErrorComponent implements OnInit {
     public loading = false

@@ -24,13 +24,14 @@ import { trigger, state, style, animate, transition, keyframes } from '@angular/
     animations: [
         trigger('highlightNewItems', [
             state('new', style({})),
-            state('old', style({})),            
+            state('old', style({})),
             transition('void => new', animate('2000ms', keyframes([
-                style({backgroundColor: '#e06a6a', offset: 0}),
-                style({offset: 1})
+                style({ backgroundColor: '#e06a6a', offset: 0 }),
+                style({ offset: 1 })
             ]))),
         ])
-    ]
+    ],
+    standalone: false
 })
 export class BlockchainComponent
     extends SubscriptionTracker

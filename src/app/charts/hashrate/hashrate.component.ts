@@ -11,7 +11,8 @@ import { SeriesOptionsType } from 'highcharts'
 @Component({
     selector: 'app-hashrate',
     templateUrl: './hashrate.component.html',
-    styleUrls: ['./hashrate.component.scss']
+    styleUrls: ['./hashrate.component.scss'],
+    standalone: false
 })
 export class HashrateComponent extends SubscriptionTracker implements OnInit {
     navIsOpen: boolean

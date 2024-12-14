@@ -8,7 +8,8 @@ import { VisibilityState } from 'app/states/visibility-state'
 @Component({
     selector: 'app-staked-coins',
     templateUrl: './staked-coins.component.html',
-    styleUrls: ['./staked-coins.component.scss']
+    styleUrls: ['./staked-coins.component.scss'],
+    standalone: false
 })
 export class StakedCoinsComponent
     extends SubscriptionTracker
