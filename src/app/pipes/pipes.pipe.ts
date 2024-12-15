@@ -5,11 +5,11 @@ import {
     Pipe,
     PipeTransform
 } from '@angular/core'
-// import * as moment from 'moment'
-import moment from 'moment'
+
 
 import BigNumber from 'bignumber.js'
 import { environment } from 'environments/environment'
+import { DateTime } from 'luxon';
 
 // bit number format
 @Pipe({
@@ -105,116 +105,116 @@ export class HashPowerConverterPipe implements PipeTransform {
     }
 }
 
-
 @Pipe({
-    name: 'amTimeAgo', pure: false,
+    name: 'amTimeAgo',
+    pure: false,
     standalone: false
 })
 export class TimeAgoPipe2 implements PipeTransform, OnDestroy {
-    private currentTimer: number | null
-
-    private lastTime: Number
-    private lastValue: moment.MomentInput
-    private lastOmitSuffix: boolean
-    private lastLocale?: string
-    private lastText: string
-    private formatFn: (m: moment.Moment) => string
+    private currentTimer: number | null;
+    private lastTime: number;
+    private lastValue: string | number | Date | DateTime;
+    private lastOmitSuffix: boolean;
+    private lastText: string;
+    private formatFn: (d: DateTime) => string;
 
     constructor(private cdRef: ChangeDetectorRef, private ngZone: NgZone) {}
 
-    format(m: moment.Moment) {
-        return m.from(moment(), this.lastOmitSuffix)
+    format(d: DateTime) {
+        return d.toRelative({ style: this.lastOmitSuffix ? 'short' : 'long' });
     }
 
     transform(
-        value: moment.MomentInput,
+        value: string | number | Date | DateTime,
         omitSuffix?: boolean,
-        formatFn?: (m: moment.Moment) => string
+        formatFn?: (d: DateTime) => string
     ): string {
         if (this.hasChanged(value, omitSuffix)) {
-            this.lastTime = this.getTime(value)
-            this.lastValue = value
-            this.lastOmitSuffix = omitSuffix
-            this.lastLocale = this.getLocale(value)
-            this.formatFn = formatFn || this.format.bind(this)
-            this.removeTimer()
-            this.createTimer()
-            this.lastText = this.formatFn(moment(value))
+            this.lastTime = this.getTime(value);
+            this.lastValue = value;
+            this.lastOmitSuffix = omitSuffix;
+            this.formatFn = formatFn || this.format.bind(this);
+            this.removeTimer();
+            this.createTimer();
+            this.lastText = this.formatFn(this.toDateTime(value));
         } else {
-            this.createTimer()
+            this.createTimer();
         }
 
-        return this.lastText
+        return this.lastText;
     }
 
     ngOnDestroy(): void {
-        this.removeTimer()
+        this.removeTimer();
     }
 
     private createTimer() {
         if (this.currentTimer) {
-            return
+            return;
         }
 
-        const momentInstance = moment(this.lastValue)
-        const timeToUpdate = this.getSecondsUntilUpdate(momentInstance) * 1000
+        const dateTime = this.toDateTime(this.lastValue);
+        const timeToUpdate = this.getSecondsUntilUpdate(dateTime) * 1000;
 
         this.currentTimer = this.ngZone.runOutsideAngular(() => {
             if (typeof window !== 'undefined') {
                 return window.setTimeout(() => {
-                    this.lastText = this.formatFn(moment(this.lastValue))
-
-                    this.currentTimer = null
-                    this.ngZone.run(() => this.cdRef.markForCheck())
-                }, timeToUpdate)
-            } else {
-                return null
+                    this.lastText = this.formatFn(this.toDateTime(this.lastValue));
+                    this.currentTimer = null;
+                    this.ngZone.run(() => this.cdRef.markForCheck());
+                }, timeToUpdate);
             }
-        })
+            return null;
+        });
     }
 
     private removeTimer() {
         if (this.currentTimer) {
-            window.clearTimeout(this.currentTimer)
-            this.currentTimer = null
+            window.clearTimeout(this.currentTimer);
+            this.currentTimer = null;
         }
     }
 
-    private getSecondsUntilUpdate(momentInstance: moment.Moment) {
-        const howOld = Math.abs(moment().diff(momentInstance, 'minute'))
-        if (howOld < 1) {
-            return 1
-        } else if (howOld < 60) {
-            return 30
-        } else if (howOld < 180) {
-            return 300
+    private getSecondsUntilUpdate(dateTime: DateTime) {
+        const diff = Math.abs(DateTime.now().diff(dateTime).as('minutes'));
+        if (diff < 1) {
+            return 1;
+        } else if (diff < 60) {
+            return 30;
+        } else if (diff < 180) {
+            return 300;
         } else {
-            return 3600
+            return 3600;
         }
     }
 
     private hasChanged(
-        value: moment.MomentInput,
+        value: string | number | Date | DateTime,
         omitSuffix?: boolean
     ): boolean {
         return (
             this.getTime(value) !== this.lastTime ||
-            this.getLocale(value) !== this.lastLocale ||
             omitSuffix !== this.lastOmitSuffix
-        )
+        );
     }
 
-    private getTime(value: moment.MomentInput): number {
-        if (moment.isDate(value)) {
-            return value.getTime()
-        } else if (moment.isMoment(value)) {
-            return value.valueOf()
+    private getTime(value: string | number | Date | DateTime): number {
+        return this.toDateTime(value).toMillis();
+    }
+
+    private toDateTime(value: string | number | Date | DateTime): DateTime {
+        if (DateTime.isDateTime(value)) {
+            return value as DateTime;
+        } else if (value instanceof Date) {
+            return DateTime.fromJSDate(value);
+        } else if (typeof value === 'number') {
+            return DateTime.fromMillis(value);
         } else {
-            return moment(value).valueOf()
+            let dt = DateTime.fromISO(value as string);
+            if (!dt.isValid) {
+                dt = DateTime.fromMillis(parseInt(value as string));
+            }
+            return dt;
         }
-    }
-
-    private getLocale(value: moment.MomentInput): string | null {
-        return moment.isMoment(value) ? value.locale() : moment.locale()
     }
 }
