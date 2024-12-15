@@ -3,7 +3,7 @@ import { MobileNavState } from '../../services/http.service'
 import { Chart } from 'angular-highcharts'
 import { SubscriptionTracker } from '../../subscription-tracker/subscription-tracker'
 import { take } from 'rxjs/operators'
-import { Select } from '@ngxs/store'
+import { Store } from '@ngxs/store'
 import { ChartsState } from 'app/states/charts-state'
 import { Observable } from 'rxjs'
 import { SeriesOptionsType } from 'highcharts'
@@ -27,15 +27,15 @@ export class ConfirmTransPerDayComponent
     ConfirmTransactPerDayChart: Chart
     loader: boolean
 
-    @Select(ChartsState.selectAllConfirmedTransactionsPerDay) allConfirmedTransactionsPerDay$: Observable<any[]>
+    allConfirmedTransactionsPerDay$: Observable<any[]>
 
-    constructor(private mobileNavState: MobileNavState
-    ) {
+    constructor(private mobileNavState: MobileNavState, private store: Store) {
         super()
         this.navIsOpen = false
         this.searchIsOpen = false
         this.activeChart = 'ConfirmTransactPerDay'
         this.period = 'all'
+        this.allConfirmedTransactionsPerDay$ = this.store.select(ChartsState.selectAllConfirmedTransactionsPerDay)
     }
 
     drawChart(titleText, yText, chartsData: SeriesOptionsType[]): Chart {
@@ -284,8 +284,11 @@ export class ConfirmTransPerDayComponent
                     }
                 ]
                 if (this.ConfirmTransactPerDayChart) {
-                    while (this.ConfirmTransactPerDayChart.ref.series.length > 0)
-                        this.ConfirmTransactPerDayChart.ref.series[0].remove(false)
+                    this.ConfirmTransactPerDayChart.ref$.forEach(c => {
+                        c.series[0].remove(false);
+                    })
+                    // while (this.ConfirmTransactPerDayChart.ref.series.length > 0)
+                    //     this.ConfirmTransactPerDayChart.ref.series[0].remove(false)
                     this.ConfirmTransactPerDayChart.addSeries(seriesData[0],
                     true, 
                     true)

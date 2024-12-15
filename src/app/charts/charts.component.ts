@@ -2,11 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Chart } from 'angular-highcharts'
 import { SubscriptionTracker } from '../subscription-tracker/subscription-tracker'
 import { take } from 'rxjs/operators'
-import { Observable } from 'rxjs'
-import { HttpService, MobileNavState } from '../services/http.service'
+import { MobileNavState } from '../services/http.service'
 import { ChartsState } from 'app/states/charts-state'
-import { Select } from '@ngxs/store'
 import { SeriesOptionsType } from 'highcharts'
+import { Store } from '@ngxs/store'
 
 @Component({
     selector: 'app-charts',
@@ -34,9 +33,12 @@ export class ChartsComponent
     ArrayHashrate: any
     searchIsOpen: boolean
 
-    @Select(ChartsState.selectAllCharts) allCharts$: Observable<any[]>
+    allCharts$ = this.store.select(ChartsState.selectAllCharts)
 
-    constructor(private mobileNavState: MobileNavState) {
+    constructor(
+        private mobileNavState: MobileNavState,
+        private store: Store
+    ) {
         super()
         this.navIsOpen = false
         this.loader = true
@@ -249,8 +251,11 @@ export class ChartsComponent
                         data: previewAvgBlockSize
                     }]
                 if (this.previewAvgBlockSizeChart) {
-                    while (this.previewAvgBlockSizeChart.ref.series.length > 0)
-                        this.previewAvgBlockSizeChart.ref.series[0].remove(false)
+                    this.previewAvgBlockSizeChart.ref$.forEach(c => {
+                        c.series[0].remove(false);
+                    })
+                    // while (this.previewAvgBlockSizeChart.ref.series.length > 0)
+                    //     this.previewAvgBlockSizeChart.ref.series[0].remove(false)
                     this.previewAvgBlockSizeChart.addSeries(avgBlockSizeData[0],
                     true,
                     true)
@@ -272,8 +277,11 @@ export class ChartsComponent
                     data: previewAvgTransPerBlock
                 }]
                 if (this.previewAvgTransPerBlockChart) {
-                    while (this.previewAvgTransPerBlockChart.ref.series.length > 0)
-                        this.previewAvgTransPerBlockChart.ref.series[0].remove(false)
+                    // while (this.previewAvgTransPerBlockChart.ref.series.length > 0)
+                    //     this.previewAvgTransPerBlockChart.ref.series[0].remove(false)
+                    this.previewAvgTransPerBlockChart.ref$.forEach(c => {
+                        c.series[0].remove(false);
+                    })
                     this.previewAvgTransPerBlockChart.addSeries(avgTransPerBlockData[0],
                     true,
                     true)
@@ -296,8 +304,11 @@ export class ChartsComponent
                     data: previewDifficultyPoW
                 }]
                 if (this.previewDifficultyPoWChart) {
-                    while (this.previewDifficultyPoWChart.ref.series.length > 0)
-                        this.previewDifficultyPoWChart.ref.series[0].remove(false)
+                    // while (this.previewDifficultyPoWChart.ref.series.length > 0)
+                    //     this.previewDifficultyPoWChart.ref.series[0].remove(false)
+                    this.previewDifficultyPoWChart.ref$.forEach(c => {
+                        c.series[0].remove(false);
+                    })
                     this.previewDifficultyPoWChart.addSeries(difficultyPoWData[0],
                     true,
                     true)
@@ -319,8 +330,11 @@ export class ChartsComponent
                 }]
                 if (this.previewDifficultyPoSChart)
                 {
-                    while (this.previewDifficultyPoSChart.ref.series.length > 0)
-                        this.previewDifficultyPoSChart.ref.series[0].remove(false)
+                    // while (this.previewDifficultyPoSChart.ref.series.length > 0)
+                    //     this.previewDifficultyPoSChart.ref.series[0].remove(false)
+                    this.previewDifficultyPoSChart.ref$.forEach(c => {
+                        c.series[0].remove(false);
+                    })
                     this.previewDifficultyPoSChart.addSeries(difficultyPoSData[0],
                     true,
                     true)
@@ -355,8 +369,11 @@ export class ChartsComponent
                     }
                 ]
                 if (this.previewHashRateChart) {
-                    while (this.previewHashRateChart.ref.series.length > 0)
-                        this.previewHashRateChart.ref.series[0].remove(false)
+                    // while (this.previewHashRateChart.ref.series.length > 0)
+                    //     this.previewHashRateChart.ref.series[0].remove(false)
+                    this.previewHashRateChart.ref$.forEach(c => {
+                        c.series[0].remove(false);
+                    })
                     this.previewHashRateChart.addSeries(hashRateData[0],
                     true,
                     true)
@@ -384,8 +401,11 @@ export class ChartsComponent
                     data: previewConfirmTransactPerDay
                 }]
                 if (this.previewConfirmTransactPerDayChart) {
-                    while (this.previewConfirmTransactPerDayChart.ref.series.length > 0)
-                        this.previewConfirmTransactPerDayChart.ref.series[0].remove(false)
+                    // while (this.previewConfirmTransactPerDayChart.ref.series.length > 0)
+                    //     this.previewConfirmTransactPerDayChart.ref.series[0].remove(false)
+                    this.previewConfirmTransactPerDayChart.ref$.forEach(c => {
+                        c.series[0].remove(false);
+                    })
                     this.previewConfirmTransactPerDayChart.addSeries(confirmTransactPerDayData[0],
                     true,
                     true)

@@ -3,10 +3,9 @@ import { MobileNavState } from '../../services/http.service'
 import { Chart } from 'angular-highcharts'
 import { take } from 'rxjs/operators'
 import { SubscriptionTracker } from '../../subscription-tracker/subscription-tracker'
-import { Select } from '@ngxs/store'
 import { ChartsState } from 'app/states/charts-state'
-import { Observable } from 'rxjs'
 import { SeriesOptionsType } from 'highcharts'
+import { Store } from '@ngxs/store'
 
 @Component({
     selector: 'app-hashrate',
@@ -23,9 +22,12 @@ export class HashrateComponent extends SubscriptionTracker implements OnInit {
     hashRateChart: Chart
     loader: boolean
 
-    @Select(ChartsState.selectAllHashRate) allHashRate$: Observable<any[]>
+    allHashRate$ = this.store.select(ChartsState.selectAllHashRate)
 
-    constructor(private mobileNavState: MobileNavState) {
+    constructor(
+        private mobileNavState: MobileNavState,
+        private store: Store
+    ) {
         super()
         this.navIsOpen = false
         this.searchIsOpen = false
@@ -303,8 +305,11 @@ export class HashrateComponent extends SubscriptionTracker implements OnInit {
                     }
                 ]
                 if (this.hashRateChart) {
-                    while (this.hashRateChart.ref.series.length > 0)
-                        this.hashRateChart.ref.series[0].remove(false)
+                    // while (this.hashRateChart.ref.series.length > 0)
+                    //     this.hashRateChart.ref.series[0].remove(false)
+                    this.hashRateChart.ref$.forEach(c => {
+                        c.series[0].remove(false);
+                    })
                     this.hashRateChart.addSeries(seriesData[0],
                         true,
                         true)

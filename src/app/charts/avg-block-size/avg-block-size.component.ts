@@ -3,9 +3,8 @@ import { MobileNavState } from '../../services/http.service'
 import { Chart } from 'angular-highcharts'
 import { SubscriptionTracker } from '../../subscription-tracker/subscription-tracker'
 import { take } from 'rxjs/operators'
-import { Select } from '@ngxs/store'
+import { Store } from '@ngxs/store'
 import { ChartsState } from 'app/states/charts-state'
-import { Observable } from 'rxjs'
 import { SeriesOptionsType } from 'highcharts'
 
 @Component({
@@ -26,9 +25,11 @@ export class AvgBlockSizeComponent
     AvgBlockSizeChart: Chart
     loader: boolean
 
-    @Select(ChartsState.selectAllAverageBlockSize) allAverageBlockSize$: Observable<any[]>
+    allAverageBlockSize$ = this.store.select(ChartsState.selectAllAverageBlockSize)
 
-    constructor(private mobileNavState: MobileNavState
+    constructor(
+        private mobileNavState: MobileNavState,
+        private store: Store
     ) {
         super()
         this.navIsOpen = false
@@ -279,8 +280,11 @@ export class AvgBlockSizeComponent
                     { type: 'area', name: 'MB', data: AvgBlockSize }
                 ]
                 if (this.AvgBlockSizeChart) {
-                    while (this.AvgBlockSizeChart.ref.series.length > 0)
-                        this.AvgBlockSizeChart.ref.series[0].remove(false)
+                    this.AvgBlockSizeChart.ref$.forEach(c => {
+                        c.series[0].remove(false);
+                    })
+                    // while (this.AvgBlockSizeChart.ref.series.length > 0)
+                    //     this.AvgBlockSizeChart.ref.series[0].remove(false)
                     this.AvgBlockSizeChart.addSeries(seriesData[0], true, true)
                 }
                 else {

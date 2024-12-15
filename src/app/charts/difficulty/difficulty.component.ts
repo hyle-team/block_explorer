@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core'
-import { HttpService, MobileNavState } from '../../services/http.service'
+import { MobileNavState } from '../../services/http.service'
 import { Chart } from 'angular-highcharts'
 import { SubscriptionTracker } from '../../subscription-tracker/subscription-tracker'
 import { take } from 'rxjs/operators'
-import { Select } from '@ngxs/store'
-import { Observable } from 'rxjs'
 import { ChartsState } from 'app/states/charts-state'
 import { SeriesOptionsType } from 'highcharts'
+import { Store } from '@ngxs/store'
 
 @Component({
     selector: 'app-difficulty',
@@ -24,9 +23,12 @@ export class DifficultyComponent extends SubscriptionTracker implements OnInit {
     loader: boolean
     seriesType: string = 'other'
 
-    @Select(ChartsState.selectAllPOSDifficulty) allPOSDifficulty$: Observable<any[]>
+    allPOSDifficulty$ = this.store.select(ChartsState.selectAllPOSDifficulty)
 
-    constructor(private mobileNavState: MobileNavState) {
+    constructor(
+        private mobileNavState: MobileNavState,
+        private store: Store
+    ) {
         super()
         this.navIsOpen = false
         this.searchIsOpen = false
@@ -345,8 +347,11 @@ export class DifficultyComponent extends SubscriptionTracker implements OnInit {
                     }
                 ]
                 if (this.difficultyChart) {
-                    while (this.difficultyChart.ref.series.length > 0)
-                        this.difficultyChart.ref.series[0].remove(false)
+                    this.difficultyChart.ref$.forEach(c => {
+                        c.series[0].remove(false);
+                    })
+                    // while (this.difficultyChart.ref.series.length > 0)
+                    //     this.difficultyChart.ref.series[0].remove(false)
                     this.difficultyChart.addSeries(seriesData[0], 
                     true, 
                     true)

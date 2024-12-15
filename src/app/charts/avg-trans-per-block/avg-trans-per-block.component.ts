@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core'
 import { MobileNavState } from '../../services/http.service'
 import { Chart } from 'angular-highcharts'
 import { SubscriptionTracker } from '../../subscription-tracker/subscription-tracker'
-import { Observable, take } from 'rxjs'
-import { Select } from '@ngxs/store'
+import { take } from 'rxjs'
+import { Store } from '@ngxs/store'
 import { ChartsState } from 'app/states/charts-state'
 import { SeriesOptionsType } from 'highcharts'
 
@@ -26,7 +26,7 @@ export class AvgTransPerBlockComponent
     AvgTransPerBlockChart: Chart
     loader: boolean
 
-    @Select(ChartsState.selectAllAverageTransactionsPerBlock) allAverageTransactionsPerBlock$: Observable<any[]>
+    allAverageTransactionsPerBlock$ = this.store.select(ChartsState.selectAllAverageTransactionsPerBlock)
 
     drawChart(titleText, yText, chartsData: SeriesOptionsType[]): Chart {
         return new Chart({
@@ -239,7 +239,9 @@ export class AvgTransPerBlockComponent
         this.searchIsOpen = $event
     }
 
-    constructor(private mobileNavState: MobileNavState
+    constructor(
+        private mobileNavState: MobileNavState,
+        private store: Store
     ) {
         super()
         this.navIsOpen = false
@@ -283,8 +285,11 @@ export class AvgTransPerBlockComponent
                     }]
                 
                 if (this.AvgTransPerBlockChart) {
-                    while (this.AvgTransPerBlockChart.ref.series.length > 0)
-                        this.AvgTransPerBlockChart.ref.series[0].remove(false)
+                    this.AvgTransPerBlockChart.ref$.forEach(c => {
+                        c.series[0].remove(false);
+                    })
+                    // while (this.AvgTransPerBlockChart.ref.series.length > 0)
+                    //     this.AvgTransPerBlockChart.ref.series[0].remove(false)
                     this.AvgTransPerBlockChart.addSeries(seriesData[0],
                     true,
                     true)
