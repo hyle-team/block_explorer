@@ -1,3 +1,21 @@
+@use 'assets/styles/base/variables' as variables;
+// BASE
+@use 'assets/styles/base/null';
+@use 'assets/styles/base/base';
+@use 'assets/styles/base/mixins';
+
+// LAYOUT
+@use 'assets/styles/layout/main';
+@use 'assets/styles/layout/header';
+
+// MODULES
+@use 'assets/styles/modules/main-info';
+@use 'assets/styles/modules/table';
+@use 'assets/styles/modules/forms';
+@use 'assets/styles/modules/pagination';
+@use 'assets/styles/modules/loader';
+@use 'assets/styles/modules/block-details';
+
 // special font - (svg icons)(
 @font-face {
     font-family: 'untitled-font-1';
@@ -10,16 +28,6 @@
     font-weight: normal;
     font-style: normal;
 }
-
-// $variables
-// $background: url('assets/img/background.jpg');
-$logo: url('assets/img/logo.svg');
-$font: 'Open Sans', sans-serif;
-$mobileMenuIco: url('assets/img/menu.svg');
-$showIco: url('assets/img/show.svg');
-$search: url('./assets/img/search-general.svg');
-$backBtn: url('./assets/img/back-block.svg');
-$searchSecond: url('./assets/img/search-second.svg');
 
 .base-icon {
     display: inline-block;
@@ -37,22 +45,7 @@ $searchSecond: url('./assets/img/search-second.svg');
     }
 }
 
-// BASE
-@import 'assets/styles/base/null';
-@import 'assets/styles/base/base';
-@import 'assets/styles/base/mixins';
 
-// LAYOUT
-@import 'assets/styles/layout/main';
-@import 'assets/styles/layout/header';
-
-// MODULES
-@import 'assets/styles/modules/main-info';
-@import 'assets/styles/modules/table';
-@import 'assets/styles/modules/forms';
-@import 'assets/styles/modules/pagination';
-@import 'assets/styles/modules/loader';
-@import 'assets/styles/modules/block-details';
 
 .fixed_background {
     position: fixed;
@@ -78,7 +71,7 @@ app-search {
         width: 25px;
         height: 100%;
         flex-shrink: 0;
-        background-image: $search;
+        background-image: variables.$search;
         background-repeat: no-repeat;
         background-position: center center;
     }
@@ -90,12 +83,12 @@ app-search {
     display: flex;
     align-items: center;
     padding-left: 21px;
-    background-image: $backBtn;
+    background-image: variables.$backBtn;
     background-repeat: no-repeat;
     background-position: 3px center;
     color: #fff;
     font-size: 16px;
-    @include max575 {
+    @include mixins.max575 {
         &.hide_back_btn {
             display: none;
         }
@@ -111,11 +104,11 @@ app-search {
     font-size: 14px;
     color: #9eaacc;
     padding-left: 47px;
-    background-image: $search;
+    background-image: variables.$search;
     background-repeat: no-repeat;
     background-position: 12px center;
     background-size: 18px;
-    @include max761 {
+    @include mixins.max761 {
         font-size: 16px;
     }
 }
@@ -125,14 +118,14 @@ app-search {
     background-color: #2b3768;
     position: relative;
     padding: 20px 0;
-    @include max991 {
+    @include mixins.max991 {
         overflow: auto;
     }
     .wrap_loader {
         height: 700px;
     }
     > div {
-        @include max991 {
+        @include mixins.max991 {
             overflow: auto !important;
         }
     }

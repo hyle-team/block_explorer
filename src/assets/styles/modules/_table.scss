@@ -1,3 +1,5 @@
+@use '../base/mixins' as mixins;
+
 .wrapper_table {
     .table_title {
         padding: 13px 24px;
@@ -5,7 +7,7 @@
         font-size: 24px;
         font-weight: 300;
         color: #fff;
-        @include max991 {
+        @include mixins.max991 {
             padding: 12px 20px;
         }
     }
@@ -34,7 +36,7 @@ table {
                 color: #fff;
                 text-align: left;
                 padding: 12px 20px;
-                @include max1170 {
+                @include mixins.max1170 {
                     padding: 12px 15px;
                 }
             }
@@ -47,7 +49,7 @@ table {
                 color: #fff;
                 padding: 12px 20px;
                 white-space: nowrap;
-                @include max1170 {
+                @include mixins.max1170 {
                     padding: 12px 15px;
                 }
                 > a {

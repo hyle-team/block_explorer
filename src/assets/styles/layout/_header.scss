@@ -1,3 +1,6 @@
+@use '../base/variables' as variables;
+@use '../base/mixins' as mixins;
+
 header {
     display: flex;
     align-items: center;
@@ -8,19 +11,19 @@ header {
         display: none;
         width: 22px;
         height: 16px;
-        background-image: $mobileMenuIco;
+        background-image: variables.$mobileMenuIco;
         background-repeat: no-repeat;
         background-position: 0 0;
         background-color: transparent;
         border: none;
-        @include max761 {
+        @include mixins.max761 {
             display: flex;
             position: absolute;
             right: 0;
         }
     }
     nav {
-        @include max761 {
+        @include mixins.max761 {
             display: none;
         }
         ul {
@@ -43,7 +46,7 @@ header {
         width: 140px;
         height: 40px;
         margin-right: 60px;
-        background-image: $logo;
+        background-image: variables.$logo;
         background-repeat: no-repeat;
         background-position: 0 center;
         background-size: contain;
@@ -55,9 +58,9 @@ header {
         text-transform: uppercase;
         padding-left: 50px;
         cursor: pointer;
-        @include unSelect;
+        @include mixins.unSelect;
         outline: none;
-        @include max575 {
+        @include mixins.max575 {
             margin-right: 10px;
         }
     }
@@ -71,13 +74,13 @@ header {
         border-radius: 10px;
         overflow: hidden;
         font-size: 14px;
-        @include max761 {
+        @include mixins.max761 {
             right: 80px;
         }
-        @include max575 {
+        @include mixins.max575 {
             font-size: 13px;
         }
-        @include mobile {
+        @include mixins.mobile {
             display: none;
         }
         > div {
@@ -89,8 +92,8 @@ header {
             //cursor: pointer;
             background-color: #2b3768;
             color: #9eaacc;
-            @include unSelect;
-            @include max575 {
+            @include mixins.unSelect;
+            @include mixins.max575 {
                 padding: 0 10px;
             }
             &.testnet {

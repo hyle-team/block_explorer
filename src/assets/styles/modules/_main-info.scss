@@ -1,3 +1,5 @@
+@use '../base/mixins' as mixins;
+
 .main_info {
     display: flex;
     justify-content: space-between;
@@ -5,12 +7,12 @@
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 25px;
-    @include max991 {
+    @include mixins.max991 {
         flex-direction: column;
     }
     > div {
         flex-basis: 25%;
-        @include max991 {
+        @include mixins.max991 {
             display: flex;
             flex-basis: 100%;
             align-items: flex-start;
@@ -19,10 +21,10 @@
             &:nth-child(2n + 1) {
                 background-color: #263163;
             }
-            @include max575 {
+            @include mixins.max575 {
                 padding: 12px 20px;
             }
-            @include mobile {
+            @include mixins.mobile {
                 padding-right: 5px;
             }
         }
@@ -33,7 +35,7 @@
             height: 40px;
             font-size: 16px;
             color: #9eaacc;
-            @include max991 {
+            @include mixins.max991 {
                 flex-basis: 50%;
                 height: auto;
                 font-size: 14px;
@@ -42,11 +44,11 @@
                 background-color: transparent;
                 color: #fff;
             }
-            @include max575 {
+            @include mixins.max575 {
                 //flex-basis: 40%;
                 padding-right: 15px;
             }
-            @include mobile {
+            @include mixins.mobile {
                 //font-size: 12px;
             }
         }
@@ -58,7 +60,7 @@
             color: #fff;
             font-weight: 300;
             background-color: #2b3768;
-            @include max991 {
+            @include mixins.max991 {
                 flex-basis: 50%;
                 height: auto;
                 justify-content: flex-start;
@@ -69,31 +71,31 @@
         }
         &.height {
             flex-basis: 20%;
-            @include max991 {
+            @include mixins.max991 {
                 flex-basis: 100%;
             }
             .value {
                 font-size: 25px;
-                @include max1170 {
+                @include mixins.max1170 {
                     font-size: 20px;
                 }
-                @include max991 {
+                @include mixins.max991 {
                     font-size: 14px;
                 }
             }
         }
         &.difficulty {
             flex-basis: 30%;
-            @include max991 {
+            @include mixins.max991 {
                 flex-basis: 100%;
             }
             .value {
                 flex-direction: column;
                 font-size: 16px;
-                @include max1170 {
+                @include mixins.max1170 {
                     font-size: 14px;
                 }
-                @include max991 {
+                @include mixins.max991 {
                     align-items: flex-start;
                 }
                 > div {
@@ -104,13 +106,13 @@
                         padding-right: 5px;
                     }
                     &:before {
-                        @include pseudo;
+                        @include mixins.pseudo;
                         top: 7px;
                         left: 0;
                         border: 11px solid transparent;
                         border-bottom: 0;
                         border-left: 11px solid transparent;
-                        @include max991 {
+                        @include mixins.max991 {
                             top: 6px;
                         }
                     }
@@ -130,25 +132,25 @@
         &.coins_emitted {
             .value {
                 font-size: 20px;
-                @include max1170 {
+                @include mixins.max1170 {
                     font-size: 18px;
                 }
-                @include max991 {
+                @include mixins.max991 {
                     font-size: 14px;
                 }
             }
         }
         &.transactions {
             flex-basis: 20%;
-            @include max991 {
+            @include mixins.max991 {
                 flex-basis: 100%;
             }
             .value {
                 font-size: 25px;
-                @include max1170 {
+                @include mixins.max1170 {
                     font-size: 20px;
                 }
-                @include max991 {
+                @include mixins.max991 {
                     font-size: 14px;
                 }
             }
@@ -156,10 +158,10 @@
         &.hash_rate {
             .value {
                 font-size: 25px;
-                @include max1170 {
+                @include mixins.max1170 {
                     font-size: 20px;
                 }
-                @include max991 {
+                @include mixins.max991 {
                     font-size: 14px;
                 }
             }

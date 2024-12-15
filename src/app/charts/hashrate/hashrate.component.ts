@@ -39,8 +39,10 @@ export class HashrateComponent extends SubscriptionTracker implements OnInit {
                 type: 'line',
                 backgroundColor: '#2b3768',
                 height: 700,
-                width: null
-                // zoomType: 'x'
+                width: null,
+                zooming: {
+                    type: 'x'
+                }
             },
             accessibility: {
                 enabled: false
