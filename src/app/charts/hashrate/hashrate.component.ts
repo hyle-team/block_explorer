@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { MobileNavState } from '../../services/http.service'
-import { Chart } from 'angular-highcharts'
+import { StockChart } from 'angular-highcharts'
 import { take } from 'rxjs/operators'
 import { SubscriptionTracker } from '../../subscription-tracker/subscription-tracker'
 import { ChartsState } from 'app/states/charts-state'
@@ -19,7 +19,7 @@ export class HashrateComponent extends SubscriptionTracker implements OnInit {
     activeChart: string
     period: string
     InputArray: any
-    hashRateChart: Chart
+    hashRateChart: StockChart
     loader: boolean
 
     allHashRate$ = this.store.select(ChartsState.selectAllHashRate)
@@ -35,8 +35,8 @@ export class HashrateComponent extends SubscriptionTracker implements OnInit {
         this.period = 'all'
     }
 
-    drawChart(titleText, yText, chartsData: SeriesOptionsType[]): Chart {
-        return new Chart({
+    drawChart(titleText, yText, chartsData: SeriesOptionsType[]): StockChart {
+        return new StockChart({
             chart: {
                 type: 'line',
                 backgroundColor: '#2b3768',
@@ -305,20 +305,12 @@ export class HashrateComponent extends SubscriptionTracker implements OnInit {
                     }
                 ]
                 if (this.hashRateChart) {
-                    // while (this.hashRateChart.ref.series.length > 0)
-                    //     this.hashRateChart.ref.series[0].remove(false)
                     this.hashRateChart.ref$.forEach(c => {
                         c.series[0].remove(false);
+                        c.addSeries(seriesData[0], true, true);
+                        c.addSeries(seriesData[1], true, true);
+                        c.addSeries(seriesData[2], true, true);
                     })
-                    this.hashRateChart.addSeries(seriesData[0],
-                        true,
-                        true)
-                    this.hashRateChart.addSeries(seriesData[1],
-                        true,
-                        true)
-                    this.hashRateChart.addSeries(seriesData[2],
-                        true,
-                        true)
                 }
                 else {
                     this.hashRateChart = this.drawChart(

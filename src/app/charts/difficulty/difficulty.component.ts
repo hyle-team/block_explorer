@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { MobileNavState } from '../../services/http.service'
-import { Chart } from 'angular-highcharts'
+import { StockChart } from 'angular-highcharts'
 import { SubscriptionTracker } from '../../subscription-tracker/subscription-tracker'
 import { take } from 'rxjs/operators'
 import { ChartsState } from 'app/states/charts-state'
@@ -19,7 +19,7 @@ export class DifficultyComponent extends SubscriptionTracker implements OnInit {
     activeChart: string
     period: string
     posDifficulty: any
-    difficultyChart: Chart
+    difficultyChart: StockChart
     loader: boolean
     seriesType: string = 'other'
 
@@ -37,9 +37,9 @@ export class DifficultyComponent extends SubscriptionTracker implements OnInit {
     }
 
     // PoS Difficulty
-    drawChart(titleText, yText, chartsData: SeriesOptionsType[]): Chart {
+    drawChart(titleText, yText, chartsData: SeriesOptionsType[]): StockChart {
         const that = this
-        return new Chart({
+        return new StockChart({
             chart: {
                 type: 'line',
                 backgroundColor: '#2b3768',
@@ -292,16 +292,14 @@ export class DifficultyComponent extends SubscriptionTracker implements OnInit {
                     parseInt(chartData[i].d, 10)
                 ])
             }
-            this.difficultyChart.removeSeries(0)
-            this.difficultyChart.addSeries(
-                {
+            this.difficultyChart.ref$.forEach(c => {
+                c.series[0].remove(false);
+                c.addSeries({
                     type: 'area',
                     name: 'PoS difficulty',
                     data: posDifficultyArray
-                },
-                true,
-                true
-            )
+                }, true, true);
+            })
         }
     }
     onIsVisible($event): void {
@@ -349,12 +347,8 @@ export class DifficultyComponent extends SubscriptionTracker implements OnInit {
                 if (this.difficultyChart) {
                     this.difficultyChart.ref$.forEach(c => {
                         c.series[0].remove(false);
+                        c.addSeries(seriesData[0], true, true)
                     })
-                    // while (this.difficultyChart.ref.series.length > 0)
-                    //     this.difficultyChart.ref.series[0].remove(false)
-                    this.difficultyChart.addSeries(seriesData[0], 
-                    true, 
-                    true)
                 }
                 else
                 {

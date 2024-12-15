@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { Chart } from 'angular-highcharts'
+import { StockChart } from 'angular-highcharts'
 import { SubscriptionTracker } from '../../subscription-tracker/subscription-tracker'
 import { take } from 'rxjs/operators'
 import { MobileNavState } from '../../services/http.service'
@@ -23,7 +23,7 @@ export class DifficultyPowComponent
     activeChart: string
     period: string
     powDifficulty: any
-    difficultyChart: Chart
+    difficultyChart: StockChart
     loader: boolean
     seriesType: string = 'other'
 
@@ -40,9 +40,9 @@ export class DifficultyPowComponent
         this.period = 'all'
     }
 
-    drawChart(titleText, yText, chartsData: SeriesOptionsType[]): Chart {
+    drawChart(titleText, yText, chartsData: SeriesOptionsType[]): StockChart {
         const that = this
-        return new Chart({
+        return new StockChart({
             chart: {
                 type: 'line',
                 backgroundColor: '#2b3768',
@@ -295,16 +295,14 @@ export class DifficultyPowComponent
                     parseInt(chartData[i].d, 10)
                 ])
             }
-            this.difficultyChart.removeSeries(0)
-            this.difficultyChart.addSeries(
-                {
+            this.difficultyChart.ref$.forEach(c => {
+                c.series[0].remove(false);
+                c.addSeries({
                     type: 'area',
                     name: 'PoW difficulty',
                     data: powDifficultyArray
-                },
-                true,
-                true
-            )
+                }, true, true);
+            })
         }
     }
 
@@ -355,10 +353,8 @@ export class DifficultyPowComponent
                 if (this.difficultyChart) {
                     this.difficultyChart.ref$.forEach(c => {
                         c.series[0].remove(false);
+                        c.addSeries(seriesData[0], true, true)
                     })
-                    // while (this.difficultyChart.ref.series.length > 0)
-                    //     this.difficultyChart.ref.series[0].remove(false)
-                    this.difficultyChart.addSeries(seriesData[0], true, true)
                 }
                 else {
                     this.difficultyChart = this.drawChart(

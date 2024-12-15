@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { MobileNavState } from '../../services/http.service'
-import { Chart } from 'angular-highcharts'
+import { StockChart } from 'angular-highcharts'
 import { SubscriptionTracker } from '../../subscription-tracker/subscription-tracker'
 import { take } from 'rxjs/operators'
 import { Store } from '@ngxs/store'
@@ -24,7 +24,7 @@ export class ConfirmTransPerDayComponent
     activeChart: string
     period: string
     InputArray: any
-    ConfirmTransactPerDayChart: Chart
+    ConfirmTransactPerDayChart: StockChart
     loader: boolean
 
     allConfirmedTransactionsPerDay$: Observable<any[]>
@@ -38,8 +38,8 @@ export class ConfirmTransPerDayComponent
         this.allConfirmedTransactionsPerDay$ = this.store.select(ChartsState.selectAllConfirmedTransactionsPerDay)
     }
 
-    drawChart(titleText, yText, chartsData: SeriesOptionsType[]): Chart {
-        return new Chart({
+    drawChart(titleText, yText, chartsData: SeriesOptionsType[]): StockChart {
+        return new StockChart({
             chart: {
                 type: 'line',
                 backgroundColor: '#2b3768',
@@ -286,12 +286,8 @@ export class ConfirmTransPerDayComponent
                 if (this.ConfirmTransactPerDayChart) {
                     this.ConfirmTransactPerDayChart.ref$.forEach(c => {
                         c.series[0].remove(false);
+                        c.addSeries(seriesData[0], true, true);
                     })
-                    // while (this.ConfirmTransactPerDayChart.ref.series.length > 0)
-                    //     this.ConfirmTransactPerDayChart.ref.series[0].remove(false)
-                    this.ConfirmTransactPerDayChart.addSeries(seriesData[0],
-                    true, 
-                    true)
                 }
                 else
                 {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { MobileNavState } from '../../services/http.service'
-import { Chart } from 'angular-highcharts'
+import { StockChart } from 'angular-highcharts'
 import { SubscriptionTracker } from '../../subscription-tracker/subscription-tracker'
 import { take } from 'rxjs/operators'
 import { Store } from '@ngxs/store'
@@ -22,7 +22,7 @@ export class AvgBlockSizeComponent
     activeChart: string
     period: string
     InputArray: any
-    AvgBlockSizeChart: Chart
+    AvgBlockSizeChart: StockChart
     loader: boolean
 
     allAverageBlockSize$ = this.store.select(ChartsState.selectAllAverageBlockSize)
@@ -38,8 +38,8 @@ export class AvgBlockSizeComponent
         this.period = 'all'
     }
 
-    drawChart(titleText, yText, chartsData: SeriesOptionsType[]): Chart {
-        return new Chart({
+    drawChart(titleText, yText, chartsData: SeriesOptionsType[]): StockChart {
+        return new StockChart({
             chart: {
                 type: 'line',
                 backgroundColor: '#2b3768',
@@ -282,10 +282,8 @@ export class AvgBlockSizeComponent
                 if (this.AvgBlockSizeChart) {
                     this.AvgBlockSizeChart.ref$.forEach(c => {
                         c.series[0].remove(false);
+                        c.addSeries(seriesData[0], true, true)
                     })
-                    // while (this.AvgBlockSizeChart.ref.series.length > 0)
-                    //     this.AvgBlockSizeChart.ref.series[0].remove(false)
-                    this.AvgBlockSizeChart.addSeries(seriesData[0], true, true)
                 }
                 else {
                     this.AvgBlockSizeChart = this.drawChart(
