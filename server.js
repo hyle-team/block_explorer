@@ -55,7 +55,7 @@ io.engine.on('headers', (headers, req) => {
     headers['Access-Control-Allow-Origin'] = frontEnd_api
 })
 
-app.use(express.static('dist'))
+app.use(express.static('dist/browser'))
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*')
     res.header(
@@ -1527,7 +1527,7 @@ app.get(
 )
 
 app.use(function (req, res) {
-    res.sendFile(__dirname + '/dist/index.html')
+    res.sendFile(__dirname + '/dist/browser/index.html')
 })
 
 io.on('connection', async (socket) => {
