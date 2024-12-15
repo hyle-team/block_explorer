@@ -52,10 +52,10 @@ export class ChartsComponent
             chart: {
                 type: 'line',
                 backgroundColor: '#2b3768',
-                height: 280,
-                zooming: {
-                    type: 'x'
-                }
+                height: 280
+            },
+            boost: {
+                enabled: true
             },
             accessibility: {
                 enabled: false
@@ -113,7 +113,12 @@ export class ChartsComponent
                         fontSize: '11px'
                     },
                     format: '{value:%d.%b}'
-                }
+                },
+                scrollbar: {
+                    enabled: false,
+                    showFull: false,
+                    buttonsEnabled: false
+                }              
             },
             yAxis: {
                 floor: 0,
@@ -128,21 +133,23 @@ export class ChartsComponent
                         color: '#9eaacc',
                         fontSize: '11px'
                     }
+                },
+                scrollbar: {
+                    enabled: false,
+                    showFull: false,
+                    buttonsEnabled: false
                 }
             },
-            // navigator: false,
+            navigator: {
+                enabled: false,
+                adaptToUpdatedData: false,
+                handles: {
+                    enabled: false
+                }
+            },
             rangeSelector: {
-                enabled: yText !== 'Transactions',
-                // enabled: false,
-                buttons: [
-                    {
-                        type: 'day',
-                        count: 1,
-                        text: 'day'
-                    }
-                ],
-                selected: 0,
-                inputEnabled: false
+                enabled: false,
+                allButtonsEnabled: false
             },
             series: chartsData
         })
@@ -184,12 +191,15 @@ export class ChartsComponent
 
                 // AvgBlockSize, AvgTransPerBlock
                 for (let i = 0; i < this.InputArray.length; i++) {
+                    let at = this.InputArray[i].at * 1000
+                    if (isNaN(at))
+                        continue
                     previewAvgBlockSize.push([
-                        this.InputArray[i].at * 1000,
+                        at,
                         this.InputArray[i].bcs
                     ])
                     previewAvgTransPerBlock.push([
-                        this.InputArray[i].at * 1000,
+                        at,
                         this.InputArray[i].trc
                     ])
                 }
@@ -200,8 +210,11 @@ export class ChartsComponent
                     i < this.ArrayConfirmTransactPerDay.length;
                     i++
                 ) {
+                    let at = this.ArrayConfirmTransactPerDay[i].at * 1000
+                    if (isNaN(at))
+                        continue
                     previewConfirmTransactPerDay.push([
-                        this.ArrayConfirmTransactPerDay[i].at * 1000,
+                        at,
                         parseInt(
                             this.ArrayConfirmTransactPerDay[i].sum_trc,
                             10
@@ -211,35 +224,40 @@ export class ChartsComponent
 
                 // Difficulty (PoS/PoW)
                 for (let i = 0; i < this.InputArray.length; i++) {
+                    let at = this.InputArray[i].at * 1000
+                    if (isNaN(at))
+                        continue
                     if (this.InputArray[i].t === 0) {
                         previewDifficultyPoS.push([
-                            this.InputArray[i].at * 1000,
+                            at,
                             this.InputArray[i].d,
                             10
                         ])
                     }
                     if (this.InputArray[i].t === 1) {
                         previewDifficultyPoW.push([
-                            this.InputArray[i].at * 1000,
+                            at,
                             parseInt(this.InputArray[i].d, 10)
                         ])
                     }
                 }
-
                 // hashRate
                 for (let i = 0; i < this.ArrayHashrate.length; i++) {
+                    let at = this.ArrayHashrate[i].at * 1000
+                    if (isNaN(at))
+                        continue
                     // const hashrate100 = this.ArrayHashrate[i]['hashrate100'] = (i > 99) ? ((this.ArrayHashrate[i]['cumulative_diff_precise'] - this.ArrayHashrate[i - 100]['cumulative_diff_precise']) / (this.ArrayHashrate[i]['actual_timestamp'] - this.ArrayHashrate[i - 100]['actual_timestamp'])) : 0;
                     // const hashrate400 = this.ArrayHashrate[i]['hashrate400'] = (i > 399) ? ((this.ArrayHashrate[i]['cumulative_diff_precise'] - this.ArrayHashrate[i - 400]['cumulative_diff_precise']) / (this.ArrayHashrate[i]['actual_timestamp'] - this.ArrayHashrate[i - 400]['actual_timestamp'])) : 0;
                     previewHashrate100.push([
-                        this.ArrayHashrate[i].at * 1000,
+                        at,
                         parseInt(this.ArrayHashrate[i].h100, 10)
                     ])
                     previewHashrate400.push([
-                        this.ArrayHashrate[i].at * 1000,
+                        at,
                         parseInt(this.ArrayHashrate[i].h400, 10)
                     ])
                     previewDifficulty120.push([
-                        this.ArrayHashrate[i].at * 1000,
+                        at,
                         parseInt(this.ArrayHashrate[i].d120, 10)
                     ])
                 }
@@ -253,12 +271,8 @@ export class ChartsComponent
                 if (this.previewAvgBlockSizeChart) {
                     this.previewAvgBlockSizeChart.ref$.forEach(c => {
                         c.series[0].remove(false);
+                        c.addSeries(avgBlockSizeData[0], true, true)
                     })
-                    // while (this.previewAvgBlockSizeChart.ref.series.length > 0)
-                    //     this.previewAvgBlockSizeChart.ref.series[0].remove(false)
-                    this.previewAvgBlockSizeChart.addSeries(avgBlockSizeData[0],
-                    true,
-                    true)
                 }
                 else
                 {
@@ -277,14 +291,10 @@ export class ChartsComponent
                     data: previewAvgTransPerBlock
                 }]
                 if (this.previewAvgTransPerBlockChart) {
-                    // while (this.previewAvgTransPerBlockChart.ref.series.length > 0)
-                    //     this.previewAvgTransPerBlockChart.ref.series[0].remove(false)
                     this.previewAvgTransPerBlockChart.ref$.forEach(c => {
                         c.series[0].remove(false);
+                        c.addSeries(avgTransPerBlockData[0], true, true)
                     })
-                    this.previewAvgTransPerBlockChart.addSeries(avgTransPerBlockData[0],
-                    true,
-                    true)
                 }
                 else
                 {
@@ -304,14 +314,10 @@ export class ChartsComponent
                     data: previewDifficultyPoW
                 }]
                 if (this.previewDifficultyPoWChart) {
-                    // while (this.previewDifficultyPoWChart.ref.series.length > 0)
-                    //     this.previewDifficultyPoWChart.ref.series[0].remove(false)
                     this.previewDifficultyPoWChart.ref$.forEach(c => {
                         c.series[0].remove(false);
+                        c.addSeries(difficultyPoWData[0],true, true)
                     })
-                    this.previewDifficultyPoWChart.addSeries(difficultyPoWData[0],
-                    true,
-                    true)
                 }
                 else {
                     this.previewDifficultyPoWChart = this.drawChart(
@@ -330,14 +336,10 @@ export class ChartsComponent
                 }]
                 if (this.previewDifficultyPoSChart)
                 {
-                    // while (this.previewDifficultyPoSChart.ref.series.length > 0)
-                    //     this.previewDifficultyPoSChart.ref.series[0].remove(false)
                     this.previewDifficultyPoSChart.ref$.forEach(c => {
                         c.series[0].remove(false);
+                        c.addSeries(difficultyPoSData[0], true, true)
                     })
-                    this.previewDifficultyPoSChart.addSeries(difficultyPoSData[0],
-                    true,
-                    true)
                 }
                 else {
                     this.previewDifficultyPoSChart = this.drawChart(
@@ -369,20 +371,12 @@ export class ChartsComponent
                     }
                 ]
                 if (this.previewHashRateChart) {
-                    // while (this.previewHashRateChart.ref.series.length > 0)
-                    //     this.previewHashRateChart.ref.series[0].remove(false)
                     this.previewHashRateChart.ref$.forEach(c => {
                         c.series[0].remove(false);
+                        c.addSeries(hashRateData[0], true, true);
+                        c.addSeries(hashRateData[1], true, true);
+                        c.addSeries(hashRateData[2], true, true);
                     })
-                    this.previewHashRateChart.addSeries(hashRateData[0],
-                    true,
-                    true)
-                    this.previewHashRateChart.addSeries(hashRateData[1],
-                        true,
-                        true)
-                    this.previewHashRateChart.addSeries(hashRateData[2],
-                        true,
-                        true)
                 }
                 else
                 {
@@ -401,14 +395,10 @@ export class ChartsComponent
                     data: previewConfirmTransactPerDay
                 }]
                 if (this.previewConfirmTransactPerDayChart) {
-                    // while (this.previewConfirmTransactPerDayChart.ref.series.length > 0)
-                    //     this.previewConfirmTransactPerDayChart.ref.series[0].remove(false)
                     this.previewConfirmTransactPerDayChart.ref$.forEach(c => {
                         c.series[0].remove(false);
+                        c.addSeries(confirmTransactPerDayData[0], true, true)
                     })
-                    this.previewConfirmTransactPerDayChart.addSeries(confirmTransactPerDayData[0],
-                    true,
-                    true)
                 }
                 else
                 {

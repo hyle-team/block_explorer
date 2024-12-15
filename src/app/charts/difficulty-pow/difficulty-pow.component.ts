@@ -4,7 +4,6 @@ import { SubscriptionTracker } from '../../subscription-tracker/subscription-tra
 import { take } from 'rxjs/operators'
 import { MobileNavState } from '../../services/http.service'
 import { ChartsState } from 'app/states/charts-state'
-import { Observable } from 'rxjs'
 import { SeriesOptionsType } from 'highcharts'
 import { Store } from '@ngxs/store'
 
